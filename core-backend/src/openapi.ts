@@ -1,0 +1,356 @@
+export const openApiDocument = {
+  openapi: '3.0.0',
+  info: {
+    title: 'HackCore API',
+    version: '1.0.0',
+    description:
+      'API contract for the HackCore - Personal Full-Stack Starter backend modules',
+  },
+  paths: {
+    '/api/health': {
+      get: {
+        summary: 'Health Check',
+        description:
+          'Returns the health and operational status of the service.',
+        responses: {
+          '200': {
+            description: 'Service is healthy',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    status: {
+                      type: 'string',
+                      example: 'ok',
+                    },
+                    timestamp: {
+                      type: 'string',
+                      example: '2026-08-20T12:00:00.000Z',
+                    },
+                  },
+                  required: ['status', 'timestamp'],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/auth/csrf': {
+      get: {
+        summary: 'Get CSRF Token',
+        description:
+          'Establish a non-HTTP-only cookie containing the CSRF token and return it.',
+        responses: {
+          '200': {
+            description: 'CSRF token established',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    csrfToken: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['csrfToken'],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/auth/login': {
+      post: {
+        summary: 'Login',
+        description: 'Authenticate user and start secure session.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string', format: 'email' },
+                  password: { type: 'string' },
+                },
+                required: ['email', 'password'],
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Login successful',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    user: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string', format: 'uuid' },
+                        email: { type: 'string', format: 'email' },
+                        permissions: {
+                          type: 'array',
+                          items: { type: 'string' },
+                        },
+                      },
+                      required: ['id', 'email', 'permissions'],
+                    },
+                    csrfToken: { type: 'string' },
+                  },
+                  required: ['user', 'csrfToken'],
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Invalid input parameters',
+          },
+          '401': {
+            description: 'Invalid credentials',
+          },
+        },
+      },
+    },
+    '/api/auth/signup': {
+      post: {
+        summary: 'Signup',
+        description:
+          'Register a new user, assign default permissions, and start secure session.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string', format: 'email' },
+                  password: { type: 'string' },
+                },
+                required: ['email', 'password'],
+              },
+            },
+          },
+        },
+        responses: {
+          '201': {
+            description: 'Signup successful and session established',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    user: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string', format: 'uuid' },
+                        email: { type: 'string', format: 'email' },
+                        permissions: {
+                          type: 'array',
+                          items: { type: 'string' },
+                        },
+                      },
+                      required: ['id', 'email', 'permissions'],
+                    },
+                    csrfToken: { type: 'string' },
+                  },
+                  required: ['user', 'csrfToken'],
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Invalid input parameters or email already registered',
+          },
+        },
+      },
+    },
+    '/api/auth/logout': {
+      post: {
+        summary: 'Logout',
+        description: 'Terminate active session and clear cookies.',
+        responses: {
+          '200': {
+            description: 'Logout successful',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                  },
+                  required: ['success'],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/auth/me': {
+      get: {
+        summary: 'Verify Session',
+        description: 'Verify session cookie and retrieve active profile.',
+        responses: {
+          '200': {
+            description: 'Session valid',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    user: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string', format: 'uuid' },
+                        email: { type: 'string', format: 'email' },
+                        permissions: {
+                          type: 'array',
+                          items: { type: 'string' },
+                        },
+                      },
+                      required: ['id', 'email', 'permissions'],
+                    },
+                    csrfToken: { type: 'string' },
+                  },
+                  required: ['user', 'csrfToken'],
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Session invalid or expired',
+          },
+        },
+      },
+    },
+    '/api/auth/forgot-password': {
+      post: {
+        summary: 'Request Password Reset',
+        description: 'Generate temporary single-use reset token.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string', format: 'email' },
+                },
+                required: ['email'],
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Reset request received (generic message)',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    message: { type: 'string' },
+                  },
+                  required: ['success', 'message'],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '/api/auth/reset-password': {
+      post: {
+        summary: 'Execute Password Reset',
+        description: 'Consume reset token and update user password.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  token: { type: 'string' },
+                  password: { type: 'string' },
+                },
+                required: ['token', 'password'],
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Password reset successful',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                  },
+                  required: ['success'],
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Invalid or expired token',
+          },
+        },
+      },
+    },
+    '/api/users/search': {
+      get: {
+        summary: 'Search Users',
+        description: 'Search user profiles by email. Requires active session.',
+        parameters: [
+          {
+            name: 'q',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string',
+            },
+            description: 'Search query string',
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Matched users list',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    users: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', format: 'uuid' },
+                          email: { type: 'string', format: 'email' },
+                        },
+                        required: ['id', 'email'],
+                      },
+                    },
+                  },
+                  required: ['users'],
+                },
+              },
+            },
+          },
+          '401': {
+            description: 'Session invalid or expired',
+          },
+        },
+      },
+    },
+  },
+};
