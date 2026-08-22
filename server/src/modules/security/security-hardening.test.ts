@@ -373,30 +373,24 @@ describe('Security Hardening Integration Tests', () => {
     });
 
     it('Employee A should NOT view Employee B salary structure via header', async () => {
-      const res = await fetch(
-        `${testUrl}/api/payroll/salary-structure`,
-        {
-          headers: {
-            Cookie: empACookie,
-            'x-employee-id': EMP_B_ID,
-          },
+      const res = await fetch(`${testUrl}/api/payroll/salary-structure`, {
+        headers: {
+          Cookie: empACookie,
+          'x-employee-id': EMP_B_ID,
         },
-      );
+      });
       // Should be 403 or 404 (B has no structure, A is not HR)
       expect([403, 404]).toContain(res.status);
     });
 
     it('Employee B should NOT view Employee A salary slip by ID', async () => {
       // First get Employee A's slip ID via HR
-      const slipsRes = await fetch(
-        `${testUrl}/api/payroll/slips`,
-        {
-          headers: {
-            Cookie: hrCookie,
-            'x-employee-id': EMP_A_ID,
-          },
+      const slipsRes = await fetch(`${testUrl}/api/payroll/slips`, {
+        headers: {
+          Cookie: hrCookie,
+          'x-employee-id': EMP_A_ID,
         },
-      );
+      });
       const slipsBody: any = await slipsRes.json();
       const slipA = slipsBody.slips.find((s: any) => s.employeeId === EMP_A_ID);
 

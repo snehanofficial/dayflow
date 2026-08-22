@@ -234,3 +234,21 @@ Create a rich, responsive, and functional employee dashboard as the main home vi
 ### Tests
 - Wrote frontend unit/integration tests in `client/src/features/employee/EmployeeDashboard.test.tsx` verifying card triggers, loading states, and error handling.
 
+## Phase 7 — Security Hardening + Integration Readiness
+
+Status: COMPLETE
+Commit: ece462a & next
+Verification: PASS
+Regression: PASS
+
+Objective:
+Perform a comprehensive audit of all Developer A routes (profile and attendance) for authorization constraints, privilege escalations, CSRF validation, and CORS validation. Check and verify that Employee A can only view/mutate Employee A data, while HR can view/mutate employee directory details.
+
+### Security Audit Findings & Hardening
+- **Self-Service Boundaries**: Checked check-in, check-out, today status, paginated logs, and insights queries in `server/src/modules/domain/attendance/controller.ts` and confirmed they strictly read from `req.user.id`, rendering them immune to IDOR query parameters or header manipulation.
+- **Profile Detail Ownership Check**: Profile detail endpoints (`GET /api/employees/:id`) enforce ownership check: `req.user.role === 'HR' || profile.userId === req.user.id`.
+- **Role Protections**: Employee directory listings and bulk HR edits strictly require `HR` role on routes.
+- **CSRF & Security Middlewares**: Ensured Helmet, CORS origin validation, custom JSON error mapping, and double-submit CSRF cookie checks are loaded globally and enforce validation checks on all mutations.
+
+
+
