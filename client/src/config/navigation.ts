@@ -31,6 +31,51 @@ const baseGroups: NavGroup[] = [
       },
     ],
   },
+  {
+    group: 'Time Off',
+    items: [
+      {
+        label: 'Leaves',
+        route: '/leave',
+        icon: 'calendar',
+        requiredPermission: { resource: 'leave', action: 'read' },
+      },
+      {
+        label: 'Manage Leaves',
+        route: '/hr/leave',
+        icon: 'users',
+        requiredPermission: { resource: 'leave', action: 'manage' },
+      },
+    ],
+  },
+  {
+    group: 'Payroll',
+    items: [
+      {
+        label: 'My Pay',
+        route: '/payroll/slips',
+        icon: 'payroll',
+        requiredPermission: { resource: 'payroll', action: 'read' },
+      },
+      {
+        label: 'Manage Payroll',
+        route: '/hr/payroll',
+        icon: 'shield',
+        requiredPermission: { resource: 'payroll', action: 'manage' },
+      },
+    ],
+  },
+  {
+    group: 'Analytics',
+    items: [
+      {
+        label: 'HR Intelligence',
+        route: '/hr/analytics',
+        icon: 'analytics',
+        requiredPermission: { resource: 'analytics', action: 'read' },
+      },
+    ],
+  },
 ];
 
 // Append playground for developer inspection in local development

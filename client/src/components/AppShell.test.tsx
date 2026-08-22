@@ -1,7 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './AppShell.js';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+const renderWithQuery = (ui: React.ReactNode) => {
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+};
 
 // Mock contexts to satisfy hook dependencies
 const mockLogout = vi.fn();
@@ -33,7 +48,7 @@ describe('AppShell', () => {
   });
 
   it('should render structural layout elements and support accessibility contracts', () => {
-    const { container } = render(
+    const { container } = renderWithQuery(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<AppShell />}>
@@ -67,7 +82,7 @@ describe('AppShell', () => {
   });
 
   it('should toggle collapsed sidebar state and persist in localStorage', () => {
-    const { container } = render(
+    const { container } = renderWithQuery(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<AppShell />} />
@@ -95,7 +110,7 @@ describe('AppShell', () => {
 
   it('should load initial collapsed state from localStorage', () => {
     localStorage.setItem('sidebar-collapsed', 'true');
-    const { container } = render(
+    const { container } = renderWithQuery(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<AppShell />} />
@@ -113,7 +128,7 @@ describe('AppShell', () => {
       return true;
     });
 
-    render(
+    renderWithQuery(
       <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route path="/" element={<AppShell />} />

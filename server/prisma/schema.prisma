@@ -21,6 +21,10 @@ model User {
   updatedAt               DateTime         @updatedAt
   sessions                Session[]
   permissions             UserPermission[]
+  leaveRequests           LeaveRequest[]
+  salaryStructure         SalaryStructure?
+  salarySlips             SalarySlip[]
+  notifications           Notification[]
 
   @@map("users")
 }
@@ -47,3 +51,68 @@ model UserPermission {
   @@unique([userId, resource, action])
   @@map("user_permissions")
 }
+
+model LeaveRequest {
+  id          String   @id @default(uuid()) @db.Uuid
+  employeeId  String
+  user        User     @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  leaveType   String   // "PAID", "SICK", "UNPAID"
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
+  status      String   @default("PENDING") // "PENDING", "APPROVED", "REJECTED", "CANCELLED"
+  remarks     String?
+  approvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("leave_requests")
+}
+
+model SalaryStructure {
+  id           String   @id @default(uuid()) @db.Uuid
+  employeeId   String   @unique
+  user         User     @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  basicSalary  Float    @default(0.0)
+  allowances   Float    @default(0.0)
+  deductions   Float    @default(0.0)
+  department   String   @default("Engineering")
+  designation  String   @default("Software Engineer")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("salary_structures")
+}
+
+model SalarySlip {
+  id           String   @id @default(uuid()) @db.Uuid
+  employeeId   String
+  user         User     @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  month        String   // format "YYYY-MM"
+  basicSalary  Float
+  allowances   Float
+  deductions   Float
+  netSalary    Float
+  department   String
+  designation  String
+  status       String   @default("PAID")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, month])
+  @@map("salary_slips")
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // "LEAVE_REQUEST" | "LEAVE_STATUS" | "PAYROLL_GENERATED" | "SYSTEM"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+

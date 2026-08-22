@@ -13,6 +13,10 @@ import {
   authRouter,
 } from './modules/core/auth/index.js';
 import { searchRouter } from './modules/core/search/routes.js';
+import { leaveRouter } from './modules/leave/routes.js';
+import { payrollRouter } from './modules/payroll/routes.js';
+import analyticsRouter from './modules/analytics/routes.js';
+import notificationsRouter from './modules/notifications/routes.js';
 
 const app = express();
 
@@ -34,6 +38,18 @@ app.use('/api/auth', authRouter);
 
 // Mount search module routes
 app.use('/api', searchRouter);
+
+// Mount leave module routes
+app.use('/api/leave', leaveRouter);
+
+// Mount payroll module routes
+app.use('/api/payroll', payrollRouter);
+
+// Mount analytics module routes
+app.use('/api/analytics', analyticsRouter);
+
+// Mount notifications module routes
+app.use('/api/notifications', notificationsRouter);
 
 // Log incoming request metadata
 app.use((req, res, next) => {

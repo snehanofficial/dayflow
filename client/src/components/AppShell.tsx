@@ -15,7 +15,13 @@ import {
   HelpCircle,
   Palette,
   Search,
+  Calendar,
+  CreditCard,
+  BarChart3,
+  Bell,
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
 import { navigationConfig, type NavItem } from '../config/navigation.js';
@@ -25,6 +31,12 @@ import { SearchPalette } from './SearchPalette.js';
 
 function renderIcon(icon?: string) {
   switch (icon) {
+    case 'analytics':
+      return <BarChart3 size={16} aria-hidden="true" />;
+    case 'payroll':
+      return <CreditCard size={16} aria-hidden="true" />;
+    case 'calendar':
+      return <Calendar size={16} aria-hidden="true" />;
     case 'dashboard':
       return <LayoutDashboard size={16} aria-hidden="true" />;
     case 'diagnostics':
@@ -95,6 +107,76 @@ export function AppShell() {
 
   // Global search palette visibility
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Notifications logic
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
+  const { data: notificationsData, refetch: refetchNotifications } = useQuery<{
+    notifications: {
+      id: string;
+      userId: string;
+      title: string;
+      message: string;
+      type: string;
+      read: boolean;
+      createdAt: string;
+    }[];
+  }>({
+    queryKey: ['notifications'],
+    queryFn: () =>
+      apiClient<{
+        notifications: {
+          id: string;
+          userId: string;
+          title: string;
+          message: string;
+          type: string;
+          read: boolean;
+          createdAt: string;
+        }[];
+      }>('/api/notifications'),
+    refetchInterval: 10000,
+    enabled: !!user,
+  });
+
+  const notifications = notificationsData?.notifications || [];
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target as Node)
+      ) {
+        setIsNotificationsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await apiClient('/api/notifications/mark-read', { method: 'POST' });
+      refetchNotifications();
+      toast.success('All notifications marked as read');
+    } catch {
+      toast.error('Failed to mark notifications as read');
+    }
+  };
+
+  const handleMarkIndividualRead = async (id: string) => {
+    try {
+      await apiClient('/api/notifications/mark-read', {
+        method: 'POST',
+        body: JSON.stringify({ ids: [id] }),
+      });
+      refetchNotifications();
+    } catch {
+      // Ignore click error
+    }
+  };
 
   // Global Ctrl+K / Cmd+K keyboard shortcut to toggle search palette
   useEffect(() => {
@@ -352,6 +434,120 @@ export function AppShell() {
         </button>
 
         <div className="topbar-actions">
+          {/* Notifications Widget */}
+          <div
+            className="notifications-widget-container"
+            ref={notificationsRef}
+          >
+            <button
+              type="button"
+              className="notifications-bell-btn"
+              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+              aria-label="View notifications"
+              aria-expanded={isNotificationsOpen}
+            >
+              <Bell size={15} aria-hidden="true" />
+              {unreadCount > 0 && (
+                <span className="notifications-badge" role="status">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {isNotificationsOpen && (
+              <div className="notifications-dropdown">
+                <div className="notifications-header">
+                  <span className="notifications-title">Notifications</span>
+                  {unreadCount > 0 && (
+                    <button
+                      type="button"
+                      className="notifications-mark-read-btn"
+                      onClick={handleMarkAllRead}
+                    >
+                      Mark all as read
+                    </button>
+                  )}
+                </div>
+
+                <div className="notifications-list">
+                  {notifications.length === 0 ? (
+                    <div className="notification-empty">
+                      <Bell
+                        size={24}
+                        aria-hidden="true"
+                        style={{ strokeWidth: 1.5 }}
+                      />
+                      <span className="notification-empty-text">
+                        No notifications yet.
+                      </span>
+                    </div>
+                  ) : (
+                    notifications.map((n) => {
+                      let typeIcon = <Bell size={12} />;
+                      let typeClass = 'notification-icon-leave-status';
+
+                      if (n.type === 'LEAVE_REQUEST') {
+                        typeIcon = <Calendar size={12} />;
+                        typeClass = 'notification-icon-leave-request';
+                      } else if (n.type === 'LEAVE_STATUS') {
+                        typeIcon = <Calendar size={12} />;
+                        typeClass = 'notification-icon-leave-status';
+                      } else if (n.type === 'PAYROLL_GENERATED') {
+                        typeIcon = <CreditCard size={12} />;
+                        typeClass = 'notification-icon-payroll';
+                      }
+
+                      return (
+                        <button
+                          key={n.id}
+                          type="button"
+                          className={clsx(
+                            'notification-item',
+                            !n.read && 'unread',
+                          )}
+                          onClick={() => {
+                            handleMarkIndividualRead(n.id);
+                          }}
+                        >
+                          <div
+                            className={clsx(
+                              'notification-icon-container',
+                              typeClass,
+                            )}
+                          >
+                            {typeIcon}
+                          </div>
+                          <div className="notification-content">
+                            <span className="notification-item-title">
+                              {n.title}
+                            </span>
+                            <span className="notification-item-message">
+                              {n.message}
+                            </span>
+                            <span className="notification-item-time">
+                              {new Date(n.createdAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                },
+                              )}
+                            </span>
+                          </div>
+                          {!n.read && (
+                            <div className="notification-unread-dot" />
+                          )}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Theme switcher */}
           <Dropdown
             trigger={

@@ -25,6 +25,11 @@ import { ForgotPassword } from './pages/Auth/ForgotPassword.js';
 import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
+import { LeaveRequestPage } from './features/leave/LeaveRequestPage.js';
+import { HrLeavePage } from './features/leave/HrLeavePage.js';
+import { SalarySlipsPage } from './features/payroll/SalarySlipsPage.js';
+import { HrPayrollPage } from './features/payroll/HrPayrollPage.js';
+import { HrAnalyticsPage } from './features/analytics/HrAnalyticsPage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -449,6 +454,56 @@ export default function App() {
                       permission={{ resource: 'resources', action: 'read' }}
                     >
                       <DiagnosticsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="leave"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'leave', action: 'read' }}
+                    >
+                      <LeaveRequestPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="hr/leave"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'leave', action: 'manage' }}
+                    >
+                      <HrLeavePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="payroll/slips"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'payroll', action: 'read' }}
+                    >
+                      <SalarySlipsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="hr/payroll"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'payroll', action: 'manage' }}
+                    >
+                      <HrPayrollPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="hr/analytics"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'analytics', action: 'read' }}
+                    >
+                      <HrAnalyticsPage />
                     </ProtectedRoute>
                   }
                 />
