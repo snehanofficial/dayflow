@@ -73,6 +73,7 @@ Implemented:
 ## APIs
 - GET /api/employees (HR role only)
 - GET /api/employees/:id (HR or owner employee only)
+- PATCH /api/employees/:id (HR role only — update any employee's details)
 
 ## Tests
 - All 11 domain integration tests verified green
@@ -80,6 +81,31 @@ Implemented:
 
 ## Known Issues
 - None
+
+# Phase 2 — Fix: HR Employee Edit (Hotfix)
+
+Status:
+Completed
+
+Commit: `7e949e4`
+
+Implemented:
+
+### Backend
+- Added `updateById` to repository.ts
+- Added `updateEmployeeProfile` to service.ts
+- Added `employeeHrUpdateSchema` validation + `updateEmployeeById` handler to controller.ts
+- Bound `PATCH /api/employees/:id` to `requireRole('HR')` route in index.ts
+- Extended OpenAPI spec with new endpoint and refreshed `docs/openapi.json` + `client/src/types/api.ts`
+
+### Frontend
+- Updated `EmployeeDetailPage.tsx` to toggle between read-only view and an inline edit form
+- Edit form is only shown to users with `role === 'HR'`
+- Form fields: First Name, Last Name, Phone, Address, Department, Designation, Joining Date, Employment Status, Profile Image URL
+- Uses `react-hook-form` with Zod schema validation
+- On save, sends `PATCH /api/employees/:id` and updates local state
+- `Cancel` button resets the form back to loaded profile values
+- Fixed `useCallback` wrapping of `fetchProfile` to clear `react-hooks/exhaustive-deps` lint warning
 
 ## Next Phase
 Attendance Management
@@ -100,7 +126,8 @@ Attendance Management
 ## Security Checklist
 - [x] Enforce `requireAuth` on all employee endpoints.
 - [x] Enforce ownership check (users can only view/edit their own profile; HR can view all).
-- [x] Zod schema validation for patch inputs.
+- [x] Enforce `requireRole('HR')` on `PATCH /api/employees/:id` — employees cannot edit other profiles.
+- [x] Zod schema validation for all patch inputs (self and HR).
 - [x] Double-submit cookie CSRF middleware verification.
 
 ## Deployment Notes
