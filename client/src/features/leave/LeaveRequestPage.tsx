@@ -21,6 +21,7 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 
 interface BalanceItem {
   allocated: number;
@@ -49,6 +50,7 @@ interface LeaveRequest {
 
 export function LeaveRequestPage() {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
   const [activeTab, setActiveTab] = useState<'portal' | 'calendar'>('portal');
   const [leaveType, setLeaveType] = useState('PAID');
   const [startDate, setStartDate] = useState('');
@@ -487,10 +489,31 @@ export function LeaveRequestPage() {
                   type="submit"
                   variant="primary"
                   isLoading={submitLeaveMutation.isPending}
+                  disabled={!isOnline}
                   style={{ width: '100%' }}
                 >
                   Submit Application
                 </Button>
+                {!isOnline && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-2)',
+                      padding: 'var(--space-2) var(--space-3)',
+                      backgroundColor: 'var(--color-danger-bg)',
+                      color: 'var(--color-danger-text)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      marginTop: 'var(--space-2)',
+                    }}
+                    role="alert"
+                  >
+                    <Info size={14} />
+                    Offline: Submitting applications is disabled.
+                  </div>
+                )}
               </form>
             </Card>
 

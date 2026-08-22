@@ -14,7 +14,8 @@ import {
   ErrorState,
 } from '../../components/ui/index.js';
 import { toast } from '../../components/Toast/toastStore.js';
-import { ShieldAlert, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { ShieldAlert, Clock, CheckCircle, XCircle, Info } from 'lucide-react';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 
 interface LeaveRequest {
   id: string;
@@ -34,6 +35,7 @@ interface LeaveRequest {
 
 export function HrLeavePage() {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
   const [activeTab, setActiveTab] = useState<'requests' | 'calendar'>(
     'requests',
   );
@@ -351,6 +353,7 @@ export function HrLeavePage() {
                           >
                             <Button
                               variant="primary"
+                              disabled={!isOnline}
                               style={{
                                 height: 28,
                                 padding: '0 var(--space-2)',
@@ -362,6 +365,7 @@ export function HrLeavePage() {
                             </Button>
                             <Button
                               variant="secondary"
+                              disabled={!isOnline}
                               style={{
                                 height: 28,
                                 padding: '0 var(--space-2)',
@@ -450,8 +454,25 @@ export function HrLeavePage() {
                 display: 'flex',
                 justifyContent: 'flex-end',
                 gap: 'var(--space-2)',
+                alignItems: 'center',
+                flexWrap: 'wrap',
               }}
             >
+              {!isOnline && (
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--color-danger)',
+                    marginRight: 'auto',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                  role="alert"
+                >
+                  <Info size={14} /> Offline: Processing disabled
+                </span>
+              )}
               <Button
                 type="button"
                 onClick={() => setIsDialogOpen(false)}
@@ -463,6 +484,7 @@ export function HrLeavePage() {
                 type="submit"
                 variant={actionType === 'APPROVE' ? 'primary' : 'danger'}
                 isLoading={isMutating}
+                disabled={!isOnline}
               >
                 {actionType === 'APPROVE'
                   ? 'Confirm Approval'

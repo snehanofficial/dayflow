@@ -12,6 +12,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AttendanceInsights } from './AttendanceInsights.js';
 import { useAuth } from '../../context/AuthContext.js';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 import {
   Card,
   Button,
@@ -33,6 +34,7 @@ type HistoryResponse =
 
 export function AttendancePage() {
   const { user } = useAuth();
+  const isOnline = useOnlineStatus();
   const queryClient = useQueryClient();
 
   // Filters and Pagination
@@ -302,7 +304,7 @@ export function AttendancePage() {
                   <Button
                     variant="primary"
                     onClick={handleCheckIn}
-                    disabled={isActionPending}
+                    disabled={isActionPending || !isOnline}
                     style={{ width: '100%', justifyContent: 'center' }}
                     aria-label="Submit check-in for today"
                   >
@@ -312,7 +314,7 @@ export function AttendancePage() {
                   <Button
                     variant="secondary"
                     onClick={handleCheckOut}
-                    disabled={isActionPending}
+                    disabled={isActionPending || !isOnline}
                     style={{ width: '100%', justifyContent: 'center' }}
                     aria-label="Submit check-out for today"
                   >
@@ -337,6 +339,26 @@ export function AttendancePage() {
                   >
                     <CheckCircle size={16} />
                     Attendance Completed Today
+                  </div>
+                )}
+                {!isOnline && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-2)',
+                      padding: 'var(--space-2) var(--space-3)',
+                      backgroundColor: 'var(--color-danger-bg)',
+                      color: 'var(--color-danger-text)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      marginTop: 'var(--space-2)',
+                    }}
+                    role="alert"
+                  >
+                    <Info size={14} />
+                    Offline: Check-in/out is disabled.
                   </div>
                 )}
               </div>

@@ -30,6 +30,8 @@ import { Dropdown, Tooltip } from './ui/index.js';
 import { toast } from './Toast/toastStore.js';
 import { SearchPalette } from './SearchPalette.js';
 
+import { useOnlineStatus } from '../hooks/useOnlineStatus.js';
+
 function renderIcon(icon?: string) {
   switch (icon) {
     case 'analytics':
@@ -59,43 +61,24 @@ function renderIcon(icon?: string) {
   }
 }
 
-// ─── Network status hook ────────────────────────────────────────────────────
-
-function useNetworkStatus() {
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true,
-  );
-
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      toast.info('Connection restored.');
-    };
-    const handleOffline = () => {
-      setIsOnline(false);
-      toast.warning('Connection lost. Working offline.');
-    };
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
-
-  return isOnline;
-}
-
 // ─── AppShell ───────────────────────────────────────────────────────────────
 
 export function AppShell() {
   const { user, logout, hasPermission } = useAuth();
   const { theme, setTheme } = useTheme();
-  const isOnline = useNetworkStatus();
+  const isOnline = useOnlineStatus();
+  const prevOnline = useRef(isOnline);
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (isOnline && !prevOnline.current) {
+      toast.info('Connection restored.');
+    } else if (!isOnline && prevOnline.current) {
+      toast.warning('Connection lost. Working offline.');
+    }
+    prevOnline.current = isOnline;
+  }, [isOnline]);
 
   // Desktop collapsed preference
   const [isCollapsed, setIsCollapsed] = useState(() => {

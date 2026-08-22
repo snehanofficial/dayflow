@@ -450,12 +450,9 @@ export function SalarySlipsPage() {
                 </div>
               </div>
 
-              {/* Employee & Job details */}
               <div
+                className="form-grid"
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
                   marginBottom: 'var(--space-5)',
                   fontSize: '0.8125rem',
                   borderBottom: '1px solid #ddd',

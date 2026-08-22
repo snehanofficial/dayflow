@@ -787,6 +787,43 @@ textarea {
   color: var(--color-text-secondary);
 }
 
+/* Shared UI Input component slots */
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-start-slot {
+  position: absolute;
+  left: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.input-end-slot {
+  position: absolute;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  z-index: 10;
+}
+
+.form-input.has-start-icon {
+  padding-left: 2.5rem !important;
+}
+
+.form-input.has-end-icon {
+  padding-right: 2.5rem !important;
+}
+
 .form-error-msg {
   font-size: 0.75rem;
   color: var(--color-error);
@@ -2175,4 +2212,17 @@ textarea {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+}
+
+/* Hardened Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

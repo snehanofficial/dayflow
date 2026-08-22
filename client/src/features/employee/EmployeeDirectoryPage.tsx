@@ -93,25 +93,12 @@ export function EmployeeDirectoryPage() {
 
         {/* Search and Filters Bar */}
         <Card style={{ marginBottom: 'var(--space-6)' }}>
-          <div style={{ position: 'relative' }}>
-            <Search
-              size={18}
-              style={{
-                color: 'var(--color-text-muted)',
-                position: 'absolute',
-                left: 'var(--space-3)',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                pointerEvents: 'none',
-              }}
-            />
-            <Input
-              type="text"
-              placeholder="Search by name, employee code, department, or designation..."
-              disabled
-              style={{ paddingLeft: 'var(--space-10)', width: '100%' }}
-            />
-          </div>
+          <Input
+            type="text"
+            placeholder="Search by name, employee code, department, or designation..."
+            disabled
+            startIcon={<Search size={18} />}
+          />
         </Card>
 
         {/* Skeleton Table */}
@@ -220,28 +207,14 @@ export function EmployeeDirectoryPage() {
         </div>
       </div>
 
-      {/* Search and Filters Bar */}
       <Card style={{ marginBottom: 'var(--space-6)' }}>
-        <div style={{ position: 'relative' }}>
-          <Search
-            size={18}
-            style={{
-              color: 'var(--color-text-muted)',
-              position: 'absolute',
-              left: 'var(--space-3)',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              pointerEvents: 'none',
-            }}
-          />
-          <Input
-            type="text"
-            placeholder="Search by name, employee code, department, or designation..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: 'var(--space-10)', width: '100%' }}
-          />
-        </div>
+        <Input
+          type="text"
+          placeholder="Search by name, employee code, department, or designation..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          startIcon={<Search size={18} />}
+        />
       </Card>
 
       {/* Directory Table / Card Container */}

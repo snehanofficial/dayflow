@@ -76,13 +76,6 @@ function DiagnosticsPage() {
     }
   };
 
-  const sampleData = [
-    { service: 'PostgreSQL DB', status: 'Connected', code: 'OK' },
-    { service: 'Cookie Session', status: 'Active', code: 'SECURE' },
-    { service: 'CSRF Protection', status: 'Enforced', code: 'ACTIVE' },
-    { service: 'PWA Worker', status: 'Registered', code: 'OFFLINE' },
-  ];
-
   return (
     <section>
       <div className="page-header">
@@ -161,36 +154,6 @@ function DiagnosticsPage() {
           </Button>
         </Card>
       </div>
-
-      {/* Service status table */}
-      <Card>
-        <h2 className="card-title">Service Status</h2>
-        <div
-          className="responsive-table-wrapper"
-          style={{ marginTop: 'var(--space-2)' }}
-        >
-          <table className="adaptive-table">
-            <thead>
-              <tr>
-                <th>Service</th>
-                <th>Status</th>
-                <th>Code</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sampleData.map((row, idx) => (
-                <tr key={idx}>
-                  <td data-label="Service">{row.service}</td>
-                  <td data-label="Status">{row.status}</td>
-                  <td data-label="Code">
-                    <Badge variant="info">{row.code}</Badge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
     </section>
   );
 }

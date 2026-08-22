@@ -9,6 +9,7 @@ import {
   Input,
   Label,
   Skeleton,
+  Select,
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import type { paths } from '../../types/api.js';
@@ -178,26 +179,23 @@ export function AttendanceInsights() {
             <Label htmlFor="insight-period" className="sr-only">
               Select Analysis Period
             </Label>
-            <select
+            <Select
               id="insight-period"
               value={period}
               onChange={(e) =>
                 handlePeriodChange(e.target.value as typeof period)
               }
-              className="form-input"
+              options={[
+                { label: 'Current Month', value: 'current-month' },
+                { label: 'Previous Month', value: 'previous-month' },
+                { label: 'Last 30 Days', value: 'last-30-days' },
+                { label: 'Current Year', value: 'current-year' },
+                { label: 'Custom Range', value: 'custom' },
+              ]}
               style={{
                 minWidth: '180px',
-                height: '36px',
-                padding: '0 var(--space-2)',
-                borderRadius: 'var(--radius-sm)',
               }}
-            >
-              <option value="current-month">Current Month</option>
-              <option value="previous-month">Previous Month</option>
-              <option value="last-30-days">Last 30 Days</option>
-              <option value="current-year">Current Year</option>
-              <option value="custom">Custom Range</option>
-            </select>
+            />
           </div>
 
           {period === 'custom' && (

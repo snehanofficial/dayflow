@@ -27,6 +27,8 @@ import {
 import { apiClient } from '../../api/client.js';
 import { useAuth } from '../../context/AuthContext.js';
 import { toast } from '../../components/Toast/toastStore.js';
+import { Info } from 'lucide-react';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 import type { paths } from '../../types/api.js';
 
 type EmployeeProfile =
@@ -54,6 +56,7 @@ const formatDateForInput = (isoString?: string | null) => {
 export function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
   const { user: currentUser } = useAuth();
 
   const [profile, setProfile] = useState<EmployeeProfile | null>(null);
@@ -383,12 +386,8 @@ export function EmployeeDetailPage() {
                 Edit Basic Info
               </h3>
               <div
-                className="adaptive-grid"
-                style={{
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
-                  marginBottom: 'var(--space-4)',
-                }}
+                className="form-grid"
+                style={{ marginBottom: 'var(--space-4)' }}
               >
                 <div className="form-group">
                   <Label htmlFor="firstName" required>
@@ -482,12 +481,8 @@ export function EmployeeDetailPage() {
                 Workplace Information
               </h3>
               <div
-                className="adaptive-grid"
-                style={{
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
-                  marginBottom: 'var(--space-4)',
-                }}
+                className="form-grid"
+                style={{ marginBottom: 'var(--space-4)' }}
               >
                 <div className="form-group">
                   <Label htmlFor="department">Department</Label>
@@ -512,13 +507,7 @@ export function EmployeeDetailPage() {
                 </div>
               </div>
 
-              <div
-                className="adaptive-grid"
-                style={{
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
-                }}
-              >
+              <div className="form-grid">
                 <div className="form-group">
                   <Label htmlFor="joiningDate">Joining Date</Label>
                   <Input
@@ -587,7 +576,7 @@ export function EmployeeDetailPage() {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isOnline}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -597,6 +586,26 @@ export function EmployeeDetailPage() {
                 <Save size={16} /> {isSubmitting ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>
+            {!isOnline && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                  padding: 'var(--space-2) var(--space-3)',
+                  backgroundColor: 'var(--color-danger-bg)',
+                  color: 'var(--color-danger-text)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  marginTop: 'var(--space-2)',
+                }}
+                role="alert"
+              >
+                <Info size={14} />
+                Offline: Editing employee details is disabled.
+              </div>
+            )}
           </div>
         </form>
       ) : (

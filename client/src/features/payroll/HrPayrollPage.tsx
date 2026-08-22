@@ -11,7 +11,8 @@ import {
   LoadingState,
 } from '../../components/ui/index.js';
 import { toast } from '../../components/Toast/toastStore.js';
-import { Printer, FileText, Search, PlusCircle, Eye } from 'lucide-react';
+import { Printer, FileText, Search, PlusCircle, Eye, Info } from 'lucide-react';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 
 interface SalaryStructure {
   id: string;
@@ -43,6 +44,7 @@ interface SalarySlip {
 
 export function HrPayrollPage() {
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
   // Search & Form State
   const [searchEmpId, setSearchEmpId] = useState('');
@@ -382,10 +384,31 @@ export function HrPayrollPage() {
                   type="submit"
                   variant="primary"
                   isLoading={saveStructureMutation.isPending}
+                  disabled={!isOnline}
                   style={{ width: '100%' }}
                 >
                   Save Salary Structure
                 </Button>
+                {!isOnline && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-2)',
+                      padding: 'var(--space-2) var(--space-3)',
+                      backgroundColor: 'var(--color-danger-bg)',
+                      color: 'var(--color-danger-text)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      marginTop: 'var(--space-2)',
+                    }}
+                    role="alert"
+                  >
+                    <Info size={14} />
+                    Offline: Saving structures is disabled.
+                  </div>
+                )}
               </form>
             )}
           </Card>
@@ -431,6 +454,7 @@ export function HrPayrollPage() {
                 type="submit"
                 variant="primary"
                 isLoading={generateSlipMutation.isPending}
+                disabled={!isOnline}
                 style={{
                   width: '100%',
                   display: 'inline-flex',
@@ -441,6 +465,26 @@ export function HrPayrollPage() {
               >
                 <PlusCircle size={16} /> Generate Monthly Slip
               </Button>
+              {!isOnline && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-2)',
+                    padding: 'var(--space-2) var(--space-3)',
+                    backgroundColor: 'var(--color-danger-bg)',
+                    color: 'var(--color-danger-text)',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    marginTop: 'var(--space-2)',
+                  }}
+                  role="alert"
+                >
+                  <Info size={14} />
+                  Offline: Generating monthly slips is disabled.
+                </div>
+              )}
             </form>
           </Card>
         </div>
@@ -632,12 +676,9 @@ export function HrPayrollPage() {
                 </div>
               </div>
 
-              {/* Employee & Job details */}
               <div
+                className="form-grid"
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
                   marginBottom: 'var(--space-5)',
                   fontSize: '0.8125rem',
                   borderBottom: '1px solid #ddd',

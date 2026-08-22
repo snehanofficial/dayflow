@@ -1,10 +1,10 @@
 export const openApiDocument = {
   openapi: '3.0.0',
   info: {
-    title: 'DayFlow API',
+    title: 'Dayflow HRMS API',
     version: '1.0.0',
     description:
-      'API contract for the DayFlow - Personal Full-Stack Starter backend modules',
+      'API contract for the Dayflow Human Resource Management System (HRMS) backend modules',
   },
   paths: {
     '/api/health': {

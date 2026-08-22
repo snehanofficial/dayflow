@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchPalette, fuzzyMatch } from './SearchPalette.js';
 
 // Setup stable mock handlers
@@ -40,6 +41,22 @@ vi.mock('../api/client.js', () => ({
   apiClient: (...args: any[]) => mockApiClient(...args),
 }));
 
+function renderWithProviders(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: 0,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
 describe('SearchPalette Fuzzy Scorer', () => {
   it('should match direct substrings', () => {
     const res = fuzzyMatch('Dashboard', 'dash');
@@ -67,14 +84,17 @@ describe('SearchPalette Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockApiClient.mockResolvedValue({ users: [] });
+    mockApiClient.mockImplementation((url) => {
+      if (url.includes('/api/employees')) {
+        return Promise.resolve({ employees: [] });
+      }
+      return Promise.resolve({ users: [] });
+    });
   });
 
   it('should render nothing when isOpen is false', () => {
-    render(
-      <MemoryRouter>
-        <SearchPalette isOpen={false} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    renderWithProviders(
+      <SearchPalette isOpen={false} setIsOpen={mockSetIsOpen} />,
     );
     expect(
       screen.queryByPlaceholderText('Search pages, actions, and users...'),
@@ -82,10 +102,8 @@ describe('SearchPalette Component', () => {
   });
 
   it('should render search layout structures when isOpen is true', () => {
-    render(
-      <MemoryRouter>
-        <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    renderWithProviders(
+      <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />,
     );
 
     expect(
@@ -98,10 +116,8 @@ describe('SearchPalette Component', () => {
   });
 
   it('should filter items statically as query is typed', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    const { container } = renderWithProviders(
+      <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />,
     );
 
     const input = screen.getByPlaceholderText(
@@ -118,14 +134,17 @@ describe('SearchPalette Component', () => {
   });
 
   it('should fetch and display users dynamically from backend on debounced search input', async () => {
-    mockApiClient.mockResolvedValue({
-      users: [{ id: 'usr-1', email: 'dynamic-user-search@example.com' }],
+    mockApiClient.mockImplementation((url) => {
+      if (url.includes('/api/employees')) {
+        return Promise.resolve({ employees: [] });
+      }
+      return Promise.resolve({
+        users: [{ id: 'usr-1', email: 'dynamic-user-search@example.com' }],
+      });
     });
 
-    const { container } = render(
-      <MemoryRouter>
-        <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    const { container } = renderWithProviders(
+      <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />,
     );
 
     const input = screen.getByPlaceholderText(
@@ -148,32 +167,27 @@ describe('SearchPalette Component', () => {
   });
 
   it('should support arrow key index selection and action execution via Enter key', () => {
-    render(
-      <MemoryRouter>
-        <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    renderWithProviders(
+      <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />,
     );
 
     // Initial selected index is 0 (Dashboard)
-    // Press ArrowDown to select index 1 (Diagnostics, if allowed, or Set Theme to Light)
-    // In our test, user permission mock returns true for everything, so Diagnostics is visible.
-    // Flat results: [Dashboard, Diagnostics, UI Playground, Set Theme to Light, ...]
+    // Press ArrowDown to select index 1 (Profile)
+    // Flat results: [Dashboard, Profile, Attendance, Directory, Diagnostics, ...]
 
     // Press ArrowDown
     fireEvent.keyDown(window, { key: 'ArrowDown' });
 
-    // Press Enter to trigger action for Diagnostics page navigation
+    // Press Enter to trigger action for Profile page navigation
     fireEvent.keyDown(window, { key: 'Enter' });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/diagnostics');
+    expect(mockNavigate).toHaveBeenCalledWith('/profile');
     expect(mockSetIsOpen).toHaveBeenCalledWith(false);
   });
 
   it('should trigger close function when Escape key is pressed', () => {
-    render(
-      <MemoryRouter>
-        <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />
-      </MemoryRouter>,
+    renderWithProviders(
+      <SearchPalette isOpen={true} setIsOpen={mockSetIsOpen} />,
     );
 
     fireEvent.keyDown(window, { key: 'Escape' });

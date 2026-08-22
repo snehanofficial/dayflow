@@ -15,6 +15,8 @@ import {
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import { toast } from '../../components/Toast/toastStore.js';
+import { Info } from 'lucide-react';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 import type { paths } from '../../types/api.js';
 
 type EmployeeProfile =
@@ -30,6 +32,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfilePage() {
   const { user } = useAuth();
+  const isOnline = useOnlineStatus();
   const queryClient = useQueryClient();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -303,12 +306,8 @@ export function ProfilePage() {
               </p>
 
               <div
-                className="adaptive-grid"
-                style={{
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 'var(--space-4)',
-                  marginBottom: 'var(--space-4)',
-                }}
+                className="form-grid"
+                style={{ marginBottom: 'var(--space-4)' }}
               >
                 <div className="form-group">
                   <Label htmlFor="firstName" required>
@@ -538,7 +537,7 @@ export function ProfilePage() {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={!isDirty || isSubmitting}
+                disabled={!isDirty || isSubmitting || !isOnline}
               >
                 {isSubmitting ? (
                   'Saving...'
@@ -550,6 +549,26 @@ export function ProfilePage() {
                 )}
               </Button>
             </div>
+            {!isOnline && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                  padding: 'var(--space-2) var(--space-3)',
+                  backgroundColor: 'var(--color-danger-bg)',
+                  color: 'var(--color-danger-text)',
+                  borderRadius: 'var(--radius-sm)',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  marginTop: 'var(--space-2)',
+                }}
+                role="alert"
+              >
+                <Info size={14} />
+                Offline: Saving profile changes is disabled.
+              </div>
+            )}
           </div>
         </form>
       </div>

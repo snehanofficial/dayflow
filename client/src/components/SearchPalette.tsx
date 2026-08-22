@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import {
   Search,
   X,
@@ -13,11 +14,16 @@ import {
   Palette,
   Command,
   Loader2,
+  Calendar,
+  CreditCard,
+  BarChart3,
+  Clock,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
 import { apiClient } from '../api/client.js';
-import { config } from '../config.js';
+import { navigationConfig } from '../config/navigation.js';
 import { toast } from './Toast/toastStore.js';
 
 interface FuzzyResult {
@@ -42,10 +48,8 @@ export function fuzzyMatch(text: string, query: string): FuzzyResult | null {
   while (queryIdx < queryLower.length && textIdx < textLower.length) {
     if (textLower[textIdx] === queryLower[queryIdx]) {
       highlightIndices.push(textIdx);
-      // Reward consecutive matching letters
       score += 2 + consecutiveMatches * 2;
 
-      // Extra bonus for matching beginning of words
       if (
         textIdx === 0 ||
         textLower[textIdx - 1] === ' ' ||
@@ -65,9 +69,7 @@ export function fuzzyMatch(text: string, query: string): FuzzyResult | null {
     return null;
   }
 
-  // Slight penalty for longer words
   score -= (text.length - query.length) * 0.4;
-
   return { score, highlightIndices };
 }
 
@@ -106,6 +108,7 @@ function renderSearchIcon(iconName: string) {
       return <Activity size={16} aria-hidden="true" />;
     case 'settings':
       return <Settings size={16} aria-hidden="true" />;
+    case 'profile':
     case 'user':
       return <User size={16} aria-hidden="true" />;
     case 'users':
@@ -116,6 +119,16 @@ function renderSearchIcon(iconName: string) {
       return <LogOut size={16} aria-hidden="true" />;
     case 'palette':
       return <Palette size={16} aria-hidden="true" />;
+    case 'calendar':
+      return <Calendar size={16} aria-hidden="true" />;
+    case 'payroll':
+      return <CreditCard size={16} aria-hidden="true" />;
+    case 'analytics':
+      return <BarChart3 size={16} aria-hidden="true" />;
+    case 'clock':
+      return <Clock size={16} aria-hidden="true" />;
+    case 'help':
+      return <HelpCircle size={16} aria-hidden="true" />;
     default:
       return <Command size={16} aria-hidden="true" />;
   }
@@ -123,7 +136,7 @@ function renderSearchIcon(iconName: string) {
 
 interface SearchItem {
   id: string;
-  category: 'Navigation' | 'Actions' | 'Users';
+  category: 'Navigation' | 'Actions' | 'Employees' | 'Users';
   title: string;
   subtitle: string;
   icon: string;
@@ -148,6 +161,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
 
   // Manage body scroll lock and restore focus
@@ -155,12 +169,10 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
     if (isOpen) {
       previousFocus.current = document.activeElement as HTMLElement;
       document.body.style.overflow = 'hidden';
-      // Clear input state when opening
       setQuery('');
       setSelectedIndex(0);
       setUserResults([]);
 
-      // Delayed focus to work around animation rendering timing
       const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 50);
@@ -182,7 +194,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
     return () => clearTimeout(handler);
   }, [query]);
 
-  // Query backend search API
+  // Query backend search API for general user profiles
   useEffect(() => {
     if (!isOpen || !debouncedQuery.trim()) {
       setUserResults([]);
@@ -200,7 +212,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
           setUserResults(res.users);
         }
       } catch {
-        // Dynamic search error ignored in starter template
+        // Ignored
       } finally {
         if (active) {
           setIsLoadingUsers(false);
@@ -214,45 +226,57 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
     };
   }, [debouncedQuery, isOpen]);
 
-  // Localized static items base list
+  // Query all employee profiles for HR search
+  const { data: employeesData } = useQuery<{
+    employees: Array<{
+      id: string;
+      userId: string;
+      employeeCode: string;
+      firstName: string;
+      lastName: string;
+      department: string | null;
+      designation: string | null;
+      profileImage: string | null;
+    }>;
+  }>({
+    queryKey: ['employees', 'list'],
+    queryFn: () => apiClient<{ employees: any[] }>('/api/employees'),
+    enabled: isOpen && user?.role === 'HR',
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Build navigation items dynamically from config
   const staticItems = useMemo<SearchItem[]>(() => {
     if (!user) return [];
-    return [
-      {
-        id: 'nav-dashboard',
-        category: 'Navigation' as const,
-        title: 'Dashboard',
-        subtitle: 'Go to main dashboard home page',
-        icon: 'dashboard',
-        action: () => navigate('/'),
-      },
-      ...(hasPermission('resources', 'read')
-        ? [
-            {
-              id: 'nav-diagnostics',
-              category: 'Navigation' as const,
-              title: 'Diagnostics',
-              subtitle: 'Check API connections and service status',
-              icon: 'diagnostics',
-              action: () => navigate('/diagnostics'),
-            },
-          ]
-        : []),
-      ...(config.isDev
-        ? [
-            {
-              id: 'nav-playground',
-              category: 'Navigation' as const,
-              title: 'UI Playground',
-              subtitle: 'Inspect design components and theme tokens',
-              icon: 'shield',
-              action: () => navigate('/playground'),
-            },
-          ]
-        : []),
+    const items: SearchItem[] = [];
+
+    navigationConfig.forEach((group) => {
+      group.items.forEach((item) => {
+        if (item.requiredRole && user.role !== item.requiredRole) {
+          return;
+        }
+        if (item.requiredPermission) {
+          const { resource, action } = item.requiredPermission;
+          if (!hasPermission(resource, action)) {
+            return;
+          }
+        }
+
+        items.push({
+          id: `nav-${item.route}`,
+          category: 'Navigation',
+          title: item.label,
+          subtitle: `Navigate to ${item.label} page`,
+          icon: item.icon || 'command',
+          action: () => navigate(item.route),
+        });
+      });
+    });
+
+    items.push(
       {
         id: 'action-theme-light',
-        category: 'Actions' as const,
+        category: 'Actions',
         title: 'Set Theme to Light',
         subtitle: 'Switch application color theme to light mode',
         icon: 'palette',
@@ -260,7 +284,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
       },
       {
         id: 'action-theme-dark',
-        category: 'Actions' as const,
+        category: 'Actions',
         title: 'Set Theme to Dark',
         subtitle: 'Switch application color theme to dark mode',
         icon: 'palette',
@@ -268,7 +292,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
       },
       {
         id: 'action-theme-system',
-        category: 'Actions' as const,
+        category: 'Actions',
         title: 'Set Theme to System',
         subtitle: 'Follow your operating system theme preferences',
         icon: 'palette',
@@ -276,7 +300,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
       },
       {
         id: 'action-logout',
-        category: 'Actions' as const,
+        category: 'Actions',
         title: 'Sign Out / Logout',
         subtitle: 'End your current session and sign out securely',
         icon: 'logout',
@@ -290,22 +314,15 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
           }
         },
       },
-      {
-        id: 'action-404',
-        category: 'Actions' as const,
-        title: 'Trigger 404 Page',
-        subtitle: 'Navigate to the Not Found handler diagnostics route',
-        icon: 'shield',
-        action: () => navigate('/unmapped-route-xyz'),
-      },
-    ];
+    );
+
+    return items;
   }, [user, navigate, hasPermission, setTheme, logout]);
 
-  // Compute fuzzy matched lists
+  // Fuzzy match results
   const processedResults = useMemo(() => {
     const matchedStatic = staticItems
       .map((item) => {
-        // Match both title and subtitle
         const fuzzyTitle = fuzzyMatch(item.title, query);
         const fuzzySubtitle = fuzzyMatch(item.subtitle, query);
         if (query && !fuzzyTitle && !fuzzySubtitle) return null;
@@ -320,7 +337,6 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
       SearchItem & { fuzzy: FuzzyResult }
     >;
 
-    // Sort static results by fuzzy score descending
     if (query) {
       matchedStatic.sort((a, b) => b.fuzzy.score - a.fuzzy.score);
     }
@@ -339,10 +355,45 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
         fuzzy,
         action: () => {
           toast.info(`Selected user profile: ${u.email}`);
-          setIsOpen(false);
         },
       };
     });
+
+    const matchedEmployees = (
+      user?.role === 'HR' ? employeesData?.employees || [] : []
+    )
+      .map((emp) => {
+        const fullName = `${emp.firstName} ${emp.lastName}`;
+        const fuzzyName = fuzzyMatch(fullName, query);
+        const fuzzyCode = fuzzyMatch(emp.employeeCode, query);
+        const fuzzyDept = emp.department
+          ? fuzzyMatch(emp.department, query)
+          : null;
+        const fuzzyDesg = emp.designation
+          ? fuzzyMatch(emp.designation, query)
+          : null;
+
+        const bestMatch = [fuzzyName, fuzzyCode, fuzzyDept, fuzzyDesg]
+          .filter((m): m is FuzzyResult => m !== null)
+          .sort((a, b) => b.score - a.score)[0];
+
+        if (query && !bestMatch) return null;
+
+        return {
+          id: `employee-${emp.id}`,
+          category: 'Employees' as const,
+          title: fullName,
+          subtitle: `${emp.employeeCode} • ${emp.designation || 'Staff'} (${emp.department || 'Operations'})`,
+          icon: 'user',
+          fuzzy: bestMatch || { score: 0, highlightIndices: [] },
+          action: () => navigate(`/employees/${emp.id}`),
+        };
+      })
+      .filter((e) => e !== null) as Array<SearchItem & { fuzzy: FuzzyResult }>;
+
+    if (query && matchedEmployees.length > 0) {
+      matchedEmployees.sort((a, b) => b.fuzzy.score - a.fuzzy.score);
+    }
 
     const flatResults: Array<SearchItem & { fuzzy: FuzzyResult }> = [];
     const navs = matchedStatic.filter((i) => i.category === 'Navigation');
@@ -350,6 +401,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
 
     flatResults.push(...navs);
     flatResults.push(...actions);
+    flatResults.push(...matchedEmployees);
     flatResults.push(...matchedUsers);
 
     return {
@@ -357,19 +409,32 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
       categories: {
         Navigation: navs,
         Actions: actions,
+        Employees: matchedEmployees,
         Users: matchedUsers,
       },
     };
-  }, [query, staticItems, userResults, setIsOpen]);
+  }, [query, staticItems, userResults, employeesData, user, navigate]);
 
   const { flatResults, categories } = processedResults;
 
-  // Reset selected item index when query parameters update
+  // Reset selected item index when queries/results update
   useEffect(() => {
     setSelectedIndex(0);
-  }, [query, userResults]);
+  }, [query, userResults, employeesData]);
 
-  // Keybindings for inside the open modal
+  // Keep active item scrolled into view
+  useEffect(() => {
+    if (resultsRef.current) {
+      const activeEl = resultsRef.current.querySelector(
+        '.search-palette-item.active',
+      );
+      if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+        activeEl.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [selectedIndex]);
+
+  // Keybindings for modal interactions
   useEffect(() => {
     if (!isOpen) return;
 
@@ -395,6 +460,21 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
         }
       } else if (e.key === 'Escape') {
         setIsOpen(false);
+      } else if (e.key === 'Tab') {
+        const closeBtn = resultsRef.current?.parentElement?.querySelector(
+          '.dialog-close-btn',
+        ) as HTMLElement;
+        if (e.shiftKey) {
+          if (document.activeElement === inputRef.current) {
+            closeBtn?.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === closeBtn) {
+            inputRef.current?.focus();
+            e.preventDefault();
+          }
+        }
       }
     };
 
@@ -404,7 +484,6 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
 
   if (!isOpen) return null;
 
-  // Track absolute render index while mapping categories to flattened index
   let absoluteIndexOffset = 0;
 
   return (
@@ -449,7 +528,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
         </div>
 
         {/* Results Body */}
-        <div className="search-palette-results">
+        <div className="search-palette-results" ref={resultsRef}>
           {flatResults.length === 0 ? (
             <div
               style={{
@@ -465,7 +544,7 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
             Object.entries(categories).map(([groupName, groupItems]) => {
               if (groupItems.length === 0) return null;
 
-              const renderGroup = (
+              return (
                 <div key={groupName} className="search-palette-group">
                   <div className="search-palette-group-title">{groupName}</div>
                   {groupItems.map((item) => {
@@ -505,8 +584,6 @@ export function SearchPalette({ isOpen, setIsOpen }: SearchPaletteProps) {
                   })}
                 </div>
               );
-
-              return renderGroup;
             })
           )}
         </div>

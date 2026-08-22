@@ -137,34 +137,39 @@ export function Login() {
                 Forgot password?
               </Link>
             </div>
-            <div className="input-wrapper">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                error={errors.password?.message}
-                aria-invalid={!!errors.password}
-                aria-describedby={
-                  errors.password ? 'password-error' : undefined
-                }
-                style={{ paddingRight: 'var(--space-8)' }}
-                {...register('password')}
-              />
-              <button
-                type="button"
-                className="input-suffix-btn"
-                onClick={() => setShowPassword((v) => !v)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                tabIndex={0}
-              >
-                {showPassword ? (
-                  <EyeOff size={16} aria-hidden="true" />
-                ) : (
-                  <Eye size={16} aria-hidden="true" />
-                )}
-              </button>
-            </div>
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              error={errors.password?.message}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? 'password-error' : undefined}
+              {...register('password')}
+              endIcon={
+                <button
+                  type="button"
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: 'var(--color-text-muted)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  tabIndex={0}
+                >
+                  {showPassword ? (
+                    <EyeOff size={16} aria-hidden="true" />
+                  ) : (
+                    <Eye size={16} aria-hidden="true" />
+                  )}
+                </button>
+              }
+            />
             {errors.password && (
               <span id="password-error" className="form-error-msg" role="alert">
                 {errors.password.message}

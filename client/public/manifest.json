@@ -1,7 +1,7 @@
 {
-  "name": "DayFlow Full-Stack Starter",
-  "short_name": "DayFlow",
-  "description": "Reusable full-stack application starter template",
+  "name": "Dayflow HRMS",
+  "short_name": "Dayflow",
+  "description": "Dayflow Human Resource Management System",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

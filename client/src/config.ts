@@ -18,6 +18,6 @@ const getEnvVar = (key: string, defaultValue?: string): string => {
 
 export const config: Config = {
   apiUrl: getEnvVar('VITE_API_URL', 'http://localhost:4000'),
-  isDev: import.meta.env.DEV,
+  isDev: Boolean(getEnvVar('VITE_IS_DEV', 'false')),
 };
 export type { Config };

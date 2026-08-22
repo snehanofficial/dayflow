@@ -18,6 +18,15 @@ const queryClient = new QueryClient({
 
 // Register Service Worker for PWA / offline support
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    if (navigator.serviceWorker.controller) {
+      window.location.reload();
+    }
+  });
+
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
