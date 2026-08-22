@@ -22,12 +22,11 @@ function calculateDays(startDate: Date, endDate: Date): number {
 
 /**
  * POST /api/leave/request
- * Submit a leave request (Employee)
+ * Submit a leave request (Employee/HR)
  */
 router.post(
   '/request',
   requireAuth,
-  requireRole('EMPLOYEE'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const validation = createRequestSchema.safeParse(req.body);
@@ -63,12 +62,11 @@ router.post(
 
 /**
  * GET /api/leave/my-requests
- * Retrieve own leave requests (Employee)
+ * Retrieve own leave requests (Employee/HR)
  */
 router.get(
   '/my-requests',
   requireAuth,
-  requireRole('EMPLOYEE'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const requests = await prisma.leaveRequest.findMany({
@@ -88,12 +86,11 @@ router.get(
 
 /**
  * GET /api/leave/balance
- * Retrieve own leave balance (Employee)
+ * Retrieve own leave balance (Employee/HR)
  */
 router.get(
   '/balance',
   requireAuth,
-  requireRole('EMPLOYEE'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const approvedRequests = await prisma.leaveRequest.findMany({

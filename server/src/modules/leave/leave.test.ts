@@ -110,7 +110,7 @@ describe('Leave Module Integration Tests', () => {
       expect(response.status).toBe(401);
     });
 
-    it('should reject requests if logged in as HR', async () => {
+    it('should successfully create leave request for HR with PENDING status', async () => {
       const response = await fetch(`${testUrl}/api/leave/request`, {
         method: 'POST',
         headers: {
@@ -125,7 +125,11 @@ describe('Leave Module Integration Tests', () => {
           reason: 'Vacation',
         }),
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(201);
+      const request: any = await response.json();
+      expect(request.id).toBeDefined();
+      expect(request.employeeId).toBe('EMP-LEAVE-HR');
+      expect(request.status).toBe('PENDING');
     });
 
     it('should reject request if start date is after end date', async () => {
@@ -194,11 +198,15 @@ describe('Leave Module Integration Tests', () => {
       expect(body.requests[0].employeeId).toBe('EMP-LEAVE-01');
     });
 
-    it('should deny requests for HR', async () => {
+    it('should return own requests list for HR', async () => {
       const response = await fetch(`${testUrl}/api/leave/my-requests`, {
         headers: { Cookie: hrCookie },
       });
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(200);
+      const body: any = await response.json();
+      expect(body.requests).toBeDefined();
+      expect(body.requests.length).toBeGreaterThan(0);
+      expect(body.requests[0].employeeId).toBe('EMP-LEAVE-HR');
     });
   });
 
