@@ -14,7 +14,13 @@ import {
   ErrorState,
 } from '../../components/ui/index.js';
 import { toast } from '../../components/Toast/toastStore.js';
-import { Calendar as CalendarIcon, Info, Clock, CheckCircle, XCircle } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Info,
+  Clock,
+  CheckCircle,
+  XCircle,
+} from 'lucide-react';
 
 interface BalanceItem {
   allocated: number;
