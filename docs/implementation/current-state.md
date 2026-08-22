@@ -2,22 +2,22 @@
 
 ## Repository State
 The repository has been bootstrapped with two main independent subdirectories representing the polyrepo architecture:
-- `core-frontend/`: A React SPA + Vite project using TypeScript and Oxlint.
-- `core-backend/`: An Express.js 5 API project using TypeScript, Prisma ORM (linked to PostgreSQL), and Vitest.
+- `client/`: A React SPA + Vite project using TypeScript and Oxlint.
+- `server/`: An Express.js 5 API project using TypeScript, Prisma ORM (linked to PostgreSQL), and Vitest.
 - `docs/`: Holds governance documents, Architecture specifications, ADRs, and the generated `openapi.json` contract.
 
 ## Verified Working Functionality
 - **Express 5 API Service**: Startup and basic Express routing is functional.
 - **OpenAPI generation**: Backend script `pnpm openapi:generate` successfully produces the contract file `docs/openapi.json`.
-- **Frontend Type Generation**: Frontend script `pnpm gen:api` correctly parses `docs/openapi.json` and outputs compile-safe type definitions to `core-frontend/src/types/api.ts`.
-- **Frontend Linting**: Oxlint linter runs successfully in `core-frontend`.
+- **Frontend Type Generation**: Frontend script `pnpm gen:api` correctly parses `docs/openapi.json` and outputs compile-safe type definitions to `client/src/types/api.ts`.
+- **Frontend Linting**: Oxlint linter runs successfully in `client`.
 
 ## Broken/Incomplete Functionality
-- **Frontend TypeScript compilation is broken**: Running `pnpm build` in `core-frontend` fails with the error:
+- **Frontend TypeScript compilation is broken**: Running `pnpm build` in `client` fails with the error:
   `tsconfig.app.json:22:5 - error TS5023: Unknown compiler option 'erasableSyntaxOnly'.`
   This occurs because the TS compiler version in both `package.json` files is pinned to `5.7.3`, whereas `erasableSyntaxOnly` is a TypeScript 5.8+ option.
-- **Backend Tests are empty**: Running `pnpm test` in `core-backend` fails because there are no test files yet.
-- **Missing Database Foundation**: No `prisma/schema.prisma` file or migration workflow exists in `core-backend`.
+- **Backend Tests are empty**: Running `pnpm test` in `server` fails because there are no test files yet.
+- **Missing Database Foundation**: No `prisma/schema.prisma` file or migration workflow exists in `server`.
 - **No environment configuration (.env) files**: No `.env` or `.env.example` templates exist.
 
 ## Architecture Compliance
@@ -39,15 +39,15 @@ The repository has been bootstrapped with two main independent subdirectories re
 - **No integration/API tests**: No tests verify backend endpoint behavior.
 
 ## Security Gaps
-- **Missing Security Middleware Configuration**: Although `helmet` and `cors` are loaded in `core-backend/src/index.ts`, there is no proper rate limiting, request validation, or environment-based CORS configuration.
+- **Missing Security Middleware Configuration**: Although `helmet` and `cors` are loaded in `server/src/index.ts`, there is no proper rate limiting, request validation, or environment-based CORS configuration.
 
 ## Infrastructure Gaps
 - **No Docker Compose config**: A root-level `docker-compose.yml` to spin up local PostgreSQL and application containers is missing.
-- **No Dockerfiles**: Individual container definitions for `core-frontend` and `core-backend` are not yet created.
+- **No Dockerfiles**: Individual container definitions for `client` and `server` are not yet created.
 
 ## Immediate Next Action
 Create the implementation plan to:
-1. Upgrade TypeScript to `6.0.2` in both `core-frontend` and `core-backend` to fix the build issue and comply with the technology baseline.
+1. Upgrade TypeScript to `6.0.2` in both `client` and `server` to fix the build issue and comply with the technology baseline.
 2. Establish the repo engineering baselines (formatting, standard command contracts, linters) in both repositories (PHASE 04.5).
 3. Implement the frontend foundation (PHASE 05) and backend foundation (PHASE 06).
 4. Implement the database foundation (PHASE 07).

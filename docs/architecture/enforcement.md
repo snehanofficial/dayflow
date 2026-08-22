@@ -1,6 +1,6 @@
 # Architecture Enforcement Matrix
 
-This matrix tracks the key architectural boundaries of HackCore and how they are enforced to prevent architectural drift by humans and AI coding agents.
+This matrix tracks the key architectural boundaries of DayFlow and how they are enforced to prevent architectural drift by humans and AI coding agents.
 
 | Boundary / Rule | Rationale | Enforcement Mechanism | Status |
 | :--- | :--- | :--- | :--- |
@@ -16,14 +16,14 @@ This matrix tracks the key architectural boundaries of HackCore and how they are
 ## Invariants & Policies
 
 ### 1. Repository Boundary
-*   **Frontend**: Must communicate with the backend exclusively via HTTP/JSON. Cannot import any code from `core-backend` or relative paths reaching out of the package.
-*   **Backend**: Must not import from `core-frontend`.
+*   **Frontend**: Must communicate with the backend exclusively via HTTP/JSON. Cannot import any code from `server` or relative paths reaching out of the package.
+*   **Backend**: Must not import from `client`.
 
 ### 2. Configuration Boundary
-*   All environment variables must be validated at startup inside `core-backend/src/modules/core/config/index.ts` and `core-frontend/src/config.ts`.
+*   All environment variables must be validated at startup inside `server/src/modules/core/config/index.ts` and `client/src/config.ts`.
 *   Direct access to `process.env` (backend) or `import.meta.env` (frontend) is prohibited in any other source files.
 
 ### 3. Generated Files Boundary
 *   The OpenAPI specification (`docs/openapi.json`) is the source of truth for the API contract.
-*   The frontend types file (`core-frontend/src/types/api.ts`) is generated from `docs/openapi.json`.
+*   The frontend types file (`client/src/types/api.ts`) is generated from `docs/openapi.json`.
 *   Neither file should be manually edited. Drift is prevented by verification scripts checking generated outputs against committed versions.

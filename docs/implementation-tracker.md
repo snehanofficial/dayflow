@@ -64,16 +64,16 @@ This tracker tracks the status of each implementation phase of the Enterprise Ha
 - [x] Set up progressive context hierarchy templates. (Status: `COMPLETED`)
 
 ### PHASE 04 — Polyrepo Architecture
-- [x] Initialize `core-frontend` subdirectory structure with React/TypeScript baseline. (Status: `COMPLETED`)
-- [x] Initialize `core-backend` subdirectory structure with Express/TypeScript baseline. (Status: `COMPLETED`)
+- [x] Initialize `client` subdirectory structure with React/TypeScript baseline. (Status: `COMPLETED`)
+- [x] Initialize `server` subdirectory structure with Express/TypeScript baseline. (Status: `COMPLETED`)
 - [x] Setup OpenAPI contract definition pipeline and generation script. (Status: `COMPLETED`)
 
 ### PHASE 05 — Frontend Foundation
-- [x] Create client-side environment validation config (`core-frontend/src/config.ts`). (Status: `COMPLETED`)
-- [x] Create thin fetch API client (`core-frontend/src/api/client.ts`) utilizing generated types. (Status: `COMPLETED`)
-- [x] Create React Error Boundary component (`core-frontend/src/components/ErrorBoundary.tsx`). (Status: `COMPLETED`)
-- [x] Create structural AppShell (`core-frontend/src/components/AppShell.tsx`). (Status: `COMPLETED`)
-- [x] Wire up routing tree inside `core-frontend/src/App.tsx`. (Status: `COMPLETED`)
+- [x] Create client-side environment validation config (`client/src/config.ts`). (Status: `COMPLETED`)
+- [x] Create thin fetch API client (`client/src/api/client.ts`) utilizing generated types. (Status: `COMPLETED`)
+- [x] Create React Error Boundary component (`client/src/components/ErrorBoundary.tsx`). (Status: `COMPLETED`)
+- [x] Create structural AppShell (`client/src/components/AppShell.tsx`). (Status: `COMPLETED`)
+- [x] Wire up routing tree inside `client/src/App.tsx`. (Status: `COMPLETED`)
 
 ### PHASE 06 — Backend Foundation
 - [x] Create centralized config validator module (`core/config`) using Zod. (Status: `COMPLETED`)
@@ -81,7 +81,7 @@ This tracker tracks the status of each implementation phase of the Enterprise Ha
 - [x] Create custom API error classes and global Express error middleware (`core/errors`). (Status: `COMPLETED`)
 - [x] Create correlation Request ID middleware using native `crypto.randomUUID()`. (Status: `COMPLETED`)
 - [x] Create CORS, Helmet, and custom in-memory rate-limiter middleware. (Status: `COMPLETED`)
-- [x] Implement graceful server shutdown and health endpoint in `core-backend/src/index.ts`. (Status: `COMPLETED`)
+- [x] Implement graceful server shutdown and health endpoint in `server/src/index.ts`. (Status: `COMPLETED`)
 
 ### PHASE 07 — Database Foundation
 - [x] Create root `docker-compose.yml` defining PostgreSQL 17-alpine service. (Status: `COMPLETED`)
@@ -89,7 +89,7 @@ This tracker tracks the status of each implementation phase of the Enterprise Ha
 - [x] Generate Prisma TypeScript client. (Status: `COMPLETED`)
 
 ### PHASE 08 — Design System Foundation
-- [x] Restructure vanilla CSS theme tokens (primitive, semantic, components) in `core-frontend/src/index.css`. (Status: `COMPLETED`)
+- [x] Restructure vanilla CSS theme tokens (primitive, semantic, components) in `client/src/index.css`. (Status: `COMPLETED`)
 
 ### PHASE 09 — Testing Foundation
 - [x] Configure Vitest testing environments for both backend and frontend repositories. (Status: `COMPLETED`)
@@ -117,5 +117,5 @@ This tracker tracks the status of each implementation phase of the Enterprise Ha
 ## Foundation Release Status
 **READY FOR PROJECT USE**
 
-HackCore has been refined and verified as a generic personal full-stack starter. It is ready to be copied and adapted as the source foundation for future projects. All future changes belong in the domain layer of those copied projects.
+DayFlow has been refined and verified as a generic personal full-stack starter. It is ready to be copied and adapted as the source foundation for future projects. All future changes belong in the domain layer of those copied projects.
 

@@ -14,18 +14,18 @@ We need to establish:
 
 ### 1. Repository Topology
 We establish a **Two-Repository Baseline** structured as:
-*   `core-frontend`: Holds the React + Vite SPA, UI components, static assets, and client-side routing/state.
-*   `core-backend`: Holds the Express.js API server, Prisma schema, migrations, database integrations, authentication/authorization layers, and business modules.
+*   `client`: Holds the React + Vite SPA, UI components, static assets, and client-side routing/state.
+*   `server`: Holds the Express.js API server, Prisma schema, migrations, database integrations, authentication/authorization layers, and business modules.
 
 We deliberately reject additional separate repositories for infrastructure, deployment, design system, or documentation. These will be embedded inside the primary repositories as follows:
-- **Design System**: Co-located in `core-frontend/src/design-system` as a modular directory, facilitating atomic development and direct hot-reloading.
-- **Docker/Deployment Configurations**: Co-located inside their respective repositories (`core-frontend/Dockerfile` and `core-backend/Dockerfile`), with a root-level `docker-compose.yml` orchestrating local development.
-- **Documentation**: Root `/docs` directory present in both repositories, with `core-backend` hosting the main API spec.
+- **Design System**: Co-located in `client/src/design-system` as a modular directory, facilitating atomic development and direct hot-reloading.
+- **Docker/Deployment Configurations**: Co-located inside their respective repositories (`client/Dockerfile` and `server/Dockerfile`), with a root-level `docker-compose.yml` orchestrating local development.
+- **Documentation**: Root `/docs` directory present in both repositories, with `server` hosting the main API spec.
 
 Every repository must represent a clear deployment boundary.
 
 ### 2. Shared Code & Contract Policy
-To prevent tight coupling, cross-repository filesystem imports (`import ... from '../../core-backend'`) are **strictly forbidden**.
+To prevent tight coupling, cross-repository filesystem imports (`import ... from '../../server'`) are **strictly forbidden**.
 
 We will manage shared code using:
 1.  **OpenAPI 3.0 / Swagger API Contracts**: The backend defines the source-of-truth API schema.
@@ -34,7 +34,7 @@ We will manage shared code using:
 4.  **No Local File Dependencies in package.json**: Dependencies like `"shared": "file:../shared"` are forbidden because they break independent container builds and CD pipeline isolation.
 
 ```text
-                  [ core-backend ]
+                  [ server ]
                          │
                          ▼
              Generate OpenAPI Spec (JSON)
@@ -44,7 +44,7 @@ We will manage shared code using:
                   [ HTTP / REST ]          Generate Types
                          ▲                        │
                          │                        ▼
-                         └───────────────── [ core-frontend ]
+                         └───────────────── [ client ]
 ```
 
 ## Consequences

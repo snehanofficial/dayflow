@@ -17,12 +17,12 @@ The Core follows a completely decoupled, multi-container architecture. It isolat
                        │
                        ▼ (Port 80/443)
               ┌─────────────────┐
-              │ core-frontend   │ (Nginx / Static SPA)
+              │ client   │ (Nginx / Static SPA)
               └────────┬────────┘
                        │
                        ▼ HTTP / REST (Port 4000)
               ┌─────────────────┐
-              │ core-backend    │ (Express API Server)
+              │ server    │ (Express API Server)
               └────────┬────────┘
                        │
                        ▼ TCP / Prisma (Port 5432)
@@ -43,7 +43,7 @@ The Core follows a completely decoupled, multi-container architecture. It isolat
 The backend is structured into domain-independent capabilities. Each capability is isolated within its own folder and exposes an explicit public interface.
 
 ```text
-core-backend/src/modules/
+server/src/modules/
 ├── core/
 │   ├── config/          # Startup configuration and .env validation
 │   ├── logger/          # Structured JSON logging utility

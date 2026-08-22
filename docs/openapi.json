@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "HackCore API",
+    "title": "DayFlow API",
     "version": "1.0.0",
-    "description": "API contract for the HackCore - Personal Full-Stack Starter backend modules"
+    "description": "API contract for the DayFlow - Personal Full-Stack Starter backend modules"
   },
   "paths": {
     "/api/health": {
