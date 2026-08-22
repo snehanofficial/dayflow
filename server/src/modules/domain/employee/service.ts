@@ -42,4 +42,22 @@ export class EmployeeService {
     }
     return profile;
   }
+
+  async updateEmployeeProfile(
+    id: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      phone?: string | null;
+      department?: string | null;
+      designation?: string | null;
+      joiningDate?: Date | null;
+      profileImage?: string | null;
+      address?: string | null;
+      employmentStatus?: string | null;
+    },
+  ) {
+    await this.getProfileById(id);
+    return this.repository.updateById(id, data);
+  }
 }

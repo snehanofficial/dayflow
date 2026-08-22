@@ -767,7 +767,96 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Update employee profile by ID
+         * @description Update employee profile details. Requires HR permissions.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Employee ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        firstName?: string;
+                        lastName?: string;
+                        phone?: string | null;
+                        department?: string | null;
+                        designation?: string | null;
+                        /** Format: date-time */
+                        joiningDate?: string | null;
+                        profileImage?: string | null;
+                        address?: string | null;
+                        employmentStatus?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Employee profile updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            userId: string;
+                            employeeCode: string;
+                            firstName: string;
+                            lastName: string;
+                            phone?: string | null;
+                            department?: string | null;
+                            designation?: string | null;
+                            /** Format: date-time */
+                            joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden: Requires HR permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Employee not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         trace?: never;
     };
 }

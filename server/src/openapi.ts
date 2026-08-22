@@ -582,6 +582,90 @@ export const openApiDocument = {
           '404': { description: 'Employee not found' },
         },
       },
+      patch: {
+        summary: 'Update employee profile by ID',
+        description:
+          'Update employee profile details. Requires HR permissions.',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            description: 'Employee ID',
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  firstName: { type: 'string' },
+                  lastName: { type: 'string' },
+                  phone: { type: 'string', nullable: true },
+                  department: { type: 'string', nullable: true },
+                  designation: { type: 'string', nullable: true },
+                  joiningDate: {
+                    type: 'string',
+                    format: 'date-time',
+                    nullable: true,
+                  },
+                  profileImage: { type: 'string', nullable: true },
+                  address: { type: 'string', nullable: true },
+                  employmentStatus: { type: 'string', nullable: true },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Employee profile updated successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    userId: { type: 'string', format: 'uuid' },
+                    employeeCode: { type: 'string' },
+                    firstName: { type: 'string' },
+                    lastName: { type: 'string' },
+                    phone: { type: 'string', nullable: true },
+                    department: { type: 'string', nullable: true },
+                    designation: { type: 'string', nullable: true },
+                    joiningDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      nullable: true,
+                    },
+                    profileImage: { type: 'string', nullable: true },
+                    address: { type: 'string', nullable: true },
+                    employmentStatus: { type: 'string', nullable: true },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    updatedAt: { type: 'string', format: 'date-time' },
+                  },
+                  required: [
+                    'id',
+                    'userId',
+                    'employeeCode',
+                    'firstName',
+                    'lastName',
+                    'createdAt',
+                    'updatedAt',
+                  ],
+                },
+              },
+            },
+          },
+          '400': { description: 'Invalid input' },
+          '401': { description: 'Authentication required' },
+          '403': { description: 'Forbidden: Requires HR permissions' },
+          '404': { description: 'Employee not found' },
+        },
+      },
     },
   },
 };

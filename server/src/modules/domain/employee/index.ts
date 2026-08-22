@@ -17,6 +17,12 @@ router.get(
   controller.listEmployees,
 );
 router.get('/employees/:id', requireAuth, controller.getEmployeeById);
+router.patch(
+  '/employees/:id',
+  requireAuth,
+  requireRole('HR'),
+  controller.updateEmployeeById,
+);
 
 export { router as employeeRouter };
 export { EmployeeService } from './service.js';

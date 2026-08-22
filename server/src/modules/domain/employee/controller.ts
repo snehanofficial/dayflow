@@ -9,6 +9,23 @@ const employeeUpdateSchema = z.object({
   phone: z.string().max(30).nullable().optional(),
 });
 
+const employeeHrUpdateSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(100).optional(),
+  lastName: z.string().min(1, 'Last name is required').max(100).optional(),
+  phone: z.string().max(30).nullable().optional(),
+  department: z.string().max(100).nullable().optional(),
+  designation: z.string().max(100).nullable().optional(),
+  joiningDate: z
+    .preprocess(
+      (val) => (val ? new Date(val as string) : null),
+      z.date().nullable(),
+    )
+    .optional(),
+  profileImage: z.string().max(500).nullable().optional(),
+  address: z.string().max(500).nullable().optional(),
+  employmentStatus: z.string().max(50).nullable().optional(),
+});
+
 export class EmployeeController {
   private service = new EmployeeService();
 
@@ -74,6 +91,34 @@ export class EmployeeController {
       }
 
       res.json(profile);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateEmployeeById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { id } = req.params;
+      if (!id || typeof id !== 'string') {
+        throw new BadRequestError('Employee ID parameter must be a string');
+      }
+
+      const parsedBody = employeeHrUpdateSchema.safeParse(req.body);
+      if (!parsedBody.success) {
+        throw new BadRequestError(
+          parsedBody.error.errors.map((e: z.ZodIssue) => e.message).join(', '),
+        );
+      }
+
+      const updatedProfile = await this.service.updateEmployeeProfile(
+        id,
+        parsedBody.data,
+      );
+      res.json(updatedProfile);
     } catch (error) {
       next(error);
     }

@@ -50,4 +50,24 @@ export class EmployeeRepository {
       where: { id },
     });
   }
+
+  async updateById(
+    id: string,
+    data: {
+      firstName?: string;
+      lastName?: string;
+      phone?: string | null;
+      department?: string | null;
+      designation?: string | null;
+      joiningDate?: Date | null;
+      profileImage?: string | null;
+      address?: string | null;
+      employmentStatus?: string | null;
+    },
+  ) {
+    return prisma.employee.update({
+      where: { id },
+      data,
+    });
+  }
 }
