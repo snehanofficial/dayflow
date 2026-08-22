@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router';
-import { AuthProvider, useAuth } from './context/AuthContext.js';
+import { AuthProvider } from './context/AuthContext.js';
 import { ThemeProvider } from './context/ThemeContext.js';
 import { AppShell } from './components/AppShell.js';
 import { ErrorBoundary } from './components/ErrorBoundary.js';
@@ -11,7 +11,6 @@ import {
   Button,
   Card,
   Badge,
-  ConfirmDialog,
   LoadingState,
   ErrorState,
 } from './components/ui/index.js';
@@ -26,6 +25,7 @@ import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
 import { ProfilePage } from './features/employee/ProfilePage.js';
+import { EmployeeDashboard } from './features/employee/EmployeeDashboard.js';
 import { EmployeeDirectoryPage } from './features/employee/EmployeeDirectoryPage.js';
 import { EmployeeDetailPage } from './features/employee/EmployeeDetailPage.js';
 import { AttendancePage } from './features/attendance/AttendancePage.js';
@@ -34,184 +34,6 @@ import { HrLeavePage } from './features/leave/HrLeavePage.js';
 import { SalarySlipsPage } from './features/payroll/SalarySlipsPage.js';
 import { HrPayrollPage } from './features/payroll/HrPayrollPage.js';
 import { HrAnalyticsPage } from './features/analytics/HrAnalyticsPage.js';
-
-/**
- * Dashboard - verified session info, permissions, and component primitives.
- */
-function DashboardHome() {
-  const { user } = useAuth();
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [isDestructiveOpen, setIsDestructiveOpen] = useState(false);
-
-  const triggerToast = (type: 'success' | 'error' | 'warning' | 'info') => {
-    const labels = {
-      success: 'Operation completed.',
-      error: 'Something went wrong.',
-      warning: 'Proceed with caution.',
-      info: 'For your information.',
-    };
-    toast[type](labels[type]);
-  };
-
-  return (
-    <section>
-      {/* Page header */}
-      <div className="page-header">
-        <h1 className="main-title">Dashboard</h1>
-        <p className="subtitle">Authenticated session and foundation status.</p>
-      </div>
-
-      {/* Session info — two side-by-side cards */}
-      <div
-        className="adaptive-grid"
-        style={{
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          marginBottom: 'var(--space-6)',
-        }}
-      >
-        {/* Authenticated user */}
-        <Card>
-          <h2 className="card-title">Session</h2>
-          <div className="kv-row">
-            <span className="kv-label">Email</span>
-            <span
-              style={{
-                fontSize: '0.8125rem',
-                color: 'var(--color-text-primary)',
-              }}
-            >
-              {user?.email}
-            </span>
-          </div>
-          <div className="kv-row">
-            <span className="kv-label">User ID</span>
-            <span className="kv-value">{user?.id}</span>
-          </div>
-        </Card>
-
-        {/* Permissions */}
-        <Card>
-          <h2 className="card-title">Permissions</h2>
-          {user?.permissions && user.permissions.length > 0 ? (
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 'var(--space-1)',
-                marginTop: 'var(--space-1)',
-              }}
-            >
-              {user.permissions.map((perm) => (
-                <Badge key={perm} variant="info">
-                  {perm}
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p
-              style={{
-                fontSize: '0.8125rem',
-                color: 'var(--color-text-muted)',
-              }}
-            >
-              No permissions assigned.
-            </p>
-          )}
-        </Card>
-      </div>
-
-      {/* Foundation components */}
-      <div className="divider" />
-      <div style={{ marginBottom: 'var(--space-2)' }}>
-        <h2 className="card-title">Foundation Components</h2>
-        <p className="subtitle" style={{ marginBottom: 'var(--space-4)' }}>
-          Verify toast, dialog, and feedback primitives.
-        </p>
-      </div>
-
-      <div
-        className="adaptive-grid"
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
-      >
-        {/* Toast feedback */}
-        <Card>
-          <h3 className="card-title">Toast Feedback</h3>
-          <div className="action-row">
-            <Button
-              onClick={() => triggerToast('success')}
-              variant="secondary"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Success
-            </Button>
-            <Button
-              onClick={() => triggerToast('error')}
-              variant="secondary"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Error
-            </Button>
-            <Button
-              onClick={() => triggerToast('warning')}
-              variant="secondary"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Warning
-            </Button>
-            <Button
-              onClick={() => triggerToast('info')}
-              variant="secondary"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Info
-            </Button>
-          </div>
-        </Card>
-
-        {/* Dialog demos */}
-        <Card>
-          <h3 className="card-title">Dialogs</h3>
-          <div className="action-row">
-            <Button
-              onClick={() => setIsConfirmOpen(true)}
-              variant="secondary"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Standard
-            </Button>
-            <Button
-              onClick={() => setIsDestructiveOpen(true)}
-              variant="danger"
-              style={{ fontSize: '0.75rem', height: 32 }}
-            >
-              Destructive
-            </Button>
-          </div>
-        </Card>
-      </div>
-
-      {/* Standard dismissible confirm dialog */}
-      <ConfirmDialog
-        isOpen={isConfirmOpen}
-        title="Confirm Action"
-        message="Are you sure you want to proceed? You can click outside or press Esc to cancel."
-        onConfirm={() => toast.success('Action confirmed.')}
-        onCancel={() => setIsConfirmOpen(false)}
-      />
-
-      {/* Dangerous destructive confirm dialog */}
-      <ConfirmDialog
-        isOpen={isDestructiveOpen}
-        title="Delete Resources Permanently?"
-        message="This action cannot be undone. Click-outside dismissal is disabled to prevent accidental confirmation."
-        confirmLabel="Delete Permanently"
-        isDanger
-        onConfirm={() => toast.success('Resource deleted.')}
-        onCancel={() => setIsDestructiveOpen(false)}
-      />
-    </section>
-  );
-}
 
 /**
  * Diagnostics — backend connection status, API errors, and table primitives.
@@ -450,7 +272,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<DashboardHome />} />
+                <Route index element={<EmployeeDashboard />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route
                   path="attendance"

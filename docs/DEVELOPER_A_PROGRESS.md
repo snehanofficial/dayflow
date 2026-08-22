@@ -216,3 +216,21 @@ Phase 4 completed, all tests and verifications passing.
 ## Deployment Notes
 - Prisma migrations must be executed via `pnpm run prisma:migrate` before deploying server updates.
 - Centralized `ATTENDANCE_TIMEZONE=Asia/Kolkata` and `ATTENDANCE_LATE_AFTER=09:00` config bindings must be set in environment variables.
+
+## Phase 5 — Employee Dashboard
+
+Status: COMPLETE
+Commit: ece462a & next
+Verification: PASS
+Regression: PASS
+
+Objective:
+Create a rich, responsive, and functional employee dashboard as the main home view for authenticated employees, integrating attendance actions, insights, leave balance, and salary slips.
+
+### Frontend
+- Created `client/src/features/employee/EmployeeDashboard.tsx` with personalized greeting, active running work-hour timer, attendance insights, leaves summary, and payslip preview.
+- Replaced testing placeholder with `EmployeeDashboard` inside `client/src/App.tsx`.
+
+### Tests
+- Wrote frontend unit/integration tests in `client/src/features/employee/EmployeeDashboard.test.tsx` verifying card triggers, loading states, and error handling.
+
