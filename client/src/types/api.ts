@@ -1694,15 +1694,15 @@ export interface paths {
         };
         /**
          * Get Salary Structure
-         * @description Retrieve salary structure configurations (Employee views own; HR can filter via query).
+         * @description Retrieve salary structure configurations (Employee views own; HR can target employee by header).
          */
         get: {
             parameters: {
-                query?: {
-                    /** @description Employee ID (HR only) */
+                query?: never;
+                header?: {
+                    /** @description Employee ID (x-employee-id, HR only) */
                     employeeId?: string;
                 };
-                header?: never;
                 path?: never;
                 cookie?: never;
             };
@@ -1833,11 +1833,11 @@ export interface paths {
          */
         get: {
             parameters: {
-                query?: {
-                    /** @description Filter by employee ID (HR only) */
+                query?: never;
+                header?: {
+                    /** @description Filter by employee ID (x-employee-id, HR only) */
                     employeeId?: string;
                 };
-                header?: never;
                 path?: never;
                 cookie?: never;
             };

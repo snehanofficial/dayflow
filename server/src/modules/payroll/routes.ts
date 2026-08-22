@@ -24,19 +24,30 @@ const generateSlipSchema = z.object({
   month: z.string().regex(/^\d{4}-\d{2}$/, 'Month must be in YYYY-MM format'),
 });
 
+const employeeIdHeaderSchema = z.string().min(1, 'Employee ID is required');
+
 /**
  * GET /api/payroll/salary-structure
- * Retrieve salary structure (Employee views own; HR can retrieve any via query param)
+ * Retrieve salary structure (Employee views own; HR can retrieve any via header)
  */
 router.get(
   '/salary-structure',
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { employeeId } = req.query;
+      const employeeIdHeader = req.get('x-employee-id');
       let targetEmployeeId = req.user!.employeeId;
 
-      if (employeeId && typeof employeeId === 'string') {
+      if (employeeIdHeader !== undefined) {
+        const headerParse = employeeIdHeaderSchema.safeParse(employeeIdHeader);
+        if (!headerParse.success) {
+          throw new BadRequestError(
+            'Invalid parameters',
+            headerParse.error.format(),
+          );
+        }
+
+        const employeeId = headerParse.data;
         if (req.user!.role !== 'HR' && employeeId !== req.user!.employeeId) {
           throw new ForbiddenError('Access denied: Unauthorized role');
         }
@@ -139,13 +150,20 @@ router.get(
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { employeeId } = req.query;
+      const employeeIdHeader = req.get('x-employee-id');
       const where: any = {};
 
       if (req.user!.role !== 'HR') {
         where.employeeId = req.user!.employeeId;
-      } else if (employeeId && typeof employeeId === 'string') {
-        where.employeeId = employeeId;
+      } else if (employeeIdHeader !== undefined) {
+        const headerParse = employeeIdHeaderSchema.safeParse(employeeIdHeader);
+        if (!headerParse.success) {
+          throw new BadRequestError(
+            'Invalid parameters',
+            headerParse.error.format(),
+          );
+        }
+        where.employeeId = headerParse.data;
       }
 
       const slips = await prisma.salarySlip.findMany({

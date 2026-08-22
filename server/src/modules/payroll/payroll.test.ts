@@ -181,24 +181,24 @@ describe('Payroll Module Integration Tests', () => {
       expect(data.netSalary).toBe(5800);
     });
 
-    it('should deny Employee from querying another employee structure via query parameter', async () => {
-      const response = await fetch(
-        `${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-HR`,
-        {
-          headers: { Cookie: employeeCookie },
+    it('should deny Employee from requesting another employee structure via header', async () => {
+      const response = await fetch(`${testUrl}/api/payroll/salary-structure`, {
+        headers: {
+          Cookie: employeeCookie,
+          'x-employee-id': 'EMP-PAYROLL-HR',
         },
-      );
+      });
 
       expect(response.status).toBe(403);
     });
 
-    it('should allow HR to query any employee structure via query parameter', async () => {
-      const response = await fetch(
-        `${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-01`,
-        {
-          headers: { Cookie: hrCookie },
+    it('should allow HR to request any employee structure via header', async () => {
+      const response = await fetch(`${testUrl}/api/payroll/salary-structure`, {
+        headers: {
+          Cookie: hrCookie,
+          'x-employee-id': 'EMP-PAYROLL-01',
         },
-      );
+      });
 
       expect(response.status).toBe(200);
       const data: any = await response.json();

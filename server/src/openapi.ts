@@ -2021,16 +2021,16 @@ export const openApiDocument = {
     "/api/payroll/salary-structure": {
       "get": {
         "summary": "Get Salary Structure",
-        "description": "Retrieve salary structure configurations (Employee views own; HR can filter via query).",
+        "description": "Retrieve salary structure configurations (Employee views own; HR can target employee by header).",
         "parameters": [
           {
             "name": "employeeId",
-            "in": "query",
+            "in": "header",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Employee ID (HR only)"
+            "description": "Employee ID (x-employee-id, HR only)"
           }
         ],
         "responses": {
@@ -2208,12 +2208,12 @@ export const openApiDocument = {
         "parameters": [
           {
             "name": "employeeId",
-            "in": "query",
+            "in": "header",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Filter by employee ID (HR only)"
+            "description": "Filter by employee ID (x-employee-id, HR only)"
           }
         ],
         "responses": {
