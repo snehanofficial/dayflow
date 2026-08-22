@@ -2,14 +2,14 @@
 
 ## Developer Mission
 
-You are responsible for establishing the **basic application structure and authentication foundation** for the Dayflow Human Resource Management System using the existing **HackCore scaffold**.
+You are responsible for establishing the **basic application structure and authentication foundation** for the Dayflow Human Resource Management System using the existing **DayFlow scaffold**.
 
 This work must provide a stable foundation that allows:
 
 * Developer A to implement Employee + Attendance
 * Developer B to implement Leave + Payroll + HR modules
 * Authentication and authorization to be shared by all modules
-* The existing HackCore architecture/design system to remain intact
+* The existing DayFlow architecture/design system to remain intact
 * Frontend and backend to remain independently modular and deployable
 
 This document covers **foundation and authentication only**.
@@ -122,7 +122,7 @@ frontend/
 backend/
 ```
 
-use the existing HackCore convention consistently.
+use the existing DayFlow convention consistently.
 
 Do not maintain both naming conventions.
 
@@ -167,7 +167,7 @@ nx.json
 pnpm-workspace.yaml
 ```
 
-unless the existing HackCore scaffold already requires an equivalent mechanism.
+unless the existing DayFlow scaffold already requires an equivalent mechanism.
 
 ---
 
@@ -196,7 +196,7 @@ frontend/
 └── .gitignore
 ```
 
-The exact framework and folder naming must follow the existing HackCore scaffold.
+The exact framework and folder naming must follow the existing DayFlow scaffold.
 
 Do not restructure the frontend unnecessarily.
 
@@ -284,7 +284,7 @@ backend/
 └── .gitignore
 ```
 
-The exact backend architecture must follow the existing HackCore/Odoo implementation where appropriate.
+The exact backend architecture must follow the existing DayFlow/Odoo implementation where appropriate.
 
 Do not introduce a second backend architecture unnecessarily.
 
@@ -428,7 +428,7 @@ services:
       context: ./backend
 ```
 
-Add database or supporting services only if required by the actual HackCore architecture.
+Add database or supporting services only if required by the actual DayFlow architecture.
 
 Do not invent unnecessary infrastructure.
 
@@ -542,7 +542,7 @@ docker-compose.override.yml
 
 Individual frontend and backend repositories may maintain their own more specific `.gitignore` files.
 
-Do not blindly overwrite existing HackCore ignore rules.
+Do not blindly overwrite existing DayFlow ignore rules.
 
 ---
 
@@ -603,8 +603,8 @@ Authentication may expose the user's identity and role to those modules, but it 
 
 # 4. Non-Negotiable Rules
 
-1. Inspect the existing HackCore scaffold before changing architecture.
-2. Preserve the existing HackCore design system.
+1. Inspect the existing DayFlow scaffold before changing architecture.
+2. Preserve the existing DayFlow design system.
 3. Reuse existing components and utilities whenever appropriate.
 4. Do not replace the scaffold with a completely new architecture.
 5. Do not introduce unnecessary dependencies.
@@ -658,7 +658,7 @@ Each phase must be completed and validated before moving to the next phase.
 
 ## Objective
 
-Understand the existing HackCore scaffold and establish the minimum Dayflow application foundation.
+Understand the existing DayFlow scaffold and establish the minimum Dayflow application foundation.
 
 Do not implement authentication business logic yet.
 
@@ -775,7 +775,7 @@ dayflow/
 
 This is only a conceptual target.
 
-**Do not force this structure if HackCore already has an appropriate architecture.**
+**Do not force this structure if DayFlow already has an appropriate architecture.**
 
 ---
 
@@ -854,14 +854,14 @@ Verify:
 [ ] Root Docker Compose can orchestrate services
 [ ] Frontend can communicate with backend through API
 [ ] No direct frontend/database connection exists
-[ ] Existing HackCore functionality remains intact
+[ ] Existing DayFlow functionality remains intact
 ```
 
 ---
 
 ## Phase 1 Deliverable
 
-A clean Dayflow application foundation integrated into HackCore without breaking existing functionality.
+A clean Dayflow application foundation integrated into DayFlow without breaking existing functionality.
 
 ### Validation
 
@@ -930,7 +930,7 @@ The requirements specify that users authenticate using email and password, while
 
 # 2.1 User Identity Model
 
-First inspect whether HackCore/Odoo already provides a suitable user model.
+First inspect whether DayFlow/Odoo already provides a suitable user model.
 
 Prefer:
 
@@ -994,7 +994,7 @@ Role-authorized application access
 
 # 2.4 Session Management
 
-Implement authentication sessions using the mechanism already established by HackCore/Odoo.
+Implement authentication sessions using the mechanism already established by DayFlow/Odoo.
 
 The implementation must provide:
 
@@ -1208,7 +1208,7 @@ Already have an account?
 Sign in
 ```
 
-The exact visual design must reuse HackCore's existing components/design system.
+The exact visual design must reuse DayFlow's existing components/design system.
 
 ---
 
@@ -1450,7 +1450,7 @@ Don't have an account?
 Create account
 ```
 
-Use existing HackCore components.
+Use existing DayFlow components.
 
 ---
 
@@ -1536,7 +1536,7 @@ HR
 HR Dashboard
 ```
 
-If HackCore uses a shared dashboard shell:
+If DayFlow uses a shared dashboard shell:
 
 ```text
 Authenticated User
@@ -1751,7 +1751,7 @@ signIn()
 signOut()
 ```
 
-Actual implementation names should follow HackCore conventions.
+Actual implementation names should follow DayFlow conventions.
 
 ---
 
@@ -1823,7 +1823,7 @@ frontend/
             └── types/
 ```
 
-Use the actual HackCore frontend conventions where available.
+Use the actual DayFlow frontend conventions where available.
 
 ---
 
@@ -2081,7 +2081,7 @@ Do not require A or B to understand internal authentication implementation detai
 Because frontend and backend are independently decoupled, development should follow:
 
 ```text
-1. Inspect HackCore
+1. Inspect DayFlow
        ↓
 2. Establish frontend/backend boundaries
        ↓
@@ -2150,7 +2150,7 @@ Before implementing authentication, confirm:
 [ ] Root structure established
 [ ] frontend repository identified/initialized
 [ ] backend repository identified/initialized
-[ ] Existing HackCore architecture inspected
+[ ] Existing DayFlow architecture inspected
 [ ] Frontend/backend boundaries documented
 [ ] Root .gitignore established
 [ ] Frontend Dockerfile established/adapted
@@ -2171,7 +2171,7 @@ Only after this foundation is validated should Phase 2 authentication infrastruc
 
 ## Application Foundation
 
-* [ ] HackCore scaffold remains functional
+* [ ] DayFlow scaffold remains functional
 * [ ] Existing architecture was reused
 * [ ] No unnecessary restructuring
 * [ ] No unnecessary dependencies
@@ -2237,7 +2237,7 @@ Only after this foundation is validated should Phase 2 authentication infrastruc
 * [ ] Error states
 * [ ] Success states
 * [ ] Accessible forms
-* [ ] Existing HackCore design system reused
+* [ ] Existing DayFlow design system reused
 
 ## Integration
 

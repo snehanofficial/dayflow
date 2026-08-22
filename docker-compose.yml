@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:17-alpine
-    container_name: hackcore-postgres
+    container_name: dayflow-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: hackcore
+      POSTGRES_DB: dayflow
     ports:
       - '5432:5432'
     volumes:
@@ -16,31 +16,31 @@ services:
       timeout: 5s
       retries: 5
 
-  core-backend:
+  server:
     build:
-      context: ./core-backend
+      context: ./server
       dockerfile: Dockerfile
-    container_name: hackcore-backend
+    container_name: dayflow-backend
     ports:
       - '4000:4000'
     environment:
       - PORT=4000
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/hackcore?schema=public
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/dayflow?schema=public
       - CORS_ORIGIN=http://localhost:5173
     depends_on:
       postgres:
         condition: service_healthy
 
-  core-frontend:
+  client:
     build:
-      context: ./core-frontend
+      context: ./client
       dockerfile: Dockerfile
-    container_name: hackcore-frontend
+    container_name: dayflow-frontend
     ports:
       - '5173:80'
     depends_on:
-      - core-backend
+      - server
 
 volumes:
   postgres_data:

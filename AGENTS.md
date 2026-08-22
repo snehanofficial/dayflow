@@ -10,11 +10,11 @@ This document contains the guidelines and architectural contracts that must be f
 ## 1. Quick Development Checklist
 
 When implementing new features or making edits:
-1. **Inspect Before Abstracting**: Review the existing code structure in `core-backend` and `core-frontend` before writing new helper functions or libraries.
+1. **Inspect Before Abstracting**: Review the existing code structure in `server` and `client` before writing new helper functions or libraries.
 2. **Follow the Architecture**: Respect the strict boundary between the frontend UI, backend API service, and PostgreSQL database.
-3. **Use the OpenAPI Contract**: Do not manually duplicate frontend API types. Modify the schema in `core-backend/src/openapi.ts`, run `pnpm run openapi:generate`, and then compile client types via `pnpm run gen:api` in `core-frontend`.
+3. **Use the OpenAPI Contract**: Do not manually duplicate frontend API types. Modify the schema in `server/src/openapi.ts`, run `pnpm run openapi:generate`, and then compile client types via `pnpm run gen:api` in `client`.
 4. **No Database Leakage**: Never import database drivers, Prisma clients, database credentials, or server-side schemas in frontend code.
-5. **No Direct Environment Access**: Never read raw environment variables (e.g., `process.env` or `import.meta.env`) directly in application code. All environment access must go through validated config modules (`core-backend/src/modules/core/config/` and `core-frontend/src/config.ts`).
+5. **No Direct Environment Access**: Never read raw environment variables (e.g., `process.env` or `import.meta.env`) directly in application code. All environment access must go through validated config modules (`server/src/modules/core/config/` and `client/src/config.ts`).
 6. **Core vs. Domain Separation**: Keep domain/business modules distinct from the core framework logic. Do not pollute generic `modules/core` directories with project-specific business details.
 7. **Use Modern APIs**: Adhere to ESM, Express 5 async route handling (native rejection capture), Prisma 7, and React 19 functional components.
 8. **Verify Early and Often**: Always run verification before concluding a task:

@@ -1,12 +1,12 @@
 # Enterprise Hackathon Core Foundation Audit
 
-This document presents the detailed, line-by-line verified audit of the existing foundations in `core-frontend`, `core-backend`, the Docker setup, and the Prisma configuration.
+This document presents the detailed, line-by-line verified audit of the existing foundations in `client`, `server`, the Docker setup, and the Prisma configuration.
 
 ---
 
 ## 1. What Exists
 
-### Frontend Repository (`core-frontend/`)
+### Frontend Repository (`client/`)
 - **React + Vite SPA**: Configured using React `19.2.8` and Vite `8.2.0`.
 - **Client-Side Routing**: Configured with `react-router` `7.1.5` in `src/App.tsx`.
 - **Environment Validation**: Simple client-side environment helper `src/config.ts` loading `VITE_API_URL` (defaulting to `http://localhost:4000`).
@@ -16,7 +16,7 @@ This document presents the detailed, line-by-line verified audit of the existing
 - **Design Tokens/CSS Foundation**: Co-located in `src/index.css` defining semantic theme variables for light and dark modes (colors, layout variables, spacing).
 - **Linter & Formatter**: Configured with Prettier and Oxlint.
 
-### Backend Repository (`core-backend/`)
+### Backend Repository (`server/`)
 - **Express 5 API Server**: Express `5.2.1` server running on port 4000.
 - **Config Validator**: Zod-based config validator `src/modules/core/config/index.ts` checking `PORT`, `NODE_ENV`, `DATABASE_URL`, and `CORS_ORIGIN` on boot.
 - **Structured JSON Logger**: Pino `9.3.2` + `pino-pretty` (in development mode) in `src/modules/core/logger/index.ts`.
@@ -26,8 +26,8 @@ This document presents the detailed, line-by-line verified audit of the existing
 - **Correlation ID Middleware**: `src/middleware/request-id.ts` injecting node's native `crypto.randomUUID()` request correlation tracking.
 
 ### Shared API & Database Setup
-- **OpenAPI Schema Contract**: Authoritative REST contract defined in JS object at `core-backend/src/openapi.ts`, exported to `docs/openapi.json` via script.
-- **Type Generation**: Frontend reads `docs/openapi.json` and runs `openapi-typescript` to output typescript contracts in `core-frontend/src/types/api.ts`.
+- **OpenAPI Schema Contract**: Authoritative REST contract defined in JS object at `server/src/openapi.ts`, exported to `docs/openapi.json` via script.
+- **Type Generation**: Frontend reads `docs/openapi.json` and runs `openapi-typescript` to output typescript contracts in `client/src/types/api.ts`.
 - **Database Schema**: PostgreSQL 17 base configuration using Prisma 7 (`7.9.1`). Includes a single `User` table map in `prisma/schema.prisma`.
 - **Docker Compose**: Orchestrates a single database container (`postgres:17-alpine`) mapping port 5432 and persisting volume data.
 
@@ -36,8 +36,8 @@ This document presents the detailed, line-by-line verified audit of the existing
 ## 2. What is Verified
 
 The following pipelines have been verified using live execution:
-1. **Backend Build & Verification**: Running `pnpm run verify` in `core-backend` successfully executes Prettier check, Oxlint scan, TypeScript compilation, and TSX build without errors.
-2. **Frontend Build & Verification**: Running `pnpm run verify` in `core-frontend` executes Prettier check, Oxlint scan, TypeScript project reference builds, and Vite asset production bundle compilation without errors.
+1. **Backend Build & Verification**: Running `pnpm run verify` in `server` successfully executes Prettier check, Oxlint scan, TypeScript compilation, and TSX build without errors.
+2. **Frontend Build & Verification**: Running `pnpm run verify` in `client` executes Prettier check, Oxlint scan, TypeScript project reference builds, and Vite asset production bundle compilation without errors.
 3. **OpenAPI Schema Pipeline**: Running `pnpm run openapi:generate` in the backend updates `docs/openapi.json`. Then, running `pnpm run gen:api` in the frontend successfully compiles a type-safe `api.ts` file.
 
 ---
@@ -48,7 +48,7 @@ The following pipelines have been verified using live execution:
 - **No Real Backend Tests**: The backend specifies `"test": "vitest run"` but fails execution because there are zero test files written.
 - **No Automated Contract/API Validation**: There are no tests verifying that the Express API implementation actually conforms to `docs/openapi.json` at runtime, or that generated types are synced.
 - **No Automated Architecture Rules**: Although an architecture specification document exists, there is no automated machinery (like static analysis, Dependency Cruiser, or custom eslint/typescript rules) enforcing import constraints (e.g. core-to-domain separation, frontend-to-database separation).
-- **Missing Docker Development Topology**: A root `docker-compose.yml` runs PostgreSQL, but neither `core-backend` nor `core-frontend` has a Dockerfile or compose service to facilitate full-stack environment boot via `docker compose up`.
+- **Missing Docker Development Topology**: A root `docker-compose.yml` runs PostgreSQL, but neither `server` nor `client` has a Dockerfile or compose service to facilitate full-stack environment boot via `docker compose up`.
 
 ---
 
@@ -56,7 +56,7 @@ The following pipelines have been verified using live execution:
 
 ### Architecture Specification
 - **Strict Module Encapsulation (`index.ts` gateway)**:
-  - Inside `core-backend/src/index.ts`, modules are imported directly from sub-paths (e.g., `import { config } from './modules/core/config/index.js'`) instead of a single core entry point. While acceptable, this violates strict public gateway architecture conventions.
+  - Inside `server/src/index.ts`, modules are imported directly from sub-paths (e.g., `import { config } from './modules/core/config/index.js'`) instead of a single core entry point. While acceptable, this violates strict public gateway architecture conventions.
   - The middleware is imported as `import { corsMiddleware, ... } from './middleware/security.js'` rather than package index entries.
 
 ### Technology Baseline
@@ -93,17 +93,17 @@ The following pipelines have been verified using live execution:
 
 ## 8. Risks
 
-1. **AI Obsolete Code Leakage**: Without architecture checks, an AI agent could easily bypass the API gateway and create direct file or database imports inside `core-frontend`.
-2. **Memory Growth Vulnerability**: The `rateLimitMap` in `core-backend/src/middleware/security.ts` accumulates memory for every unique IP accessing the app, exposing the system to memory exhaustion (OOM) under sustained scan queries.
-3. **Silent OpenAPI Drifts**: A developer might modify an Express route handler but forget to update the object schema inside `core-backend/src/openapi.ts`. Without contract tests, this will compile but cause runtime frontend crashes.
+1. **AI Obsolete Code Leakage**: Without architecture checks, an AI agent could easily bypass the API gateway and create direct file or database imports inside `client`.
+2. **Memory Growth Vulnerability**: The `rateLimitMap` in `server/src/middleware/security.ts` accumulates memory for every unique IP accessing the app, exposing the system to memory exhaustion (OOM) under sustained scan queries.
+3. **Silent OpenAPI Drifts**: A developer might modify an Express route handler but forget to update the object schema inside `server/src/openapi.ts`. Without contract tests, this will compile but cause runtime frontend crashes.
 
 ---
 
 ## 9. Recommended Corrections
 
 1. **Upgrade Rate Limiter**: Clear out-of-date rate limit IP maps, or cap the size of the IP map to prevent memory leak issues.
-2. **Implement Vitest Setup for Frontend**: Add `vitest` and `@testing-library/react` to `core-frontend` devDependencies, set up `vitest.config.ts`, and create tests for `ErrorBoundary`, `AppShell`, and the `apiClient`.
-3. **Implement Backend Tests**: Configure `vitest` in `core-backend` and test `config` schema rejection, health check route, error mapping, and correlation IDs.
+2. **Implement Vitest Setup for Frontend**: Add `vitest` and `@testing-library/react` to `client` devDependencies, set up `vitest.config.ts`, and create tests for `ErrorBoundary`, `AppShell`, and the `apiClient`.
+3. **Implement Backend Tests**: Configure `vitest` in `server` and test `config` schema rejection, health check route, error mapping, and correlation IDs.
 4. **Automated OpenAPI Contract Checks**: Introduce a script or test validating the generated `openapi.json` against actual router declarations, or test that types compiled perfectly.
 5. **Architecture Guardrails**: Write custom node-based scripts or use a tool to enforce repository boundary isolation (preventing frontend importing backend files and vice-versa, core-to-domain rules).
 6. **Implement Liveness & Readiness**: Update the health module to distinguish between process liveness (lightweight) and system readiness (confirm database ping via Prisma `$queryRaw`).
