@@ -25,6 +25,7 @@ const baseGroups: NavGroup[] = [
     items: [
       { label: 'Dashboard', route: '/', icon: 'dashboard' },
       { label: 'Profile', route: '/profile', icon: 'profile' },
+      { label: 'Attendance', route: '/attendance', icon: 'clock' },
       {
         label: 'Directory',
         route: '/employees',

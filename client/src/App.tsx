@@ -28,6 +28,7 @@ import { Playground } from './pages/Playground.js';
 import { ProfilePage } from './features/employee/ProfilePage.js';
 import { EmployeeDirectoryPage } from './features/employee/EmployeeDirectoryPage.js';
 import { EmployeeDetailPage } from './features/employee/EmployeeDetailPage.js';
+import { AttendancePage } from './features/attendance/AttendancePage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -446,6 +447,14 @@ export default function App() {
               >
                 <Route index element={<DashboardHome />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route
+                  path="attendance"
+                  element={
+                    <ProtectedRoute role={['EMPLOYEE', 'HR']}>
+                      <AttendancePage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="employees"
                   element={

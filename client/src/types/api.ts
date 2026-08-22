@@ -859,6 +859,289 @@ export interface paths {
         };
         trace?: never;
     };
+    "/api/attendance/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Employee check-in
+         * @description Record employee check-in for the current day based on configured timezone.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Check-in recorded successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/check-out": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Employee check-out
+         * @description Record employee check-out for the current day.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Check-out recorded successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get today's attendance status
+         * @description Retrieve the attendance record for the current authenticated employee for today.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Today's attendance details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attendance history
+         * @description Retrieve paginated attendance history for the authenticated employee.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Maximum number of records to return */
+                    limit?: number;
+                    /** @description Number of records to skip */
+                    offset?: number;
+                    /** @description Filter start date (YYYY-MM-DD) */
+                    startDate?: string;
+                    /** @description Filter end date (YYYY-MM-DD) */
+                    endDate?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Attendance history retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            history: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            }[];
+                            pagination: {
+                                total: number;
+                                limit: number;
+                                offset: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {

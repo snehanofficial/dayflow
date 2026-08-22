@@ -1011,6 +1011,337 @@
           }
         }
       }
+    },
+    "/api/attendance/check-in": {
+      "post": {
+        "summary": "Employee check-in",
+        "description": "Record employee check-in for the current day based on configured timezone.",
+        "responses": {
+          "200": {
+            "description": "Check-in recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/check-out": {
+      "post": {
+        "summary": "Employee check-out",
+        "description": "Record employee check-out for the current day.",
+        "responses": {
+          "200": {
+            "description": "Check-out recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/today": {
+      "get": {
+        "summary": "Get today's attendance status",
+        "description": "Retrieve the attendance record for the current authenticated employee for today.",
+        "responses": {
+          "200": {
+            "description": "Today's attendance details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/history": {
+      "get": {
+        "summary": "Get attendance history",
+        "description": "Retrieve paginated attendance history for the authenticated employee.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter end date (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance history retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-08-22"
+                          },
+                          "checkIn": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "checkOut": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PRESENT",
+                              "ABSENT",
+                              "LATE",
+                              "HALF_DAY"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "date",
+                          "checkIn",
+                          "status"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "total",
+                        "limit",
+                        "offset"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "history",
+                    "pagination"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
     }
   }
 }

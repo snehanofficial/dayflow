@@ -107,12 +107,36 @@ Implemented:
 - `Cancel` button resets the form back to loaded profile values
 - Fixed `useCallback` wrapping of `fetchProfile` to clear `react-hooks/exhaustive-deps` lint warning
 
+# Phase 3 — Attendance Management
+
+Status:
+Completed
+
+## Database Changes
+- Added `Attendance` model with fields `id`, `employeeId`, `attendanceDate` (mapped as `@db.Date`), `checkIn`, `checkOut`, `status` (enum: `PRESENT`, `LATE`, `ABSENT`, `HALF_DAY`), `createdAt`, `updatedAt` and unique index on `(employeeId, attendanceDate)`.
+- Executed migration `20260822155117_add_attendance_model` successfully.
+
+## API Changes
+- POST `/api/attendance/check-in` - Record employee daily check-in (computes status based on configured threshold and app-wide timezone).
+- POST `/api/attendance/check-out` - Record employee daily check-out.
+- GET `/api/attendance/today` - Retrieve current calendar day attendance status.
+- GET `/api/attendance/history` - Retrieve own attendance history with filter ranges and page offsets.
+
+## Frontend Changes
+- Registered `/attendance` route mapped to `<AttendancePage />` protected under `['EMPLOYEE', 'HR']` roles.
+- Linked "Attendance" sidebar navigation under AppShell using `clock` icon.
+- Created `client/src/features/attendance/AttendancePage.tsx` supporting status cards, action buttons, historical search controls, and accessibility skip links.
+
+## Tests
+- Created backend integration tests in `server/src/modules/domain/attendance/attendance.test.ts` covering double check-in/out, isolation boundaries, error mapping, and timezone calendar rollover bounds.
+- Created frontend unit/integration tests in `client/src/features/attendance/AttendancePage.test.tsx` verifying card triggers, empty states, and errors.
+
 ## Next Phase
-Attendance Management
+Attendance Insights
 
 ## Testing Status
-- Backend Vitest suite: 10 test files, 55 tests passing.
-- Frontend Vitest suite: 54 files, all typechecks, builds, and test suites passing.
+- Backend Vitest suite: 11 test files, 69 tests passing.
+- Frontend Vitest suite: 10 test files, 43 tests passing.
 
 ## Known Issues
 - None.
@@ -121,14 +145,17 @@ Attendance Management
 - None.
 
 ## Performance Notes
-- Auto-initialization uses database transaction checking to ensure profile creation is atomic.
+- Timezone operations run on server using `Intl.DateTimeFormat` configured once from centralized service.
+- Database index on `(employeeId, attendanceDate)` ensures constant-time check-in lookup.
 
 ## Security Checklist
-- [x] Enforce `requireAuth` on all employee endpoints.
+- [x] Enforce `requireAuth` on all employee & attendance endpoints.
 - [x] Enforce ownership check (users can only view/edit their own profile; HR can view all).
 - [x] Enforce `requireRole('HR')` on `PATCH /api/employees/:id` — employees cannot edit other profiles.
+- [x] Authoritatively resolve employee self-service identity from `req.user.id` on backend (no client input allowed).
 - [x] Zod schema validation for all patch inputs (self and HR).
 - [x] Double-submit cookie CSRF middleware verification.
 
 ## Deployment Notes
 - Prisma migrations must be executed via `pnpm run prisma:migrate` before deploying server updates.
+- Centralized `ATTENDANCE_TIMEZONE=Asia/Kolkata` and `ATTENDANCE_LATE_AFTER=09:00` config bindings must be set in environment variables.

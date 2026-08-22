@@ -11,6 +11,8 @@ export const configSchema = z.object({
     .default('development'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL must be specified'),
   CORS_ORIGIN: z.string().min(1, 'CORS_ORIGIN must be specified'),
+  ATTENDANCE_TIMEZONE: z.string().default('Asia/Kolkata'),
+  ATTENDANCE_LATE_AFTER: z.string().default('09:00'),
 });
 
 export type Config = z.infer<typeof configSchema>;

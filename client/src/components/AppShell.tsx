@@ -15,6 +15,7 @@ import {
   HelpCircle,
   Palette,
   Search,
+  Clock,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
@@ -39,6 +40,8 @@ function renderIcon(icon?: string) {
       return <Shield size={16} aria-hidden="true" />;
     case 'help':
       return <HelpCircle size={16} aria-hidden="true" />;
+    case 'clock':
+      return <Clock size={16} aria-hidden="true" />;
     default:
       return null;
   }

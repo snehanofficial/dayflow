@@ -10,12 +10,12 @@ const SRC_DIR = path.resolve(__dirname);
 // Helper to get all ts/tsx files recursively
 function getSourceFiles(dir: string): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
-  const files = entries.flatMap((entry) => {
+  const files = entries.flatMap((entry: any) => {
     const res = path.resolve(dir, entry.name);
     return entry.isDirectory() ? getSourceFiles(res) : res;
   });
   return files.filter(
-    (f) =>
+    (f: any) =>
       (f.endsWith('.ts') || f.endsWith('.tsx')) &&
       !f.includes('node_modules') &&
       !f.includes('dist'),
