@@ -131,12 +131,69 @@ Completed
 - Created backend integration tests in `server/src/modules/domain/attendance/attendance.test.ts` covering double check-in/out, isolation boundaries, error mapping, and timezone calendar rollover bounds.
 - Created frontend unit/integration tests in `client/src/features/attendance/AttendancePage.test.tsx` verifying card triggers, empty states, and errors.
 
-## Next Phase
-Attendance Insights
+## Phase 4 — Attendance Insights
+
+Status: Completed
+
+Objective:
+Provide useful attendance summaries and insights using the existing Attendance domain.
+
+Current Task:
+Phase 4 completed, all tests and verifications passing.
+
+### Backend
+- [x] Insights service
+- [x] Aggregation queries
+- [x] Date-period handling
+- [x] API controller
+- [x] Route
+- [x] Authorization
+
+### API
+- [x] OpenAPI schema
+- [x] Generated client types
+
+### Frontend
+- [x] Insights section
+- [x] Summary cards
+- [x] Period selector
+- [x] Trend visualization
+- [x] Loading state
+- [x] Empty state
+- [x] Error state
+- [x] Retry
+
+### Data correctness
+- [x] Timezone consistency
+- [x] Attendance-date consistency
+- [x] No invented ABSENT data
+- [x] Valid attendance percentage definition
+
+### Performance
+- [x] Database-side aggregation
+- [x] No N+1 queries
+- [x] Appropriate indexes verified
+
+### Testing
+- [x] Backend tests
+- [x] Frontend tests
+- [x] Timezone tests
+- [x] Authorization tests
+
+### Verification
+- [x] OpenAPI generation
+- [x] Typecheck
+- [x] Lint
+- [x] Build
+- [x] Full test suite
+
+### Documentation
+- [x] Tracker updated
+- [x] Architecture decisions documented
 
 ## Testing Status
-- Backend Vitest suite: 11 test files, 69 tests passing.
-- Frontend Vitest suite: 10 test files, 43 tests passing.
+- Backend Vitest suite: 11 test files, 75 tests passing.
+- Frontend Vitest suite: 10 test files, 48 tests passing.
 
 ## Known Issues
 - None.

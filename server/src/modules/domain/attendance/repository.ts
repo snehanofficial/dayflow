@@ -79,4 +79,51 @@ export class AttendanceRepository {
 
     return prisma.attendance.count({ where });
   }
+
+  async findInsightsSummary(params: {
+    employeeId: string;
+    startDate: Date;
+    endDate: Date;
+  }) {
+    const { employeeId, startDate, endDate } = params;
+
+    return prisma.attendance.groupBy({
+      by: ['status'],
+      where: {
+        employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      _count: {
+        status: true,
+      },
+    });
+  }
+
+  async findInsightsBreakdown(params: {
+    employeeId: string;
+    startDate: Date;
+    endDate: Date;
+  }) {
+    const { employeeId, startDate, endDate } = params;
+
+    return prisma.attendance.findMany({
+      where: {
+        employeeId,
+        attendanceDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        attendanceDate: true,
+        status: true,
+      },
+      orderBy: {
+        attendanceDate: 'asc',
+      },
+    });
+  }
 }

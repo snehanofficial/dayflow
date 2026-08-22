@@ -121,4 +121,82 @@ export class AttendanceService {
 
     return { records, total };
   }
+
+  async getInsights(params: {
+    userId: string;
+    startDateStr: string;
+    endDateStr: string;
+  }) {
+    const { userId, startDateStr, endDateStr } = params;
+
+    const employee = await this.employeeRepo.findByUserId(userId);
+    if (!employee) {
+      throw new NotFoundError('Employee profile not found');
+    }
+
+    const { startDate, endDate } = getAttendanceDateRange(
+      startDateStr,
+      endDateStr,
+    );
+
+    if (!startDate || !endDate) {
+      throw new BadRequestError('Start date and end date are required');
+    }
+
+    // 1. Fetch grouping counts by status
+    const summaryCounts = await this.repository.findInsightsSummary({
+      employeeId: employee.id,
+      startDate,
+      endDate,
+    });
+
+    // 2. Fetch daily chronological breakdown
+    const breakdownRecords = await this.repository.findInsightsBreakdown({
+      employeeId: employee.id,
+      startDate,
+      endDate,
+    });
+
+    // Calculate metrics
+    const presentCount =
+      summaryCounts.find((s) => s.status === 'PRESENT')?._count.status || 0;
+    const lateCount =
+      summaryCounts.find((s) => s.status === 'LATE')?._count.status || 0;
+    const halfDayCount =
+      summaryCounts.find((s) => s.status === 'HALF_DAY')?._count.status || 0;
+    const absentCount =
+      summaryCounts.find((s) => s.status === 'ABSENT')?._count.status || 0;
+
+    // Total recorded days is the sum of all statuses
+    const recordedDays = summaryCounts.reduce(
+      (acc, curr) => acc + curr._count.status,
+      0,
+    );
+
+    // Calculate On-Time Rate: Present Days / Recorded Days * 100
+    // Return null if recordedDays === 0
+    let onTimeRate: number | null = null;
+    if (recordedDays > 0) {
+      onTimeRate = Math.round((presentCount / recordedDays) * 100 * 10) / 10;
+    }
+
+    return {
+      period: {
+        startDate: startDateStr,
+        endDate: endDateStr,
+      },
+      summary: {
+        recordedDays,
+        presentDays: presentCount,
+        lateDays: lateCount,
+        halfDayDays: halfDayCount,
+        absentDays: absentCount,
+        onTimeRate,
+      },
+      breakdown: breakdownRecords.map((r) => ({
+        date: r.attendanceDate.toISOString().split('T')[0],
+        status: r.status,
+      })),
+    };
+  }
 }

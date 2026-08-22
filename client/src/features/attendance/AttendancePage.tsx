@@ -7,7 +7,9 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
+  Info,
 } from 'lucide-react';
+import { AttendanceInsights } from './AttendanceInsights.js';
 import { useAuth } from '../../context/AuthContext.js';
 import {
   Card,
@@ -415,6 +417,11 @@ export function AttendancePage() {
         </Card>
       </div>
 
+      {/* Attendance Insights Section */}
+      <div style={{ marginBottom: 'var(--space-8)' }}>
+        <AttendanceInsights />
+      </div>
+
       {/* History Log Section */}
       <Card>
         <div
@@ -631,6 +638,31 @@ export function AttendancePage() {
             )}
           </div>
         )}
+
+        {/* Informational manual adjustment notice */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-2)',
+            marginTop: 'var(--space-6)',
+            padding: 'var(--space-3)',
+            backgroundColor: 'var(--color-bg-tertiary)',
+            borderRadius: 'var(--radius-sm)',
+            fontSize: '0.8125rem',
+            color: 'var(--color-text-secondary)',
+            borderLeft: '3px solid var(--color-info)',
+          }}
+        >
+          <Info
+            size={16}
+            style={{ color: 'var(--color-info)', flexShrink: 0 }}
+          />
+          <span>
+            <strong>Need to correct an attendance record?</strong> Contact HR
+            support for manual adjustments to your attendance history.
+          </span>
+        </div>
       </Card>
     </section>
   );

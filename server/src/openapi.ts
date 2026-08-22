@@ -892,5 +892,102 @@ export const openApiDocument = {
         },
       },
     },
+    '/api/attendance/insights': {
+      get: {
+        summary: 'Get attendance insights',
+        description:
+          'Retrieve attendance metrics and daily breakdown for the authenticated employee within a date range.',
+        parameters: [
+          {
+            name: 'startDate',
+            in: 'query',
+            required: true,
+            schema: { type: 'string', format: 'date' },
+            description: 'Filter start date (YYYY-MM-DD)',
+          },
+          {
+            name: 'endDate',
+            in: 'query',
+            required: true,
+            schema: { type: 'string', format: 'date' },
+            description: 'Filter end date (YYYY-MM-DD)',
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Attendance insights retrieved',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    period: {
+                      type: 'object',
+                      properties: {
+                        startDate: {
+                          type: 'string',
+                          format: 'date',
+                          example: '2026-08-01',
+                        },
+                        endDate: {
+                          type: 'string',
+                          format: 'date',
+                          example: '2026-08-31',
+                        },
+                      },
+                      required: ['startDate', 'endDate'],
+                    },
+                    summary: {
+                      type: 'object',
+                      properties: {
+                        recordedDays: { type: 'integer', example: 22 },
+                        presentDays: { type: 'integer', example: 18 },
+                        lateDays: { type: 'integer', example: 4 },
+                        halfDayDays: { type: 'integer', example: 0 },
+                        absentDays: { type: 'integer', example: 0 },
+                        onTimeRate: {
+                          type: 'number',
+                          nullable: true,
+                          example: 81.8,
+                        },
+                      },
+                      required: [
+                        'recordedDays',
+                        'presentDays',
+                        'lateDays',
+                        'halfDayDays',
+                        'absentDays',
+                        'onTimeRate',
+                      ],
+                    },
+                    breakdown: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          date: {
+                            type: 'string',
+                            format: 'date',
+                            example: '2026-08-01',
+                          },
+                          status: {
+                            type: 'string',
+                            enum: ['PRESENT', 'ABSENT', 'LATE', 'HALF_DAY'],
+                          },
+                        },
+                        required: ['date', 'status'],
+                      },
+                    },
+                  },
+                  required: ['period', 'summary', 'breakdown'],
+                },
+              },
+            },
+          },
+          '400': { description: 'Bad Request' },
+          '401': { description: 'Authentication required' },
+        },
+      },
+    },
   },
 };

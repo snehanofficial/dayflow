@@ -1142,6 +1142,100 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/attendance/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attendance insights
+         * @description Retrieve attendance metrics and daily breakdown for the authenticated employee within a date range.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description Filter start date (YYYY-MM-DD) */
+                    startDate: string;
+                    /** @description Filter end date (YYYY-MM-DD) */
+                    endDate: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Attendance insights retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            period: {
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-01
+                                 */
+                                startDate: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-31
+                                 */
+                                endDate: string;
+                            };
+                            summary: {
+                                /** @example 22 */
+                                recordedDays: number;
+                                /** @example 18 */
+                                presentDays: number;
+                                /** @example 4 */
+                                lateDays: number;
+                                /** @example 0 */
+                                halfDayDays: number;
+                                /** @example 0 */
+                                absentDays: number;
+                                /** @example 81.8 */
+                                onTimeRate: number | null;
+                            };
+                            breakdown: {
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-01
+                                 */
+                                date: string;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            }[];
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {

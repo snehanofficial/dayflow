@@ -29,6 +29,21 @@ const historyQuerySchema = z.object({
     .optional(),
 });
 
+const insightsQuerySchema = z.object({
+  startDate: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Invalid startDate format. Expected YYYY-MM-DD',
+    ),
+  endDate: z
+    .string()
+    .regex(
+      /^\d{4}-\d{2}-\d{2}$/,
+      'Invalid endDate format. Expected YYYY-MM-DD',
+    ),
+});
+
 export class AttendanceController {
   private service = new AttendanceService();
 
@@ -108,6 +123,33 @@ export class AttendanceController {
           offset,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getInsights = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        throw new BadRequestError('User context missing');
+      }
+
+      const parsedQuery = insightsQuerySchema.safeParse(req.query);
+      if (!parsedQuery.success) {
+        throw new BadRequestError(
+          parsedQuery.error.errors.map((e: z.ZodIssue) => e.message).join(', '),
+        );
+      }
+
+      const { startDate, endDate } = parsedQuery.data;
+
+      const insights = await this.service.getInsights({
+        userId: req.user.id,
+        startDateStr: startDate,
+        endDateStr: endDate,
+      });
+
+      res.json(insights);
     } catch (error) {
       next(error);
     }

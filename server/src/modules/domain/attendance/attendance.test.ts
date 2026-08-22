@@ -355,4 +355,111 @@ describe('Attendance Domain Integration Tests', () => {
       expect(calendarDate2.getUTCMonth()).toBe(7);
     });
   });
+
+  describe('Attendance Insights API & Logic', () => {
+    it('should return 401 for insights request without authentication', async () => {
+      const res = await fetch(
+        `${testUrl}/api/attendance/insights?startDate=2026-08-01&endDate=2026-08-31`,
+      );
+      expect(res.status).toBe(401);
+    });
+
+    it('should reject requests with missing dates', async () => {
+      const res = await fetch(`${testUrl}/api/attendance/insights`, {
+        headers: { Cookie: `sid=${employeeSessionToken1}` },
+      });
+      expect(res.status).toBe(400);
+    });
+
+    it('should reject requests where startDate > endDate', async () => {
+      const res = await fetch(
+        `${testUrl}/api/attendance/insights?startDate=2026-08-25&endDate=2026-08-20`,
+        {
+          headers: { Cookie: `sid=${employeeSessionToken1}` },
+        },
+      );
+      expect(res.status).toBe(400);
+      const body = await res.json();
+      expect(body.error.message).toContain(
+        'Start date must be less than or equal to end date',
+      );
+    });
+
+    it('should return correctly aggregated metrics for the selected period', async () => {
+      // Create mock attendance records directly in the DB
+      await prisma.attendance.createMany({
+        data: [
+          {
+            employeeId: employeeUser1.employee.id,
+            attendanceDate: new Date('2026-08-01T00:00:00.000Z'),
+            checkIn: new Date('2026-08-01T08:30:00.000Z'),
+            status: 'PRESENT',
+          },
+          {
+            employeeId: employeeUser1.employee.id,
+            attendanceDate: new Date('2026-08-02T00:00:00.000Z'),
+            checkIn: new Date('2026-08-02T09:15:00.000Z'),
+            status: 'LATE',
+          },
+        ],
+      });
+
+      // Fetch insights
+      const res = await fetch(
+        `${testUrl}/api/attendance/insights?startDate=2026-08-01&endDate=2026-08-02`,
+        {
+          headers: { Cookie: `sid=${employeeSessionToken1}` },
+        },
+      );
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.summary.recordedDays).toBe(2);
+      expect(body.summary.presentDays).toBe(1);
+      expect(body.summary.lateDays).toBe(1);
+      expect(body.summary.onTimeRate).toBe(50); // 1 / 2 * 100
+      expect(body.breakdown).toHaveLength(2);
+      expect(body.breakdown[0].date).toBe('2026-08-01');
+      expect(body.breakdown[0].status).toBe('PRESENT');
+      expect(body.breakdown[1].date).toBe('2026-08-02');
+      expect(body.breakdown[1].status).toBe('LATE');
+    });
+
+    it('should return null onTimeRate when recordedDays is 0', async () => {
+      const res = await fetch(
+        `${testUrl}/api/attendance/insights?startDate=2026-09-01&endDate=2026-09-30`,
+        {
+          headers: { Cookie: `sid=${employeeSessionToken1}` },
+        },
+      );
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.summary.recordedDays).toBe(0);
+      expect(body.summary.onTimeRate).toBeNull();
+      expect(body.breakdown).toHaveLength(0);
+    });
+
+    it('should enforce employee data isolation', async () => {
+      // Employee 1 has records, Employee 2 has none
+      await prisma.attendance.create({
+        data: {
+          employeeId: employeeUser1.employee.id,
+          attendanceDate: new Date('2026-08-01T00:00:00.000Z'),
+          checkIn: new Date('2026-08-01T08:30:00.000Z'),
+          status: 'PRESENT',
+        },
+      });
+
+      // Employee 2 requests insights
+      const res = await fetch(
+        `${testUrl}/api/attendance/insights?startDate=2026-08-01&endDate=2026-08-31`,
+        {
+          headers: { Cookie: `sid=${employeeSessionToken2}` },
+        },
+      );
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      // Employee 2 should have 0 records despite Employee 1 having records
+      expect(body.summary.recordedDays).toBe(0);
+    });
+  });
 });
