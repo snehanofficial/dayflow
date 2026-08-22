@@ -48,6 +48,23 @@ const baseGroups: NavGroup[] = [
       },
     ],
   },
+  {
+    group: 'Payroll',
+    items: [
+      {
+        label: 'My Pay',
+        route: '/payroll/slips',
+        icon: 'payroll',
+        requiredPermission: { resource: 'payroll', action: 'read' },
+      },
+      {
+        label: 'Manage Payroll',
+        route: '/hr/payroll',
+        icon: 'shield',
+        requiredPermission: { resource: 'payroll', action: 'manage' },
+      },
+    ],
+  },
 ];
 
 // Append playground for developer inspection in local development

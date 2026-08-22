@@ -14,6 +14,7 @@ import {
 } from './modules/core/auth/index.js';
 import { searchRouter } from './modules/core/search/routes.js';
 import { leaveRouter } from './modules/leave/routes.js';
+import { payrollRouter } from './modules/payroll/routes.js';
 
 const app = express();
 
@@ -38,6 +39,9 @@ app.use('/api', searchRouter);
 
 // Mount leave module routes
 app.use('/api/leave', leaveRouter);
+
+// Mount payroll module routes
+app.use('/api/payroll', payrollRouter);
 
 
 // Log incoming request metadata

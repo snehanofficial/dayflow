@@ -16,6 +16,7 @@ import {
   Palette,
   Search,
   Calendar,
+  CreditCard,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
@@ -26,6 +27,8 @@ import { SearchPalette } from './SearchPalette.js';
 
 function renderIcon(icon?: string) {
   switch (icon) {
+    case 'payroll':
+      return <CreditCard size={16} aria-hidden="true" />;
     case 'calendar':
       return <Calendar size={16} aria-hidden="true" />;
     case 'dashboard':

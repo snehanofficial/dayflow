@@ -22,6 +22,8 @@ model User {
   sessions                Session[]
   permissions             UserPermission[]
   leaveRequests           LeaveRequest[]
+  salaryStructure         SalaryStructure?
+  salarySlips             SalarySlip[]
 
   @@map("users")
 }
@@ -64,5 +66,39 @@ model LeaveRequest {
   updatedAt   DateTime @updatedAt
 
   @@map("leave_requests")
+}
+
+model SalaryStructure {
+  id           String   @id @default(uuid()) @db.Uuid
+  employeeId   String   @unique
+  user         User     @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  basicSalary  Float    @default(0.0)
+  allowances   Float    @default(0.0)
+  deductions   Float    @default(0.0)
+  department   String   @default("Engineering")
+  designation  String   @default("Software Engineer")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("salary_structures")
+}
+
+model SalarySlip {
+  id           String   @id @default(uuid()) @db.Uuid
+  employeeId   String
+  user         User     @relation(fields: [employeeId], references: [employeeId], onDelete: Cascade)
+  month        String   // format "YYYY-MM"
+  basicSalary  Float
+  allowances   Float
+  deductions   Float
+  netSalary    Float
+  department   String
+  designation  String
+  status       String   @default("PAID")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([employeeId, month])
+  @@map("salary_slips")
 }
 

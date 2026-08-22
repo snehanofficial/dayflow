@@ -46,6 +46,8 @@ async function main() {
     { resource: 'resources', action: 'delete' },
     { resource: 'leave', action: 'read' },
     { resource: 'leave', action: 'manage' },
+    { resource: 'payroll', action: 'read' },
+    { resource: 'payroll', action: 'manage' },
   ];
 
   for (const perm of permissions) {
@@ -66,7 +68,27 @@ async function main() {
     });
   }
 
-  console.log(`✅ Seeding completed. Created user ${email} with permissions.`);
+  // Seed default salary structure for seeded user
+  await prisma.salaryStructure.upsert({
+    where: { employeeId: 'EMP-001' },
+    update: {
+      basicSalary: 6500,
+      allowances: 1500,
+      deductions: 500,
+      department: 'People Operations',
+      designation: 'HR Manager',
+    },
+    create: {
+      employeeId: 'EMP-001',
+      basicSalary: 6500,
+      allowances: 1500,
+      deductions: 500,
+      department: 'People Operations',
+      designation: 'HR Manager',
+    },
+  });
+
+  console.log(`✅ Seeding completed. Created user ${email} with permissions and salary structure.`);
 }
 
 main()

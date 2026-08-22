@@ -17,9 +17,13 @@ describe('Leave Module Integration Tests', () => {
     // Setup test users
     const pwdHash = await hashPassword('password123');
 
-    // Clean up first
-    await prisma.leaveRequest.deleteMany();
-    await prisma.session.deleteMany();
+    // Clean up first (targeted only)
+    await prisma.leaveRequest.deleteMany({
+      where: { employeeId: { in: ['EMP-LEAVE-01', 'EMP-LEAVE-HR'] } },
+    });
+    await prisma.session.deleteMany({
+      where: { user: { email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] } } },
+    });
     await prisma.user.deleteMany({
       where: {
         email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] },
@@ -79,8 +83,12 @@ describe('Leave Module Integration Tests', () => {
   });
 
   afterAll(async () => {
-    await prisma.leaveRequest.deleteMany();
-    await prisma.session.deleteMany();
+    await prisma.leaveRequest.deleteMany({
+      where: { employeeId: { in: ['EMP-LEAVE-01', 'EMP-LEAVE-HR'] } },
+    });
+    await prisma.session.deleteMany({
+      where: { user: { email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] } } },
+    });
     await prisma.user.deleteMany({
       where: {
         email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] },
