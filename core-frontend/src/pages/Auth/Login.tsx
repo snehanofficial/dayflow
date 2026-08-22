@@ -24,21 +24,33 @@ export function Login() {
     register,
     handleSubmit,
     setError,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  const currentEmail = watch('email');
 
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data.email, data.password);
       navigate(from, { replace: true });
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Login failed. Check your credentials.';
-      setError('root', { message });
+      if (
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        err.code === 'AUTH_EMAIL_NOT_VERIFIED'
+      ) {
+        setError('root', { message: 'AUTH_EMAIL_NOT_VERIFIED' });
+      } else {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Login failed. Check your credentials.';
+        setError('root', { message });
+      }
     }
   };
 
@@ -48,15 +60,32 @@ export function Login() {
         <div className="auth-header">
           <Link to="/" className="auth-brand">
             <Code2 size={16} strokeWidth={2.5} aria-hidden="true" />
-            <span>HackCore</span>
+            <span>Dayflow</span>
           </Link>
           <h1 className="auth-title">Sign in</h1>
-          <p className="auth-description">Access your developer dashboard.</p>
+          <p className="auth-description">Access your employee dashboard.</p>
         </div>
 
         {errors.root && (
           <div className="form-error-summary" role="alert">
-            {errors.root.message}
+            {errors.root.message === 'AUTH_EMAIL_NOT_VERIFIED' ? (
+              <span>
+                Please verify your email before signing in.{' '}
+                <Link
+                  to="/verify-email"
+                  state={{ email: currentEmail }}
+                  style={{
+                    color: 'var(--color-primary-text)',
+                    fontWeight: 600,
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Verify email now
+                </Link>
+              </span>
+            ) : (
+              errors.root.message
+            )}
           </div>
         )}
 
@@ -160,4 +189,5 @@ export function Login() {
     </div>
   );
 }
+
 export default Login;
