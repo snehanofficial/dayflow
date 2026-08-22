@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Code2 } from 'lucide-react';
@@ -8,17 +8,10 @@ import { Button, Label, Input } from '../../components/ui/index.js';
 import { loginSchema, type LoginFormData } from '../../lib/validations/auth.js';
 
 export function Login() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
-
-  const searchParams = new URLSearchParams(location.search);
-  const redirectTo =
-    searchParams.get('redirectTo') ||
-    searchParams.get('redirect') ||
-    searchParams.get('returnTo');
-  const from = redirectTo || location.state?.from?.pathname || '/';
 
   const {
     register,
@@ -31,6 +24,19 @@ export function Login() {
   });
 
   const currentEmail = watch('email');
+
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo =
+    searchParams.get('redirectTo') ||
+    searchParams.get('redirect') ||
+    searchParams.get('returnTo');
+  const from = redirectTo || location.state?.from?.pathname || '/';
+
+  const targetRedirect = from === '/login' ? '/' : from;
+
+  if (isAuthenticated && !isLoading) {
+    return <Navigate to={targetRedirect} replace />;
+  }
 
   const onSubmit = async (data: LoginFormData) => {
     try {

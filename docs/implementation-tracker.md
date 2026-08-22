@@ -130,5 +130,6 @@ DayFlow has been refined and verified as a generic personal full-stack starter. 
 - [x] Offline Mutation Guards disabled button & alert blocks (Status: `COMPLETED`)
 - [x] Diagnostics Page mockup table stripping (Status: `COMPLETED`)
 - [x] OpenAPI spec and branding cleanups (Status: `COMPLETED`)
+- [x] Automatic Login Page Redirection (Status: `COMPLETED`)
 
 
