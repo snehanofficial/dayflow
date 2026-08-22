@@ -507,6 +507,18 @@
                       "format": "date-time",
                       "nullable": true
                     },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -601,6 +613,18 @@
                       "format": "date-time",
                       "nullable": true
                     },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -681,6 +705,18 @@
                           "joiningDate": {
                             "type": "string",
                             "format": "date-time",
+                            "nullable": true
+                          },
+                          "profileImage": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "address": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "employmentStatus": {
+                            "type": "string",
                             "nullable": true
                           },
                           "createdAt": {
@@ -776,6 +812,18 @@
                     "joiningDate": {
                       "type": "string",
                       "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
                       "nullable": true
                     },
                     "createdAt": {

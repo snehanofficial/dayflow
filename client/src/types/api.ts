@@ -520,6 +520,9 @@ export interface paths {
                             designation?: string | null;
                             /** Format: date-time */
                             joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
                             /** Format: date-time */
                             createdAt: string;
                             /** Format: date-time */
@@ -581,6 +584,9 @@ export interface paths {
                             designation?: string | null;
                             /** Format: date-time */
                             joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
                             /** Format: date-time */
                             createdAt: string;
                             /** Format: date-time */
@@ -646,6 +652,9 @@ export interface paths {
                                 designation?: string | null;
                                 /** Format: date-time */
                                 joiningDate?: string | null;
+                                profileImage?: string | null;
+                                address?: string | null;
+                                employmentStatus?: string | null;
                                 /** Format: date-time */
                                 createdAt: string;
                                 /** Format: date-time */
@@ -720,6 +729,9 @@ export interface paths {
                             designation?: string | null;
                             /** Format: date-time */
                             joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
                             /** Format: date-time */
                             createdAt: string;
                             /** Format: date-time */

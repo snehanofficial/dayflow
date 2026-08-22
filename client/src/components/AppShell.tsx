@@ -174,11 +174,15 @@ export function AppShell() {
       ...group,
       items: group.items.filter(
         (item) =>
-          !item.requiredPermission ||
-          hasPermission(
-            item.requiredPermission.resource,
-            item.requiredPermission.action,
-          ),
+          (!item.requiredPermission ||
+            hasPermission(
+              item.requiredPermission.resource,
+              item.requiredPermission.action,
+            )) &&
+          (!item.requiredRole ||
+            (user &&
+              user.role &&
+              user.role.toUpperCase() === item.requiredRole.toUpperCase())),
       ),
     }))
     .filter((group) => group.items.length > 0);

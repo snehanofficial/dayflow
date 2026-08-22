@@ -26,6 +26,8 @@ import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
 import { ProfilePage } from './features/employee/ProfilePage.js';
+import { EmployeeDirectoryPage } from './features/employee/EmployeeDirectoryPage.js';
+import { EmployeeDetailPage } from './features/employee/EmployeeDetailPage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -444,6 +446,22 @@ export default function App() {
               >
                 <Route index element={<DashboardHome />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route
+                  path="employees"
+                  element={
+                    <ProtectedRoute role="HR">
+                      <EmployeeDirectoryPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="employees/:id"
+                  element={
+                    <ProtectedRoute role={['HR', 'EMPLOYEE']}>
+                      <EmployeeDetailPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="diagnostics"
                   element={

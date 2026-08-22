@@ -16,6 +16,9 @@ export class EmployeeRepository {
     department?: string;
     designation?: string;
     joiningDate?: Date;
+    profileImage?: string | null;
+    address?: string | null;
+    employmentStatus?: string | null;
   }) {
     return prisma.employee.create({
       data,

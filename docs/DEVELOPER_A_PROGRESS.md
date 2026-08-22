@@ -48,13 +48,41 @@ Employee + Attendance Modules
 - [x] Mounted route inside React Router and sidebar navigation config
 - [x] Passed full backend and frontend verification suites (`pnpm run verify`)
 
-## Current Task
-- PHASE 1 — EMPLOYEE FOUNDATION: Completed. Waiting for approval to proceed to Phase 2 (Dashboard).
+# Phase 2 — Employee Profile + Employee Management
 
-## Upcoming Tasks
-- PHASE 2: Employee Dashboard (attendance overview, shift details, widgets).
-- PHASE 3: Attendance Logging (check-in, check-out, geofencing, IP rules, manual entries).
-- PHASE 4: Attendance History & Insights (calendar, status badges, CSV export, monthly reports).
+Status:
+Completed
+
+Implemented:
+
+## Backend
+- Expanded Employee model with optional fields: profileImage, address, employmentStatus
+- Updated OpenAPI spec schemas for GET/PATCH profile, GET list, and GET detail endpoints
+- Updated Repository and Service logic supporting profile creation with extra fields
+- Enforced role checks for directory listing and own-profile ownership verification in detail retrieval
+
+## Frontend
+- Added role checking logic to AppShell navigation rendering
+- Registered Directory sidebar nav config and mounted `/employees` and `/employees/:id` routes
+- Created EmployeeDirectoryPage featuring local search filter, loading/empty/error states, and table layout responsive converting to cards on mobile
+- Created EmployeeDetailPage displaying structured personal and organizational data with permission boundary error handles
+
+## Database
+- Executed migration 20260822060721_add_employee_extra_fields to add columns to the employees table
+
+## APIs
+- GET /api/employees (HR role only)
+- GET /api/employees/:id (HR or owner employee only)
+
+## Tests
+- All 11 domain integration tests verified green
+- Sync tests passing for OpenAPI spec drift and typecheck compatibility
+
+## Known Issues
+- None
+
+## Next Phase
+Attendance Management
 
 ## Testing Status
 - Backend Vitest suite: 10 test files, 55 tests passing.
