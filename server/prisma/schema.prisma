@@ -21,12 +21,34 @@ model User {
   updatedAt               DateTime         @updatedAt
   sessions                Session[]
   permissions             UserPermission[]
+  employee                Employee?
   leaveRequests           LeaveRequest[]
   salaryStructure         SalaryStructure?
   salarySlips             SalarySlip[]
   notifications           Notification[]
 
   @@map("users")
+}
+
+model Employee {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @unique @db.Uuid
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode     String    @unique
+  firstName        String
+  lastName         String
+  phone            String?
+  department       String?
+  designation      String?
+  joiningDate      DateTime?
+  profileImage     String?
+  address          String?
+  employmentStatus String?   @default("ACTIVE")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  attendances      Attendance[]
+
+  @@map("employees")
 }
 
 model Session {
@@ -50,6 +72,30 @@ model UserPermission {
 
   @@unique([userId, resource, action])
   @@map("user_permissions")
+}
+
+model Attendance {
+  id             String           @id @default(uuid()) @db.Uuid
+  employeeId     String           @db.Uuid
+  employee       Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  attendanceDate DateTime         @db.Date
+  checkIn        DateTime
+  checkOut       DateTime?
+  status         AttendanceStatus @default(PRESENT)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([employeeId, attendanceDate])
+  @@index([employeeId])
+  @@index([attendanceDate])
+  @@map("attendances")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
 }
 
 model LeaveRequest {
@@ -115,4 +161,3 @@ model Notification {
 
   @@map("notifications")
 }
-

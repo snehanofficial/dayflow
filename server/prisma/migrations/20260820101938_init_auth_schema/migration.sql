@@ -1,8 +1,13 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL,
+    "employeeId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'EMPLOYEE',
+    "emailVerified" BOOLEAN NOT NULL DEFAULT false,
+    "verificationToken" TEXT,
+    "verificationTokenExpiry" TIMESTAMP(3),
     "passwordResetToken" TEXT,
     "passwordResetExpiry" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,7 +39,13 @@ CREATE TABLE "user_permissions" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_employeeId_key" ON "users"("employeeId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_verificationToken_key" ON "users"("verificationToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_passwordResetToken_key" ON "users"("passwordResetToken");

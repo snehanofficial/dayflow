@@ -15,6 +15,7 @@ import {
   HelpCircle,
   Palette,
   Search,
+  Clock,
   Calendar,
   CreditCard,
   BarChart3,
@@ -51,6 +52,8 @@ function renderIcon(icon?: string) {
       return <Shield size={16} aria-hidden="true" />;
     case 'help':
       return <HelpCircle size={16} aria-hidden="true" />;
+    case 'clock':
+      return <Clock size={16} aria-hidden="true" />;
     default:
       return null;
   }
@@ -256,11 +259,15 @@ export function AppShell() {
       ...group,
       items: group.items.filter(
         (item) =>
-          !item.requiredPermission ||
-          hasPermission(
-            item.requiredPermission.resource,
-            item.requiredPermission.action,
-          ),
+          (!item.requiredPermission ||
+            hasPermission(
+              item.requiredPermission.resource,
+              item.requiredPermission.action,
+            )) &&
+          (!item.requiredRole ||
+            (user &&
+              user.role &&
+              user.role.toUpperCase() === item.requiredRole.toUpperCase())),
       ),
     }))
     .filter((group) => group.items.length > 0);

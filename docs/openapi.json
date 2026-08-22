@@ -461,6 +461,1024 @@
         }
       }
     },
+    "/api/employee/profile": {
+      "get": {
+        "summary": "Get active user employee profile",
+        "description": "Retrieve the employee profile associated with the currently logged-in user session.",
+        "responses": {
+          "200": {
+            "description": "Employee profile retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update active user employee profile",
+        "description": "Update personal details of the logged-in user employee profile.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee profile updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/employees": {
+      "get": {
+        "summary": "List all employee profiles",
+        "description": "Retrieve a list of all employee profiles in the system. Requires HR permissions.",
+        "responses": {
+          "200": {
+            "description": "Employee profiles list retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "employees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "employeeCode": {
+                            "type": "string"
+                          },
+                          "firstName": {
+                            "type": "string"
+                          },
+                          "lastName": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "department": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "designation": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "joiningDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "profileImage": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "address": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "employmentStatus": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "userId",
+                          "employeeCode",
+                          "firstName",
+                          "lastName",
+                          "createdAt",
+                          "updatedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "employees"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden: Requires HR permissions"
+          }
+        }
+      }
+    },
+    "/api/employees/{id}": {
+      "get": {
+        "summary": "Get employee profile by ID",
+        "description": "Retrieve detailed employee profile by its unique database identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee profile retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update employee profile by ID",
+        "description": "Update employee profile details. Requires HR permissions.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "department": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "designation": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "joiningDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "profileImage": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "employmentStatus": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden: Requires HR permissions"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      }
+    },
+    "/api/attendance/check-in": {
+      "post": {
+        "summary": "Employee check-in",
+        "description": "Record employee check-in for the current day based on configured timezone.",
+        "responses": {
+          "200": {
+            "description": "Check-in recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/check-out": {
+      "post": {
+        "summary": "Employee check-out",
+        "description": "Record employee check-out for the current day.",
+        "responses": {
+          "200": {
+            "description": "Check-out recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/today": {
+      "get": {
+        "summary": "Get today's attendance status",
+        "description": "Retrieve the attendance record for the current authenticated employee for today.",
+        "responses": {
+          "200": {
+            "description": "Today's attendance details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/history": {
+      "get": {
+        "summary": "Get attendance history",
+        "description": "Retrieve paginated attendance history for the authenticated employee.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter end date (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance history retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-08-22"
+                          },
+                          "checkIn": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "checkOut": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PRESENT",
+                              "ABSENT",
+                              "LATE",
+                              "HALF_DAY"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "date",
+                          "checkIn",
+                          "status"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "total",
+                        "limit",
+                        "offset"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "history",
+                    "pagination"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/insights": {
+      "get": {
+        "summary": "Get attendance insights",
+        "description": "Retrieve attendance metrics and daily breakdown for the authenticated employee within a date range.",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter end date (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance insights retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "object",
+                      "properties": {
+                        "startDate": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-01"
+                        },
+                        "endDate": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-31"
+                        }
+                      },
+                      "required": [
+                        "startDate",
+                        "endDate"
+                      ]
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "recordedDays": {
+                          "type": "integer",
+                          "example": 22
+                        },
+                        "presentDays": {
+                          "type": "integer",
+                          "example": 18
+                        },
+                        "lateDays": {
+                          "type": "integer",
+                          "example": 4
+                        },
+                        "halfDayDays": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "absentDays": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "onTimeRate": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 81.8
+                        }
+                      },
+                      "required": [
+                        "recordedDays",
+                        "presentDays",
+                        "lateDays",
+                        "halfDayDays",
+                        "absentDays",
+                        "onTimeRate"
+                      ]
+                    },
+                    "breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-08-01"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PRESENT",
+                              "ABSENT",
+                              "LATE",
+                              "HALF_DAY"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "date",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "period",
+                    "summary",
+                    "breakdown"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
     "/api/leave/request": {
       "post": {
         "summary": "Submit Leave Request",
@@ -1003,16 +2021,16 @@
     "/api/payroll/salary-structure": {
       "get": {
         "summary": "Get Salary Structure",
-        "description": "Retrieve salary structure configurations (Employee views own; HR can filter via query).",
+        "description": "Retrieve salary structure configurations (Employee views own; HR can target employee by header).",
         "parameters": [
           {
             "name": "employeeId",
-            "in": "query",
+            "in": "header",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Employee ID (HR only)"
+            "description": "Employee ID (x-employee-id, HR only)"
           }
         ],
         "responses": {
@@ -1190,12 +2208,12 @@
         "parameters": [
           {
             "name": "employeeId",
-            "in": "query",
+            "in": "header",
             "required": false,
             "schema": {
               "type": "string"
             },
-            "description": "Filter by employee ID (HR only)"
+            "description": "Filter by employee ID (x-employee-id, HR only)"
           }
         ],
         "responses": {

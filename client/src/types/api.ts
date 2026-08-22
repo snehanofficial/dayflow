@@ -481,6 +481,761 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/employee/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get active user employee profile
+         * @description Retrieve the employee profile associated with the currently logged-in user session.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Employee profile retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            userId: string;
+                            employeeCode: string;
+                            firstName: string;
+                            lastName: string;
+                            phone?: string | null;
+                            department?: string | null;
+                            designation?: string | null;
+                            /** Format: date-time */
+                            joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update active user employee profile
+         * @description Update personal details of the logged-in user employee profile.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        firstName?: string;
+                        lastName?: string;
+                        phone?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Employee profile updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            userId: string;
+                            employeeCode: string;
+                            firstName: string;
+                            lastName: string;
+                            phone?: string | null;
+                            department?: string | null;
+                            designation?: string | null;
+                            /** Format: date-time */
+                            joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/employees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all employee profiles
+         * @description Retrieve a list of all employee profiles in the system. Requires HR permissions.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Employee profiles list retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            employees: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: uuid */
+                                userId: string;
+                                employeeCode: string;
+                                firstName: string;
+                                lastName: string;
+                                phone?: string | null;
+                                department?: string | null;
+                                designation?: string | null;
+                                /** Format: date-time */
+                                joiningDate?: string | null;
+                                profileImage?: string | null;
+                                address?: string | null;
+                                employmentStatus?: string | null;
+                                /** Format: date-time */
+                                createdAt: string;
+                                /** Format: date-time */
+                                updatedAt: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden: Requires HR permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/employees/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get employee profile by ID
+         * @description Retrieve detailed employee profile by its unique database identifier.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Employee ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Employee profile retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            userId: string;
+                            employeeCode: string;
+                            firstName: string;
+                            lastName: string;
+                            phone?: string | null;
+                            department?: string | null;
+                            designation?: string | null;
+                            /** Format: date-time */
+                            joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Employee not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Update employee profile by ID
+         * @description Update employee profile details. Requires HR permissions.
+         */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Employee ID */
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        firstName?: string;
+                        lastName?: string;
+                        phone?: string | null;
+                        department?: string | null;
+                        designation?: string | null;
+                        /** Format: date-time */
+                        joiningDate?: string | null;
+                        profileImage?: string | null;
+                        address?: string | null;
+                        employmentStatus?: string | null;
+                    };
+                };
+            };
+            responses: {
+                /** @description Employee profile updated successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** Format: uuid */
+                            id: string;
+                            /** Format: uuid */
+                            userId: string;
+                            employeeCode: string;
+                            firstName: string;
+                            lastName: string;
+                            phone?: string | null;
+                            department?: string | null;
+                            designation?: string | null;
+                            /** Format: date-time */
+                            joiningDate?: string | null;
+                            profileImage?: string | null;
+                            address?: string | null;
+                            employmentStatus?: string | null;
+                            /** Format: date-time */
+                            createdAt: string;
+                            /** Format: date-time */
+                            updatedAt: string;
+                        };
+                    };
+                };
+                /** @description Invalid input */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden: Requires HR permissions */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Employee not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/attendance/check-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Employee check-in
+         * @description Record employee check-in for the current day based on configured timezone.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Check-in recorded successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/check-out": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Employee check-out
+         * @description Record employee check-out for the current day.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Check-out recorded successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/today": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get today's attendance status
+         * @description Retrieve the attendance record for the current authenticated employee for today.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Today's attendance details */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            attendance: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            } | null;
+                        };
+                    };
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attendance history
+         * @description Retrieve paginated attendance history for the authenticated employee.
+         */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Maximum number of records to return */
+                    limit?: number;
+                    /** @description Number of records to skip */
+                    offset?: number;
+                    /** @description Filter start date (YYYY-MM-DD) */
+                    startDate?: string;
+                    /** @description Filter end date (YYYY-MM-DD) */
+                    endDate?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Attendance history retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            history: {
+                                /** Format: uuid */
+                                id: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-22
+                                 */
+                                date: string;
+                                /** Format: date-time */
+                                checkIn: string;
+                                /** Format: date-time */
+                                checkOut?: string | null;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            }[];
+                            pagination: {
+                                total: number;
+                                limit: number;
+                                offset: number;
+                            };
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/attendance/insights": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attendance insights
+         * @description Retrieve attendance metrics and daily breakdown for the authenticated employee within a date range.
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description Filter start date (YYYY-MM-DD) */
+                    startDate: string;
+                    /** @description Filter end date (YYYY-MM-DD) */
+                    endDate: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Attendance insights retrieved */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            period: {
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-01
+                                 */
+                                startDate: string;
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-31
+                                 */
+                                endDate: string;
+                            };
+                            summary: {
+                                /** @example 22 */
+                                recordedDays: number;
+                                /** @example 18 */
+                                presentDays: number;
+                                /** @example 4 */
+                                lateDays: number;
+                                /** @example 0 */
+                                halfDayDays: number;
+                                /** @example 0 */
+                                absentDays: number;
+                                /** @example 81.8 */
+                                onTimeRate: number | null;
+                            };
+                            breakdown: {
+                                /**
+                                 * Format: date
+                                 * @example 2026-08-01
+                                 */
+                                date: string;
+                                /** @enum {string} */
+                                status: "PRESENT" | "ABSENT" | "LATE" | "HALF_DAY";
+                            }[];
+                        };
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Authentication required */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/leave/request": {
         parameters: {
             query?: never;
@@ -939,15 +1694,15 @@ export interface paths {
         };
         /**
          * Get Salary Structure
-         * @description Retrieve salary structure configurations (Employee views own; HR can filter via query).
+         * @description Retrieve salary structure configurations (Employee views own; HR can target employee by header).
          */
         get: {
             parameters: {
-                query?: {
-                    /** @description Employee ID (HR only) */
+                query?: never;
+                header?: {
+                    /** @description Employee ID (x-employee-id, HR only) */
                     employeeId?: string;
                 };
-                header?: never;
                 path?: never;
                 cookie?: never;
             };
@@ -1078,11 +1833,11 @@ export interface paths {
          */
         get: {
             parameters: {
-                query?: {
-                    /** @description Filter by employee ID (HR only) */
+                query?: never;
+                header?: {
+                    /** @description Filter by employee ID (x-employee-id, HR only) */
                     employeeId?: string;
                 };
-                header?: never;
                 path?: never;
                 cookie?: never;
             };

@@ -1,1239 +1,2849 @@
 export const openApiDocument = {
-  openapi: '3.0.0',
-  info: {
-    title: 'DayFlow API',
-    version: '1.0.0',
-    description:
-      'API contract for the DayFlow - Personal Full-Stack Starter backend modules',
+  "openapi": "3.0.0",
+  "info": {
+    "title": "DayFlow API",
+    "version": "1.0.0",
+    "description": "API contract for the DayFlow - Personal Full-Stack Starter backend modules"
   },
-  paths: {
-    '/api/health': {
-      get: {
-        summary: 'Health Check',
-        description:
-          'Returns the health and operational status of the service.',
-        responses: {
-          '200': {
-            description: 'Service is healthy',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    status: {
-                      type: 'string',
-                      example: 'ok',
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Returns the health and operational status of the service.",
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
                     },
-                    timestamp: {
-                      type: 'string',
-                      example: '2026-08-20T12:00:00.000Z',
-                    },
+                    "timestamp": {
+                      "type": "string",
+                      "example": "2026-08-20T12:00:00.000Z"
+                    }
                   },
-                  required: ['status', 'timestamp'],
-                },
-              },
-            },
-          },
-        },
-      },
+                  "required": [
+                    "status",
+                    "timestamp"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    '/api/auth/csrf': {
-      get: {
-        summary: 'Get CSRF Token',
-        description:
-          'Establish a non-HTTP-only cookie containing the CSRF token and return it.',
-        responses: {
-          '200': {
-            description: 'CSRF token established',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    csrfToken: {
-                      type: 'string',
-                    },
+    "/api/auth/csrf": {
+      "get": {
+        "summary": "Get CSRF Token",
+        "description": "Establish a non-HTTP-only cookie containing the CSRF token and return it.",
+        "responses": {
+          "200": {
+            "description": "CSRF token established",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "csrfToken": {
+                      "type": "string"
+                    }
                   },
-                  required: ['csrfToken'],
-                },
-              },
-            },
-          },
-        },
-      },
+                  "required": [
+                    "csrfToken"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    '/api/auth/login': {
-      post: {
-        summary: 'Login',
-        description: 'Authenticate user and start secure session.',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  email: { type: 'string', format: 'email' },
-                  password: { type: 'string' },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login",
+        "description": "Authenticate user and start secure session.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
                 },
-                required: ['email', 'password'],
-              },
-            },
-          },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
         },
-        responses: {
-          '200': {
-            description: 'Login successful',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    user: {
-                      type: 'object',
-                      properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        email: { type: 'string', format: 'email' },
-                        permissions: {
-                          type: 'array',
-                          items: { type: 'string' },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
                         },
-                      },
-                      required: ['id', 'email', 'permissions'],
-                    },
-                    csrfToken: { type: 'string' },
-                  },
-                  required: ['user', 'csrfToken'],
-                },
-              },
-            },
-          },
-          '400': {
-            description: 'Invalid input parameters',
-          },
-          '401': {
-            description: 'Invalid credentials',
-          },
-        },
-      },
-    },
-    '/api/auth/signup': {
-      post: {
-        summary: 'Signup',
-        description:
-          'Register a new user, assign default permissions, and start secure session.',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  email: { type: 'string', format: 'email' },
-                  password: { type: 'string' },
-                },
-                required: ['email', 'password'],
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Signup successful and session established',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    user: {
-                      type: 'object',
-                      properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        email: { type: 'string', format: 'email' },
-                        permissions: {
-                          type: 'array',
-                          items: { type: 'string' },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
                         },
+                        "permissions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      required: ['id', 'email', 'permissions'],
+                      "required": [
+                        "id",
+                        "email",
+                        "permissions"
+                      ]
                     },
-                    csrfToken: { type: 'string' },
+                    "csrfToken": {
+                      "type": "string"
+                    }
                   },
-                  required: ['user', 'csrfToken'],
-                },
-              },
-            },
+                  "required": [
+                    "user",
+                    "csrfToken"
+                  ]
+                }
+              }
+            }
           },
-          '400': {
-            description: 'Invalid input parameters or email already registered',
+          "400": {
+            "description": "Invalid input parameters"
           },
-        },
-      },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
     },
-    '/api/auth/logout': {
-      post: {
-        summary: 'Logout',
-        description: 'Terminate active session and clear cookies.',
-        responses: {
-          '200': {
-            description: 'Logout successful',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    success: { type: 'boolean', example: true },
+    "/api/auth/signup": {
+      "post": {
+        "summary": "Signup",
+        "description": "Register a new user, assign default permissions, and start secure session.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
                   },
-                  required: ['success'],
+                  "password": {
+                    "type": "string"
+                  }
                 },
-              },
-            },
-          },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
         },
-      },
-    },
-    '/api/auth/me': {
-      get: {
-        summary: 'Verify Session',
-        description: 'Verify session cookie and retrieve active profile.',
-        responses: {
-          '200': {
-            description: 'Session valid',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    user: {
-                      type: 'object',
-                      properties: {
-                        id: { type: 'string', format: 'uuid' },
-                        email: { type: 'string', format: 'email' },
-                        permissions: {
-                          type: 'array',
-                          items: { type: 'string' },
+        "responses": {
+          "201": {
+            "description": "Signup successful and session established",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
                         },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "permissions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      required: ['id', 'email', 'permissions'],
+                      "required": [
+                        "id",
+                        "email",
+                        "permissions"
+                      ]
                     },
-                    csrfToken: { type: 'string' },
+                    "csrfToken": {
+                      "type": "string"
+                    }
                   },
-                  required: ['user', 'csrfToken'],
-                },
-              },
-            },
+                  "required": [
+                    "user",
+                    "csrfToken"
+                  ]
+                }
+              }
+            }
           },
-          '401': {
-            description: 'Session invalid or expired',
-          },
-        },
-      },
+          "400": {
+            "description": "Invalid input parameters or email already registered"
+          }
+        }
+      }
     },
-    '/api/auth/forgot-password': {
-      post: {
-        summary: 'Request Password Reset',
-        description: 'Generate temporary single-use reset token.',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  email: { type: 'string', format: 'email' },
-                },
-                required: ['email'],
-              },
-            },
-          },
-        },
-        responses: {
-          '200': {
-            description: 'Reset request received (generic message)',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    success: { type: 'boolean', example: true },
-                    message: { type: 'string' },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "description": "Terminate active session and clear cookies.",
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
                   },
-                  required: ['success', 'message'],
-                },
-              },
-            },
-          },
-        },
-      },
+                  "required": [
+                    "success"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     },
-    '/api/auth/reset-password': {
-      post: {
-        summary: 'Execute Password Reset',
-        description: 'Consume reset token and update user password.',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  token: { type: 'string' },
-                  password: { type: 'string' },
-                },
-                required: ['token', 'password'],
-              },
-            },
-          },
-        },
-        responses: {
-          '200': {
-            description: 'Password reset successful',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    success: { type: 'boolean', example: true },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Verify Session",
+        "description": "Verify session cookie and retrieve active profile.",
+        "responses": {
+          "200": {
+            "description": "Session valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "permissions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "email",
+                        "permissions"
+                      ]
+                    },
+                    "csrfToken": {
+                      "type": "string"
+                    }
                   },
-                  required: ['success'],
-                },
-              },
-            },
+                  "required": [
+                    "user",
+                    "csrfToken"
+                  ]
+                }
+              }
+            }
           },
-          '400': {
-            description: 'Invalid or expired token',
-          },
-        },
-      },
+          "401": {
+            "description": "Session invalid or expired"
+          }
+        }
+      }
     },
-    '/api/users/search': {
-      get: {
-        summary: 'Search Users',
-        description: 'Search user profiles by email. Requires active session.',
-        parameters: [
+    "/api/auth/forgot-password": {
+      "post": {
+        "summary": "Request Password Reset",
+        "description": "Generate temporary single-use reset token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                },
+                "required": [
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reset request received (generic message)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reset-password": {
+      "post": {
+        "summary": "Execute Password Reset",
+        "description": "Consume reset token and update user password.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or expired token"
+          }
+        }
+      }
+    },
+    "/api/users/search": {
+      "get": {
+        "summary": "Search Users",
+        "description": "Search user profiles by email. Requires active session.",
+        "parameters": [
           {
-            name: 'q',
-            in: 'query',
-            required: false,
-            schema: {
-              type: 'string',
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
             },
-            description: 'Search query string',
-          },
+            "description": "Search query string"
+          }
         ],
-        responses: {
-          '200': {
-            description: 'Matched users list',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    users: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          id: { type: 'string', format: 'uuid' },
-                          email: { type: 'string', format: 'email' },
+        "responses": {
+          "200": {
+            "description": "Matched users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          }
                         },
-                        required: ['id', 'email'],
-                      },
+                        "required": [
+                          "id",
+                          "email"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "users"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Session invalid or expired"
+          }
+        }
+      }
+    },
+    "/api/employee/profile": {
+      "get": {
+        "summary": "Get active user employee profile",
+        "description": "Retrieve the employee profile associated with the currently logged-in user session.",
+        "responses": {
+          "200": {
+            "description": "Employee profile retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
                     },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   },
-                  required: ['users'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
           },
-          '401': {
-            description: 'Session invalid or expired',
-          },
-        },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
       },
-    },
-    '/api/leave/request': {
-      post: {
-        summary: 'Submit Leave Request',
-        description: 'Submit a leave request. (Employee/HR)',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  leaveType: {
-                    type: 'string',
-                    enum: ['PAID', 'SICK', 'UNPAID'],
+      "patch": {
+        "summary": "Update active user employee profile",
+        "description": "Update personal details of the logged-in user employee profile.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
                   },
-                  startDate: { type: 'string', format: 'date-time' },
-                  endDate: { type: 'string', format: 'date-time' },
-                  reason: { type: 'string' },
-                },
-                required: ['leaveType', 'startDate', 'endDate', 'reason'],
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Leave request created',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    employeeId: { type: 'string' },
-                    leaveType: { type: 'string' },
-                    startDate: { type: 'string', format: 'date-time' },
-                    endDate: { type: 'string', format: 'date-time' },
-                    reason: { type: 'string' },
-                    status: { type: 'string' },
-                    remarks: { type: 'string', nullable: true },
-                    approvedBy: { type: 'string', nullable: true },
-                    createdAt: { type: 'string', format: 'date-time' },
-                    updatedAt: { type: 'string', format: 'date-time' },
+                  "lastName": {
+                    "type": "string"
                   },
-                  required: [
-                    'id',
-                    'employeeId',
-                    'leaveType',
-                    'startDate',
-                    'endDate',
-                    'reason',
-                    'status',
-                    'createdAt',
-                    'updatedAt',
-                  ],
-                },
-              },
-            },
-          },
-          '400': { description: 'Bad request parameters' },
-          '401': { description: 'Unauthorized' },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
         },
-      },
+        "responses": {
+          "200": {
+            "description": "Employee profile updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
     },
-    '/api/leave/my-requests': {
-      get: {
-        summary: 'Get My Leave Requests',
-        description:
-          'Retrieve all leave requests submitted by the logged-in employee.',
-        responses: {
-          '200': {
-            description: 'Employee requests list',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    requests: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          id: { type: 'string', format: 'uuid' },
-                          employeeId: { type: 'string' },
-                          leaveType: { type: 'string' },
-                          startDate: { type: 'string', format: 'date-time' },
-                          endDate: { type: 'string', format: 'date-time' },
-                          reason: { type: 'string' },
-                          status: { type: 'string' },
-                          remarks: { type: 'string', nullable: true },
-                          approvedBy: { type: 'string', nullable: true },
-                          createdAt: { type: 'string', format: 'date-time' },
-                          updatedAt: { type: 'string', format: 'date-time' },
+    "/api/employees": {
+      "get": {
+        "summary": "List all employee profiles",
+        "description": "Retrieve a list of all employee profiles in the system. Requires HR permissions.",
+        "responses": {
+          "200": {
+            "description": "Employee profiles list retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "employees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "employeeCode": {
+                            "type": "string"
+                          },
+                          "firstName": {
+                            "type": "string"
+                          },
+                          "lastName": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "department": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "designation": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "joiningDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "profileImage": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "address": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "employmentStatus": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
                         },
-                        required: [
-                          'id',
-                          'employeeId',
-                          'leaveType',
-                          'startDate',
-                          'endDate',
-                          'reason',
-                          'status',
-                          'createdAt',
-                          'updatedAt',
-                        ],
-                      },
-                    },
+                        "required": [
+                          "id",
+                          "userId",
+                          "employeeCode",
+                          "firstName",
+                          "lastName",
+                          "createdAt",
+                          "updatedAt"
+                        ]
+                      }
+                    }
                   },
-                  required: ['requests'],
-                },
-              },
-            },
+                  "required": [
+                    "employees"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-        },
-      },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden: Requires HR permissions"
+          }
+        }
+      }
     },
-    '/api/leave/balance': {
-      get: {
-        summary: 'Get Leave Balance',
-        description: 'Retrieve leave balances for the logged-in user.',
-        responses: {
-          '200': {
-            description: 'Leave balance breakdown',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    paid: {
-                      type: 'object',
-                      properties: {
-                        allocated: { type: 'integer' },
-                        used: { type: 'integer' },
-                        remaining: { type: 'integer' },
-                      },
-                      required: ['allocated', 'used', 'remaining'],
+    "/api/employees/{id}": {
+      "get": {
+        "summary": "Get employee profile by ID",
+        "description": "Retrieve detailed employee profile by its unique database identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Employee profile retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
                     },
-                    sick: {
-                      type: 'object',
-                      properties: {
-                        allocated: { type: 'integer' },
-                        used: { type: 'integer' },
-                        remaining: { type: 'integer' },
-                      },
-                      required: ['allocated', 'used', 'remaining'],
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
                     },
-                    unpaid: {
-                      type: 'object',
-                      properties: {
-                        allocated: { type: 'integer' },
-                        used: { type: 'integer' },
-                        remaining: { type: 'integer' },
-                      },
-                      required: ['allocated', 'used', 'remaining'],
+                    "employeeCode": {
+                      "type": "string"
                     },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   },
-                  required: ['paid', 'sick', 'unpaid'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-        },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
       },
+      "patch": {
+        "summary": "Update employee profile by ID",
+        "description": "Update employee profile details. Requires HR permissions.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Employee ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "department": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "designation": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "joiningDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "profileImage": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "address": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "employmentStatus": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Employee profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeCode": {
+                      "type": "string"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "department": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "designation": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "joiningDate": {
+                      "type": "string",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "profileImage": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "address": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "employmentStatus": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "employeeCode",
+                    "firstName",
+                    "lastName",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Forbidden: Requires HR permissions"
+          },
+          "404": {
+            "description": "Employee not found"
+          }
+        }
+      }
     },
-    '/api/leave/all': {
-      get: {
-        summary: 'Get All Leave Requests',
-        description:
-          'Retrieve leave requests across the organization (HR only).',
-        responses: {
-          '200': {
-            description: 'All requests list',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    requests: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          id: { type: 'string', format: 'uuid' },
-                          employeeId: { type: 'string' },
-                          leaveType: { type: 'string' },
-                          startDate: { type: 'string', format: 'date-time' },
-                          endDate: { type: 'string', format: 'date-time' },
-                          reason: { type: 'string' },
-                          status: { type: 'string' },
-                          remarks: { type: 'string', nullable: true },
-                          approvedBy: { type: 'string', nullable: true },
-                          createdAt: { type: 'string', format: 'date-time' },
-                          updatedAt: { type: 'string', format: 'date-time' },
-                          user: {
-                            type: 'object',
-                            properties: {
-                              email: { type: 'string', format: 'email' },
+    "/api/attendance/check-in": {
+      "post": {
+        "summary": "Employee check-in",
+        "description": "Record employee check-in for the current day based on configured timezone.",
+        "responses": {
+          "200": {
+            "description": "Check-in recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/check-out": {
+      "post": {
+        "summary": "Employee check-out",
+        "description": "Record employee check-out for the current day.",
+        "responses": {
+          "200": {
+            "description": "Check-out recorded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/today": {
+      "get": {
+        "summary": "Get today's attendance status",
+        "description": "Retrieve the attendance record for the current authenticated employee for today.",
+        "responses": {
+          "200": {
+            "description": "Today's attendance details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendance": {
+                      "type": "object",
+                      "nullable": true,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-22"
+                        },
+                        "checkIn": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "checkOut": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PRESENT",
+                            "ABSENT",
+                            "LATE",
+                            "HALF_DAY"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "date",
+                        "checkIn",
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "attendance"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/history": {
+      "get": {
+        "summary": "Get attendance history",
+        "description": "Retrieve paginated attendance history for the authenticated employee.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter end date (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance history retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "history": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-08-22"
+                          },
+                          "checkIn": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "checkOut": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PRESENT",
+                              "ABSENT",
+                              "LATE",
+                              "HALF_DAY"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "date",
+                          "checkIn",
+                          "status"
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "offset": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "total",
+                        "limit",
+                        "offset"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "history",
+                    "pagination"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/attendance/insights": {
+      "get": {
+        "summary": "Get attendance insights",
+        "description": "Retrieve attendance metrics and daily breakdown for the authenticated employee within a date range.",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter end date (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Attendance insights retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "object",
+                      "properties": {
+                        "startDate": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-01"
+                        },
+                        "endDate": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2026-08-31"
+                        }
+                      },
+                      "required": [
+                        "startDate",
+                        "endDate"
+                      ]
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "recordedDays": {
+                          "type": "integer",
+                          "example": 22
+                        },
+                        "presentDays": {
+                          "type": "integer",
+                          "example": 18
+                        },
+                        "lateDays": {
+                          "type": "integer",
+                          "example": 4
+                        },
+                        "halfDayDays": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "absentDays": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "onTimeRate": {
+                          "type": "number",
+                          "nullable": true,
+                          "example": 81.8
+                        }
+                      },
+                      "required": [
+                        "recordedDays",
+                        "presentDays",
+                        "lateDays",
+                        "halfDayDays",
+                        "absentDays",
+                        "onTimeRate"
+                      ]
+                    },
+                    "breakdown": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2026-08-01"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PRESENT",
+                              "ABSENT",
+                              "LATE",
+                              "HALF_DAY"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "date",
+                          "status"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "period",
+                    "summary",
+                    "breakdown"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        }
+      }
+    },
+    "/api/leave/request": {
+      "post": {
+        "summary": "Submit Leave Request",
+        "description": "Submit a leave request. (Employee/HR)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "leaveType": {
+                    "type": "string",
+                    "enum": [
+                      "PAID",
+                      "SICK",
+                      "UNPAID"
+                    ]
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "leaveType",
+                  "startDate",
+                  "endDate",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Leave request created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeId": {
+                      "type": "string"
+                    },
+                    "leaveType": {
+                      "type": "string"
+                    },
+                    "startDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "remarks": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "approvedBy": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "employeeId",
+                    "leaveType",
+                    "startDate",
+                    "endDate",
+                    "reason",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request parameters"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/leave/my-requests": {
+      "get": {
+        "summary": "Get My Leave Requests",
+        "description": "Retrieve all leave requests submitted by the logged-in employee.",
+        "responses": {
+          "200": {
+            "description": "Employee requests list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "employeeId": {
+                            "type": "string"
+                          },
+                          "leaveType": {
+                            "type": "string"
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "endDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "remarks": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "approvedBy": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "employeeId",
+                          "leaveType",
+                          "startDate",
+                          "endDate",
+                          "reason",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "requests"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/leave/balance": {
+      "get": {
+        "summary": "Get Leave Balance",
+        "description": "Retrieve leave balances for the logged-in user.",
+        "responses": {
+          "200": {
+            "description": "Leave balance breakdown",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "paid": {
+                      "type": "object",
+                      "properties": {
+                        "allocated": {
+                          "type": "integer"
+                        },
+                        "used": {
+                          "type": "integer"
+                        },
+                        "remaining": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "allocated",
+                        "used",
+                        "remaining"
+                      ]
+                    },
+                    "sick": {
+                      "type": "object",
+                      "properties": {
+                        "allocated": {
+                          "type": "integer"
+                        },
+                        "used": {
+                          "type": "integer"
+                        },
+                        "remaining": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "allocated",
+                        "used",
+                        "remaining"
+                      ]
+                    },
+                    "unpaid": {
+                      "type": "object",
+                      "properties": {
+                        "allocated": {
+                          "type": "integer"
+                        },
+                        "used": {
+                          "type": "integer"
+                        },
+                        "remaining": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "allocated",
+                        "used",
+                        "remaining"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "paid",
+                    "sick",
+                    "unpaid"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/leave/all": {
+      "get": {
+        "summary": "Get All Leave Requests",
+        "description": "Retrieve leave requests across the organization (HR only).",
+        "responses": {
+          "200": {
+            "description": "All requests list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "requests": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "employeeId": {
+                            "type": "string"
+                          },
+                          "leaveType": {
+                            "type": "string"
+                          },
+                          "startDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "endDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "remarks": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "approvedBy": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "email": {
+                                "type": "string",
+                                "format": "email"
+                              }
                             },
-                            required: ['email'],
-                          },
+                            "required": [
+                              "email"
+                            ]
+                          }
                         },
-                        required: [
-                          'id',
-                          'employeeId',
-                          'leaveType',
-                          'startDate',
-                          'endDate',
-                          'reason',
-                          'status',
-                          'createdAt',
-                          'updatedAt',
-                          'user',
-                        ],
-                      },
+                        "required": [
+                          "id",
+                          "employeeId",
+                          "leaveType",
+                          "startDate",
+                          "endDate",
+                          "reason",
+                          "status",
+                          "createdAt",
+                          "updatedAt",
+                          "user"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "requests"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/leave/{id}/approve": {
+      "patch": {
+        "summary": "Approve Leave Request",
+        "description": "Approve a pending leave request (HR only).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Request ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "remarks": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Leave request approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
                     },
+                    "status": {
+                      "type": "string"
+                    },
+                    "remarks": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "approvedBy": {
+                      "type": "string",
+                      "nullable": true
+                    }
                   },
-                  required: ['requests'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "status"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-        },
-      },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        }
+      }
     },
-    '/api/leave/{id}/approve': {
-      patch: {
-        summary: 'Approve Leave Request',
-        description: 'Approve a pending leave request (HR only).',
-        parameters: [
+    "/api/leave/{id}/reject": {
+      "patch": {
+        "summary": "Reject Leave Request",
+        "description": "Reject a pending leave request (HR only).",
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'string', format: 'uuid' },
-            description: 'Request ID',
-          },
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Request ID"
+          }
         ],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  remarks: { type: 'string' },
-                },
-              },
-            },
-          },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "remarks": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         },
-        responses: {
-          '200': {
-            description: 'Leave request approved',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    status: { type: 'string' },
-                    remarks: { type: 'string', nullable: true },
-                    approvedBy: { type: 'string', nullable: true },
+        "responses": {
+          "200": {
+            "description": "Leave request rejected",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "remarks": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "approvedBy": {
+                      "type": "string",
+                      "nullable": true
+                    }
                   },
-                  required: ['id', 'status'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "status"
+                  ]
+                }
+              }
+            }
           },
-          '400': { description: 'Bad request' },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-          '404': { description: 'Request not found' },
-        },
-      },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        }
+      }
     },
-    '/api/leave/{id}/reject': {
-      patch: {
-        summary: 'Reject Leave Request',
-        description: 'Reject a pending leave request (HR only).',
-        parameters: [
+    "/api/payroll/salary-structure": {
+      "get": {
+        "summary": "Get Salary Structure",
+        "description": "Retrieve salary structure configurations (Employee views own; HR can target employee by header).",
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'string', format: 'uuid' },
-            description: 'Request ID',
-          },
+            "name": "employeeId",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Employee ID (x-employee-id, HR only)"
+          }
         ],
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  remarks: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-        responses: {
-          '200': {
-            description: 'Leave request rejected',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    status: { type: 'string' },
-                    remarks: { type: 'string', nullable: true },
-                    approvedBy: { type: 'string', nullable: true },
+        "responses": {
+          "200": {
+            "description": "Salary structure configurations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeId": {
+                      "type": "string"
+                    },
+                    "basicSalary": {
+                      "type": "number"
+                    },
+                    "allowances": {
+                      "type": "number"
+                    },
+                    "deductions": {
+                      "type": "number"
+                    },
+                    "netSalary": {
+                      "type": "number"
+                    },
+                    "department": {
+                      "type": "string"
+                    },
+                    "designation": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   },
-                  required: ['id', 'status'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "employeeId",
+                    "basicSalary",
+                    "allowances",
+                    "deductions",
+                    "netSalary",
+                    "department",
+                    "designation"
+                  ]
+                }
+              }
+            }
           },
-          '400': { description: 'Bad request' },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-          '404': { description: 'Request not found' },
-        },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Salary structure not found"
+          }
+        }
       },
+      "put": {
+        "summary": "Configure Salary Structure",
+        "description": "Configure or update salary structure settings for an employee (HR only).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "employeeId": {
+                    "type": "string"
+                  },
+                  "basicSalary": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "allowances": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "deductions": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "department": {
+                    "type": "string"
+                  },
+                  "designation": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "employeeId",
+                  "basicSalary",
+                  "allowances",
+                  "deductions",
+                  "department",
+                  "designation"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Salary structure saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "employeeId": {
+                      "type": "string"
+                    },
+                    "basicSalary": {
+                      "type": "number"
+                    },
+                    "allowances": {
+                      "type": "number"
+                    },
+                    "deductions": {
+                      "type": "number"
+                    },
+                    "netSalary": {
+                      "type": "number"
+                    },
+                    "department": {
+                      "type": "string"
+                    },
+                    "designation": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "employeeId",
+                    "basicSalary",
+                    "allowances",
+                    "deductions",
+                    "netSalary",
+                    "department",
+                    "designation"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     },
-    '/api/payroll/salary-structure': {
-      get: {
-        summary: 'Get Salary Structure',
-        description:
-          'Retrieve salary structure configurations (Employee views own; HR can filter via query).',
-        parameters: [
+    "/api/payroll/slips": {
+      "get": {
+        "summary": "Get Salary Slips",
+        "description": "Retrieve salary slips list (Employee views own; HR views all).",
+        "parameters": [
           {
-            name: 'employeeId',
-            in: 'query',
-            required: false,
-            schema: { type: 'string' },
-            description: 'Employee ID (HR only)',
-          },
+            "name": "employeeId",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by employee ID (x-employee-id, HR only)"
+          }
         ],
-        responses: {
-          '200': {
-            description: 'Salary structure configurations',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    employeeId: { type: 'string' },
-                    basicSalary: { type: 'number' },
-                    allowances: { type: 'number' },
-                    deductions: { type: 'number' },
-                    netSalary: { type: 'number' },
-                    department: { type: 'string' },
-                    designation: { type: 'string' },
-                    createdAt: { type: 'string', format: 'date-time' },
-                    updatedAt: { type: 'string', format: 'date-time' },
-                  },
-                  required: [
-                    'id',
-                    'employeeId',
-                    'basicSalary',
-                    'allowances',
-                    'deductions',
-                    'netSalary',
-                    'department',
-                    'designation',
-                  ],
-                },
-              },
-            },
-          },
-          '401': { description: 'Unauthorized' },
-          '404': { description: 'Salary structure not found' },
-        },
-      },
-      put: {
-        summary: 'Configure Salary Structure',
-        description:
-          'Configure or update salary structure settings for an employee (HR only).',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  employeeId: { type: 'string' },
-                  basicSalary: { type: 'number', minimum: 0 },
-                  allowances: { type: 'number', minimum: 0 },
-                  deductions: { type: 'number', minimum: 0 },
-                  department: { type: 'string' },
-                  designation: { type: 'string' },
-                },
-                required: [
-                  'employeeId',
-                  'basicSalary',
-                  'allowances',
-                  'deductions',
-                  'department',
-                  'designation',
-                ],
-              },
-            },
-          },
-        },
-        responses: {
-          '200': {
-            description: 'Salary structure saved',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    employeeId: { type: 'string' },
-                    basicSalary: { type: 'number' },
-                    allowances: { type: 'number' },
-                    deductions: { type: 'number' },
-                    netSalary: { type: 'number' },
-                    department: { type: 'string' },
-                    designation: { type: 'string' },
-                  },
-                  required: [
-                    'id',
-                    'employeeId',
-                    'basicSalary',
-                    'allowances',
-                    'deductions',
-                    'netSalary',
-                    'department',
-                    'designation',
-                  ],
-                },
-              },
-            },
-          },
-          '400': { description: 'Bad request' },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-        },
-      },
-    },
-    '/api/payroll/slips': {
-      get: {
-        summary: 'Get Salary Slips',
-        description:
-          'Retrieve salary slips list (Employee views own; HR views all).',
-        parameters: [
-          {
-            name: 'employeeId',
-            in: 'query',
-            required: false,
-            schema: { type: 'string' },
-            description: 'Filter by employee ID (HR only)',
-          },
-        ],
-        responses: {
-          '200': {
-            description: 'Salary slips list',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    slips: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          id: { type: 'string', format: 'uuid' },
-                          employeeId: { type: 'string' },
-                          month: { type: 'string' },
-                          basicSalary: { type: 'number' },
-                          allowances: { type: 'number' },
-                          deductions: { type: 'number' },
-                          netSalary: { type: 'number' },
-                          department: { type: 'string' },
-                          designation: { type: 'string' },
-                          status: { type: 'string' },
-                          createdAt: { type: 'string', format: 'date-time' },
-                          user: {
-                            type: 'object',
-                            properties: {
-                              email: { type: 'string', format: 'email' },
+        "responses": {
+          "200": {
+            "description": "Salary slips list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "slips": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "employeeId": {
+                            "type": "string"
+                          },
+                          "month": {
+                            "type": "string"
+                          },
+                          "basicSalary": {
+                            "type": "number"
+                          },
+                          "allowances": {
+                            "type": "number"
+                          },
+                          "deductions": {
+                            "type": "number"
+                          },
+                          "netSalary": {
+                            "type": "number"
+                          },
+                          "department": {
+                            "type": "string"
+                          },
+                          "designation": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "email": {
+                                "type": "string",
+                                "format": "email"
+                              }
                             },
-                            required: ['email'],
-                          },
+                            "required": [
+                              "email"
+                            ]
+                          }
                         },
-                        required: [
-                          'id',
-                          'employeeId',
-                          'month',
-                          'basicSalary',
-                          'allowances',
-                          'deductions',
-                          'netSalary',
-                          'department',
-                          'designation',
-                          'status',
-                          'createdAt',
-                        ],
-                      },
+                        "required": [
+                          "id",
+                          "employeeId",
+                          "month",
+                          "basicSalary",
+                          "allowances",
+                          "deductions",
+                          "netSalary",
+                          "department",
+                          "designation",
+                          "status",
+                          "createdAt"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "slips"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/payroll/slip/generate": {
+      "post": {
+        "summary": "Generate Salary Slip",
+        "description": "Generate a salary slip for an employee and month (HR only).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "employeeId": {
+                    "type": "string"
+                  },
+                  "month": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}$"
+                  }
+                },
+                "required": [
+                  "employeeId",
+                  "month"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Salary slip generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
                     },
+                    "employeeId": {
+                      "type": "string"
+                    },
+                    "month": {
+                      "type": "string"
+                    },
+                    "basicSalary": {
+                      "type": "number"
+                    },
+                    "allowances": {
+                      "type": "number"
+                    },
+                    "deductions": {
+                      "type": "number"
+                    },
+                    "netSalary": {
+                      "type": "number"
+                    },
+                    "department": {
+                      "type": "string"
+                    },
+                    "designation": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
                   },
-                  required: ['slips'],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "employeeId",
+                    "month",
+                    "basicSalary",
+                    "allowances",
+                    "deductions",
+                    "netSalary",
+                    "department",
+                    "designation",
+                    "status"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-        },
-      },
+          "400": {
+            "description": "Bad request or missing salary structure"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     },
-    '/api/payroll/slip/generate': {
-      post: {
-        summary: 'Generate Salary Slip',
-        description:
-          'Generate a salary slip for an employee and month (HR only).',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  employeeId: { type: 'string' },
-                  month: { type: 'string', pattern: '^\\d{4}-\\d{2}$' },
-                },
-                required: ['employeeId', 'month'],
-              },
-            },
-          },
-        },
-        responses: {
-          '201': {
-            description: 'Salary slip generated',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    employeeId: { type: 'string' },
-                    month: { type: 'string' },
-                    basicSalary: { type: 'number' },
-                    allowances: { type: 'number' },
-                    deductions: { type: 'number' },
-                    netSalary: { type: 'number' },
-                    department: { type: 'string' },
-                    designation: { type: 'string' },
-                    status: { type: 'string' },
-                  },
-                  required: [
-                    'id',
-                    'employeeId',
-                    'month',
-                    'basicSalary',
-                    'allowances',
-                    'deductions',
-                    'netSalary',
-                    'department',
-                    'designation',
-                    'status',
-                  ],
-                },
-              },
-            },
-          },
-          '400': { description: 'Bad request or missing salary structure' },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-        },
-      },
-    },
-    '/api/payroll/slip/{id}': {
-      get: {
-        summary: 'Get Salary Slip Details',
-        description:
-          'Retrieve a single salary slip details by ID (Employee/HR).',
-        parameters: [
+    "/api/payroll/slip/{id}": {
+      "get": {
+        "summary": "Get Salary Slip Details",
+        "description": "Retrieve a single salary slip details by ID (Employee/HR).",
+        "parameters": [
           {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'string', format: 'uuid' },
-            description: 'Salary Slip ID',
-          },
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Salary Slip ID"
+          }
         ],
-        responses: {
-          '200': {
-            description: 'Salary slip details',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string', format: 'uuid' },
-                    employeeId: { type: 'string' },
-                    month: { type: 'string' },
-                    basicSalary: { type: 'number' },
-                    allowances: { type: 'number' },
-                    deductions: { type: 'number' },
-                    netSalary: { type: 'number' },
-                    department: { type: 'string' },
-                    designation: { type: 'string' },
-                    status: { type: 'string' },
-                    createdAt: { type: 'string', format: 'date-time' },
-                    user: {
-                      type: 'object',
-                      properties: {
-                        email: { type: 'string', format: 'email' },
-                      },
-                      required: ['email'],
+        "responses": {
+          "200": {
+            "description": "Salary slip details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
                     },
+                    "employeeId": {
+                      "type": "string"
+                    },
+                    "month": {
+                      "type": "string"
+                    },
+                    "basicSalary": {
+                      "type": "number"
+                    },
+                    "allowances": {
+                      "type": "number"
+                    },
+                    "deductions": {
+                      "type": "number"
+                    },
+                    "netSalary": {
+                      "type": "number"
+                    },
+                    "department": {
+                      "type": "string"
+                    },
+                    "designation": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "required": [
+                        "email"
+                      ]
+                    }
                   },
-                  required: [
-                    'id',
-                    'employeeId',
-                    'month',
-                    'basicSalary',
-                    'allowances',
-                    'deductions',
-                    'netSalary',
-                    'department',
-                    'designation',
-                    'status',
-                    'createdAt',
-                    'user',
-                  ],
-                },
-              },
-            },
+                  "required": [
+                    "id",
+                    "employeeId",
+                    "month",
+                    "basicSalary",
+                    "allowances",
+                    "deductions",
+                    "netSalary",
+                    "department",
+                    "designation",
+                    "status",
+                    "createdAt",
+                    "user"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-          '404': { description: 'Salary slip not found' },
-        },
-      },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Salary slip not found"
+          }
+        }
+      }
     },
-    '/api/analytics/dashboard': {
-      get: {
-        summary: 'Get HR Analytics Dashboard Data',
-        description:
-          'Retrieve high-level HR metrics and charting distributions (HR only).',
-        responses: {
-          '200': {
-            description: 'Dashboard metrics and charts data',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    metrics: {
-                      type: 'object',
-                      properties: {
-                        totalEmployees: { type: 'integer' },
-                        presentToday: { type: 'integer' },
-                        absentToday: { type: 'integer' },
-                        onLeaveToday: { type: 'integer' },
-                        attendancePercentage: { type: 'number' },
-                        pendingLeavesCount: { type: 'integer' },
-                        payrollTotal: { type: 'number' },
+    "/api/analytics/dashboard": {
+      "get": {
+        "summary": "Get HR Analytics Dashboard Data",
+        "description": "Retrieve high-level HR metrics and charting distributions (HR only).",
+        "responses": {
+          "200": {
+            "description": "Dashboard metrics and charts data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metrics": {
+                      "type": "object",
+                      "properties": {
+                        "totalEmployees": {
+                          "type": "integer"
+                        },
+                        "presentToday": {
+                          "type": "integer"
+                        },
+                        "absentToday": {
+                          "type": "integer"
+                        },
+                        "onLeaveToday": {
+                          "type": "integer"
+                        },
+                        "attendancePercentage": {
+                          "type": "number"
+                        },
+                        "pendingLeavesCount": {
+                          "type": "integer"
+                        },
+                        "payrollTotal": {
+                          "type": "number"
+                        }
                       },
-                      required: [
-                        'totalEmployees',
-                        'presentToday',
-                        'absentToday',
-                        'onLeaveToday',
-                        'attendancePercentage',
-                        'pendingLeavesCount',
-                        'payrollTotal',
-                      ],
+                      "required": [
+                        "totalEmployees",
+                        "presentToday",
+                        "absentToday",
+                        "onLeaveToday",
+                        "attendancePercentage",
+                        "pendingLeavesCount",
+                        "payrollTotal"
+                      ]
                     },
-                    charts: {
-                      type: 'object',
-                      properties: {
-                        attendanceTrend: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              date: { type: 'string' },
-                              present: { type: 'integer' },
-                              absent: { type: 'integer' },
-                              leave: { type: 'integer' },
+                    "charts": {
+                      "type": "object",
+                      "properties": {
+                        "attendanceTrend": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "present": {
+                                "type": "integer"
+                              },
+                              "absent": {
+                                "type": "integer"
+                              },
+                              "leave": {
+                                "type": "integer"
+                              }
                             },
-                            required: ['date', 'present', 'absent', 'leave'],
-                          },
+                            "required": [
+                              "date",
+                              "present",
+                              "absent",
+                              "leave"
+                            ]
+                          }
                         },
-                        leaveDistribution: {
-                          type: 'object',
-                          properties: {
-                            paid: { type: 'integer' },
-                            sick: { type: 'integer' },
-                            unpaid: { type: 'integer' },
-                          },
-                          required: ['paid', 'sick', 'unpaid'],
-                        },
-                        departmentDistribution: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              department: { type: 'string' },
-                              count: { type: 'integer' },
+                        "leaveDistribution": {
+                          "type": "object",
+                          "properties": {
+                            "paid": {
+                              "type": "integer"
                             },
-                            required: ['department', 'count'],
-                          },
-                        },
-                        payrollSummary: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              department: { type: 'string' },
-                              basic: { type: 'number' },
-                              allowances: { type: 'number' },
-                              deductions: { type: 'number' },
-                              net: { type: 'number' },
+                            "sick": {
+                              "type": "integer"
                             },
-                            required: [
-                              'department',
-                              'basic',
-                              'allowances',
-                              'deductions',
-                              'net',
-                            ],
+                            "unpaid": {
+                              "type": "integer"
+                            }
                           },
+                          "required": [
+                            "paid",
+                            "sick",
+                            "unpaid"
+                          ]
                         },
+                        "departmentDistribution": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "department": {
+                                "type": "string"
+                              },
+                              "count": {
+                                "type": "integer"
+                              }
+                            },
+                            "required": [
+                              "department",
+                              "count"
+                            ]
+                          }
+                        },
+                        "payrollSummary": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "department": {
+                                "type": "string"
+                              },
+                              "basic": {
+                                "type": "number"
+                              },
+                              "allowances": {
+                                "type": "number"
+                              },
+                              "deductions": {
+                                "type": "number"
+                              },
+                              "net": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "department",
+                              "basic",
+                              "allowances",
+                              "deductions",
+                              "net"
+                            ]
+                          }
+                        }
                       },
-                      required: [
-                        'attendanceTrend',
-                        'leaveDistribution',
-                        'departmentDistribution',
-                        'payrollSummary',
-                      ],
-                    },
+                      "required": [
+                        "attendanceTrend",
+                        "leaveDistribution",
+                        "departmentDistribution",
+                        "payrollSummary"
+                      ]
+                    }
                   },
-                  required: ['metrics', 'charts'],
-                },
-              },
-            },
+                  "required": [
+                    "metrics",
+                    "charts"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-        },
-      },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     },
-    '/api/analytics/reports': {
-      get: {
-        summary: 'Get HR Analytics Tabular Reports',
-        description:
-          'Retrieve detailed tabular reports by report type (HR only).',
-        parameters: [
+    "/api/analytics/reports": {
+      "get": {
+        "summary": "Get HR Analytics Tabular Reports",
+        "description": "Retrieve detailed tabular reports by report type (HR only).",
+        "parameters": [
           {
-            name: 'type',
-            in: 'query',
-            required: true,
-            schema: {
-              type: 'string',
-              enum: ['attendance', 'leave', 'payroll'],
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "attendance",
+                "leave",
+                "payroll"
+              ]
             },
-            description: 'The type of report to retrieve',
-          },
+            "description": "The type of report to retrieve"
+          }
         ],
-        responses: {
-          '200': {
-            description: 'Tabular report rows',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    type: { type: 'string' },
-                    data: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        additionalProperties: true,
-                      },
+        "responses": {
+          "200": {
+            "description": "Tabular report rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
                     },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
                   },
-                  required: ['type', 'data'],
-                },
-              },
-            },
+                  "required": [
+                    "type",
+                    "data"
+                  ]
+                }
+              }
+            }
           },
-          '400': { description: 'Bad request parameters' },
-          '401': { description: 'Unauthorized' },
-          '403': { description: 'Forbidden' },
-        },
-      },
+          "400": {
+            "description": "Bad request parameters"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
     },
-    '/api/notifications': {
-      get: {
-        summary: 'Get User Notifications Feed',
-        description:
-          'Retrieve all read and unread notifications for the active user (Employee/HR).',
-        responses: {
-          '200': {
-            description: 'List of notifications',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    notifications: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          id: { type: 'string', format: 'uuid' },
-                          userId: { type: 'string', format: 'uuid' },
-                          title: { type: 'string' },
-                          message: { type: 'string' },
-                          type: { type: 'string' },
-                          read: { type: 'boolean' },
-                          createdAt: { type: 'string', format: 'date-time' },
+    "/api/notifications": {
+      "get": {
+        "summary": "Get User Notifications Feed",
+        "description": "Retrieve all read and unread notifications for the active user (Employee/HR).",
+        "responses": {
+          "200": {
+            "description": "List of notifications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notifications": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "userId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
                         },
-                        required: [
-                          'id',
-                          'userId',
-                          'title',
-                          'message',
-                          'type',
-                          'read',
-                          'createdAt',
-                        ],
-                      },
-                    },
+                        "required": [
+                          "id",
+                          "userId",
+                          "title",
+                          "message",
+                          "type",
+                          "read",
+                          "createdAt"
+                        ]
+                      }
+                    }
                   },
-                  required: ['notifications'],
-                },
-              },
-            },
+                  "required": [
+                    "notifications"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-        },
-      },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
     },
-    '/api/notifications/mark-read': {
-      post: {
-        summary: 'Mark Notifications as Read',
-        description:
-          'Mark selected notifications or all notifications as read for the active user.',
-        requestBody: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  ids: {
-                    type: 'array',
-                    items: { type: 'string', format: 'uuid' },
-                  },
-                },
-              },
-            },
-          },
+    "/api/notifications/mark-read": {
+      "post": {
+        "summary": "Mark Notifications as Read",
+        "description": "Mark selected notifications or all notifications as read for the active user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
-        responses: {
-          '200': {
-            description: 'Operation success status',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    success: { type: 'boolean' },
+        "responses": {
+          "200": {
+            "description": "Operation success status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
                   },
-                  required: ['success'],
-                },
-              },
-            },
+                  "required": [
+                    "success"
+                  ]
+                }
+              }
+            }
           },
-          '401': { description: 'Unauthorized' },
-        },
-      },
-    },
-  },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  }
 };

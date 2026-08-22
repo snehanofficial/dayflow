@@ -25,6 +25,10 @@ import { ForgotPassword } from './pages/Auth/ForgotPassword.js';
 import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
+import { ProfilePage } from './features/employee/ProfilePage.js';
+import { EmployeeDirectoryPage } from './features/employee/EmployeeDirectoryPage.js';
+import { EmployeeDetailPage } from './features/employee/EmployeeDetailPage.js';
+import { AttendancePage } from './features/attendance/AttendancePage.js';
 import { LeaveRequestPage } from './features/leave/LeaveRequestPage.js';
 import { HrLeavePage } from './features/leave/HrLeavePage.js';
 import { SalarySlipsPage } from './features/payroll/SalarySlipsPage.js';
@@ -447,6 +451,31 @@ export default function App() {
                 }
               >
                 <Route index element={<DashboardHome />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route
+                  path="attendance"
+                  element={
+                    <ProtectedRoute role={['EMPLOYEE', 'HR']}>
+                      <AttendancePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="employees"
+                  element={
+                    <ProtectedRoute role="HR">
+                      <EmployeeDirectoryPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="employees/:id"
+                  element={
+                    <ProtectedRoute role={['HR', 'EMPLOYEE']}>
+                      <EmployeeDetailPage />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="diagnostics"
                   element={
