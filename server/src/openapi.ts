@@ -352,5 +352,224 @@ export const openApiDocument = {
         },
       },
     },
+    '/api/employee/profile': {
+      get: {
+        summary: 'Get active user employee profile',
+        description:
+          'Retrieve the employee profile associated with the currently logged-in user session.',
+        responses: {
+          '200': {
+            description: 'Employee profile retrieved',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    userId: { type: 'string', format: 'uuid' },
+                    employeeCode: { type: 'string' },
+                    firstName: { type: 'string' },
+                    lastName: { type: 'string' },
+                    phone: { type: 'string', nullable: true },
+                    department: { type: 'string', nullable: true },
+                    designation: { type: 'string', nullable: true },
+                    joiningDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      nullable: true,
+                    },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    updatedAt: { type: 'string', format: 'date-time' },
+                  },
+                  required: [
+                    'id',
+                    'userId',
+                    'employeeCode',
+                    'firstName',
+                    'lastName',
+                    'createdAt',
+                    'updatedAt',
+                  ],
+                },
+              },
+            },
+          },
+          '401': { description: 'Authentication required' },
+        },
+      },
+      patch: {
+        summary: 'Update active user employee profile',
+        description:
+          'Update personal details of the logged-in user employee profile.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  firstName: { type: 'string' },
+                  lastName: { type: 'string' },
+                  phone: { type: 'string', nullable: true },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Employee profile updated',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    userId: { type: 'string', format: 'uuid' },
+                    employeeCode: { type: 'string' },
+                    firstName: { type: 'string' },
+                    lastName: { type: 'string' },
+                    phone: { type: 'string', nullable: true },
+                    department: { type: 'string', nullable: true },
+                    designation: { type: 'string', nullable: true },
+                    joiningDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      nullable: true,
+                    },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    updatedAt: { type: 'string', format: 'date-time' },
+                  },
+                  required: [
+                    'id',
+                    'userId',
+                    'employeeCode',
+                    'firstName',
+                    'lastName',
+                    'createdAt',
+                    'updatedAt',
+                  ],
+                },
+              },
+            },
+          },
+          '400': { description: 'Invalid input' },
+          '401': { description: 'Authentication required' },
+        },
+      },
+    },
+    '/api/employees': {
+      get: {
+        summary: 'List all employee profiles',
+        description:
+          'Retrieve a list of all employee profiles in the system. Requires HR permissions.',
+        responses: {
+          '200': {
+            description: 'Employee profiles list retrieved',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    employees: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', format: 'uuid' },
+                          userId: { type: 'string', format: 'uuid' },
+                          employeeCode: { type: 'string' },
+                          firstName: { type: 'string' },
+                          lastName: { type: 'string' },
+                          phone: { type: 'string', nullable: true },
+                          department: { type: 'string', nullable: true },
+                          designation: { type: 'string', nullable: true },
+                          joiningDate: {
+                            type: 'string',
+                            format: 'date-time',
+                            nullable: true,
+                          },
+                          createdAt: { type: 'string', format: 'date-time' },
+                          updatedAt: { type: 'string', format: 'date-time' },
+                        },
+                        required: [
+                          'id',
+                          'userId',
+                          'employeeCode',
+                          'firstName',
+                          'lastName',
+                          'createdAt',
+                          'updatedAt',
+                        ],
+                      },
+                    },
+                  },
+                  required: ['employees'],
+                },
+              },
+            },
+          },
+          '401': { description: 'Authentication required' },
+          '403': { description: 'Forbidden: Requires HR permissions' },
+        },
+      },
+    },
+    '/api/employees/{id}': {
+      get: {
+        summary: 'Get employee profile by ID',
+        description:
+          'Retrieve detailed employee profile by its unique database identifier.',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            description: 'Employee ID',
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Employee profile retrieved',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', format: 'uuid' },
+                    userId: { type: 'string', format: 'uuid' },
+                    employeeCode: { type: 'string' },
+                    firstName: { type: 'string' },
+                    lastName: { type: 'string' },
+                    phone: { type: 'string', nullable: true },
+                    department: { type: 'string', nullable: true },
+                    designation: { type: 'string', nullable: true },
+                    joiningDate: {
+                      type: 'string',
+                      format: 'date-time',
+                      nullable: true,
+                    },
+                    createdAt: { type: 'string', format: 'date-time' },
+                    updatedAt: { type: 'string', format: 'date-time' },
+                  },
+                  required: [
+                    'id',
+                    'userId',
+                    'employeeCode',
+                    'firstName',
+                    'lastName',
+                    'createdAt',
+                    'updatedAt',
+                  ],
+                },
+              },
+            },
+          },
+          '401': { description: 'Authentication required' },
+          '403': { description: 'Forbidden' },
+          '404': { description: 'Employee not found' },
+        },
+      },
+    },
   },
 };

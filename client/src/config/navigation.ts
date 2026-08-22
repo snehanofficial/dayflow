@@ -23,6 +23,7 @@ const baseGroups: NavGroup[] = [
     group: 'General',
     items: [
       { label: 'Dashboard', route: '/', icon: 'dashboard' },
+      { label: 'Profile', route: '/profile', icon: 'profile' },
       {
         label: 'Diagnostics',
         route: '/diagnostics',

@@ -25,6 +25,7 @@ import { ForgotPassword } from './pages/Auth/ForgotPassword.js';
 import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
+import { ProfilePage } from './features/employee/ProfilePage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -442,6 +443,7 @@ export default function App() {
                 }
               >
                 <Route index element={<DashboardHome />} />
+                <Route path="profile" element={<ProfilePage />} />
                 <Route
                   path="diagnostics"
                   element={

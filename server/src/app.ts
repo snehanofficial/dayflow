@@ -13,6 +13,7 @@ import {
   authRouter,
 } from './modules/core/auth/index.js';
 import { searchRouter } from './modules/core/search/routes.js';
+import { employeeRouter } from './modules/domain/employee/index.js';
 
 const app = express();
 
@@ -34,6 +35,9 @@ app.use('/api/auth', authRouter);
 
 // Mount search module routes
 app.use('/api', searchRouter);
+
+// Mount employee domain routes
+app.use('/api', employeeRouter);
 
 // Log incoming request metadata
 app.use((req, res, next) => {
