@@ -1,129 +1,1179 @@
-# DayFlow - Personal Full-Stack Starter
+# Dayflow — Human Resource Management System
 
-DayFlow is a clean, domain-agnostic, and reusable full-stack starter designed for bootstrapping hackathons, mini-projects, and applications with a robust, pre-established engineering baseline.
+> **Every workday, perfectly aligned.**
+
+Dayflow is a modern **Human Resource Management System (HRMS)** designed to digitize and streamline essential HR operations through a centralized platform.
+
+The system provides dedicated experiences for **Employees** and **HR/Admin users**, covering employee management, attendance tracking, leave and time-off management, payroll visibility, approval workflows, notifications, analytics, and reporting.
 
 ---
 
-## The Source-Based Reuse Model
+## Overview
 
-DayFlow is structured as a source template, not a runtime dependency or package library.
+Dayflow brings common HR workflows into a single platform.
 
 ```text
-DayFlow
-   │
-   ├── [Copy/Adapt Source]
-   ▼
-New Project (Fully owns all its code)
+                         DAYFLOW HRMS
+                              │
+               ┌──────────────┴──────────────┐
+               │                             │
+           EMPLOYEE                       HR / ADMIN
+               │                             │
+      ┌────────┼────────┐          ┌─────────┼─────────┐
+      │        │        │          │         │         │
+   Profile  Attendance Leave    Employees  Payroll  Analytics
+      │        │        │          │         │         │
+      └────────┴────────┘          └─────────┴─────────┘
+                              │
+                       PostgreSQL Database
 ```
 
-### Invariants for Copied Projects
-When initializing a new project from DayFlow, the target repository must have:
-* **No runtime dependency** on DayFlow.
-* **No workspace references** or cross-project package dependencies.
-* **No symbolic links** or Git submodules referencing DayFlow.
-* **No absolute filesystem paths** pointing back to DayFlow.
+The platform is designed around two primary roles:
 
-Once copied, the new project is completely decoupled and self-contained.
+- **Employee** — self-service access to profile, attendance, leave, and salary information.
+- **HR/Admin** — workforce management, approvals, payroll management, analytics, and reporting.
 
 ---
 
-## Technology Stack
+# Features
 
-The baseline stack includes:
-* **Frontend**: React (19.x), Vite (8.x), TypeScript (6.x), React Router (7.x)
-* **Backend**: Express (5.x), TypeScript (6.x), Zod (3.x)
-* **Database**: PostgreSQL (17), Prisma ORM (7.x)
-* **Testing**: Vitest (4.x), Testing Library (React)
-* **Linters/Formatters**: Oxlint (1.x), Prettier (3.x)
-* **Development Environment**: Docker Compose
+## 🔐 Authentication & Authorization
+
+- User registration
+- User login
+- Employee ID and email-based registration
+- Role-based access control
+- Employee and HR/Admin roles
+- JWT-based authentication
+- Secure HTTP-only cookie-based authentication
+- Argon2 password hashing
+- CSRF protection
+- Zod request validation
+- Protected routes and API endpoints
+- Server-side authorization
 
 ---
 
-## Quick Start & Setup
+## 👤 Employee Management
 
-### 1. Copy the Source Code
-Copy DayFlow to your new project directory while excluding git history, build assets, and local packages:
-```bash
-rsync -av --exclude=".git" \
-          --exclude="node_modules" \
-          --exclude="dist" \
-          --exclude=".pnpm-store" \
-          --exclude=".env" \
-          --exclude=".temp-verify" \
-          /path/to/DayFlow/ /path/to/new-project/
+### Employee Profile
+
+Employees can view:
+
+- Personal information
+- Job information
+- Department
+- Designation
+- Joining date
+- Profile picture
+- Documents
+- Salary information
+
+Employees can edit permitted personal fields such as:
+
+- Phone number
+- Address
+- Profile picture
+
+### HR/Admin Employee Management
+
+HR/Admin users can:
+
+- View employees
+- Search employees
+- Filter employees
+- View detailed employee profiles
+- Edit employee information
+- View employee-related records
+
+---
+
+## 🕒 Attendance Management
+
+Employees can:
+
+- Check in
+- Check out
+- View today's attendance
+- View daily attendance
+- View weekly attendance
+- View attendance history
+- View worked hours
+
+Attendance statuses include:
+
+- Present
+- Absent
+- Half-day
+- Leave
+
+### HR/Admin Attendance
+
+HR/Admin users can:
+
+- View attendance across employees
+- Filter attendance
+- View attendance history
+- Monitor attendance statistics
+- Review attendance trends
+
+### Attendance Validation
+
+The system prevents invalid attendance operations such as:
+
+- Duplicate active check-ins
+- Check-out without check-in
+- Duplicate check-outs
+
+---
+
+## 🧠 Attendance Insights
+
+Dayflow provides rule-based attendance insights to help identify unusual attendance patterns.
+
+Examples include:
+
+- Late check-ins
+- Missing check-outs
+- Low attendance
+- Repeated absences
+- Repeated half-days
+
+Example:
+
+```text
+⚠ Attendance Insight
+
+Rahul has had 3 late check-ins this week.
 ```
 
-### 2. Rename & Configure
-To decouple your new project from default DayFlow names:
-1. **Docker Service**: Update `container_name` in `docker-compose.yml` to your project name.
-2. **Database Configuration**: Rename the Postgres database from `dayflow` to your target database name in `docker-compose.yml` (`POSTGRES_DB`) and `.env` template.
-3. **Branding**: Customize the logo brand text inside `client/src/components/AppShell.tsx` and the `<title>` tag inside `client/index.html`.
-4. **API Spec**: Update OpenAPI title and description in `server/src/openapi.ts`.
+These insights are designed to help HR identify attendance issues quickly.
 
-### 3. Environment Setup
-Copy the environment variable templates and customize them:
+---
 
-#### Backend Setup
-```bash
-cd server
-cp .env.example .env
+## 🏖️ Leave & Time-Off Management
+
+Employees can apply for:
+
+- Paid Leave
+- Sick Leave
+- Unpaid Leave
+
+A leave request contains:
+
+- Leave type
+- Start date
+- End date
+- Number of days
+- Remarks
+
+Leave statuses:
+
+```text
+Pending
+Approved
+Rejected
 ```
-Ensure `DATABASE_URL` matches your local database settings (default: `postgresql://postgres:postgres@localhost:5432/dayflow?schema=public`).
 
-#### Frontend Setup
+Employees can also:
+
+- View their leave history
+- Track request status
+- View leave balance
+- View upcoming leave
+
+---
+
+## ✅ Leave Approval Workflow
+
+HR/Admin users can:
+
+- View all leave requests
+- Filter leave requests
+- Review employee leave details
+- Approve requests
+- Reject requests
+- Add comments
+
+Workflow:
+
+```text
+Employee
+    │
+    ▼
+Apply Leave
+    │
+    ▼
+Pending
+    │
+    ▼
+HR Review
+    │
+    ├───────────────┐
+    ▼               ▼
+Approved         Rejected
+    │               │
+    └───────┬───────┘
+            ▼
+      Employee Updated
+```
+
+Once the request is processed, the employee sees the updated status.
+
+---
+
+## 📅 Leave Calendar
+
+The leave calendar provides HR with a visual overview of employee time-off.
+
+It can display:
+
+- Employee
+- Leave type
+- Start date
+- End date
+- Leave status
+- Upcoming leave
+
+This makes it easier to identify overlapping leave periods and workforce availability.
+
+---
+
+## 🎯 Leave Balance
+
+Dayflow provides leave balance visibility.
+
+Example:
+
+```text
+Paid Leave
+12 / 15 days remaining
+
+Sick Leave
+7 / 10 days remaining
+```
+
+Approved leave reduces the relevant balance.
+
+Pending and rejected requests do not incorrectly reduce the available balance.
+
+---
+
+## 💰 Payroll & Salary Management
+
+### Employee Payroll
+
+Employees have read-only access to their payroll information.
+
+They can view:
+
+- Basic salary
+- Allowances
+- Deductions
+- Net salary
+
+The basic calculation is:
+
+```text
+Net Salary =
+Basic Salary + Allowances - Deductions
+```
+
+### HR/Admin Payroll
+
+HR/Admin users can:
+
+- View employee payroll
+- Manage salary structures
+- Update salary components
+- Review payroll information
+- Maintain payroll accuracy
+
+Employees cannot modify payroll information.
+
+---
+
+## 📄 Salary Slips
+
+Dayflow supports salary slip generation containing information such as:
+
+- Employee name
+- Employee ID
+- Department
+- Designation
+- Salary period
+- Basic salary
+- Allowances
+- Deductions
+- Net salary
+
+Where supported by the implementation, salary slips can be printed or downloaded.
+
+---
+
+## 📊 HR Analytics & Reports
+
+The HR dashboard provides organizational insights.
+
+### Dashboard Metrics
+
+- Total employees
+- Present today
+- Absent today
+- Employees on leave
+- Attendance percentage
+- Pending leave requests
+- Payroll summary
+
+### Attendance Reports
+
+```text
+Employee
+Present
+Absent
+Leave
+Half-day
+Attendance %
+```
+
+### Leave Reports
+
+```text
+Employee
+Leave Type
+Approved
+Rejected
+Pending
+Days
+```
+
+### Payroll Reports
+
+```text
+Employee
+Basic Salary
+Allowances
+Deductions
+Net Salary
+```
+
+Additional analytics can include:
+
+- Attendance trends
+- Leave distribution
+- Department distribution
+- Payroll summaries
+
+---
+
+## 🔔 Notifications
+
+Dayflow includes an in-app notification system.
+
+### Employee Notifications
+
+- Leave approved
+- Leave rejected
+- Attendance alerts
+- Missing checkout alerts
+- Salary-related updates
+
+### HR/Admin Notifications
+
+- New leave request
+- Attendance alerts
+- HR-related updates
+
+Example:
+
+```text
+🔔 Notifications
+
+✓ Leave Approved
+Your leave request for Aug 25–27 was approved.
+
+⚠ Attendance Alert
+You have a missing checkout.
+```
+
+---
+
+# Technology Stack
+
+## Frontend
+
+| Technology | Purpose |
+|---|---|
+| **React** | Frontend application and UI |
+| **React Router** | Client-side routing |
+| **JavaScript / TypeScript** | Frontend application logic |
+| **CSS / Tailwind CSS** | Styling and responsive design |
+
+> Use the styling and language configuration present in the actual project repository.
+
+---
+
+## Backend
+
+| Technology | Purpose |
+|---|---|
+| **Node.js** | Backend runtime |
+| **Express.js** | REST API framework |
+| **Prisma ORM** | Database access and ORM layer |
+| **Zod** | Request and data validation |
+
+---
+
+## Database
+
+| Technology | Purpose |
+|---|---|
+| **PostgreSQL** | Primary relational database |
+| **Prisma Migrate** | Database schema migrations |
+| **Prisma ORM** | Type-safe database access |
+
+---
+
+## Authentication & Security
+
+| Technology | Purpose |
+|---|---|
+| **JWT** | Authentication tokens |
+| **HTTP-only Cookies** | Secure token storage |
+| **Argon2** | Password hashing |
+| **CSRF Protection** | Protection against cross-site request forgery |
+| **Zod** | Input/request validation |
+
+### Security Flow
+
+```text
+User
+ │
+ ▼
+React Frontend
+ │
+ ▼
+Express API
+ │
+ ├── CSRF Validation
+ │
+ ├── JWT Authentication
+ │
+ ├── Authorization
+ │
+ └── Zod Validation
+ │
+ ▼
+Application Services
+ │
+ ▼
+Prisma ORM
+ │
+ ▼
+PostgreSQL
+```
+
+Passwords are never stored as plaintext. They are securely hashed using **Argon2**.
+
+Authentication tokens are handled through secure cookies rather than exposing sensitive tokens directly to client-side JavaScript.
+
+---
+
+# System Architecture
+
+Dayflow follows a layered web application architecture.
+
+```text
+┌──────────────────────────────────────────────────────┐
+│                  REACT FRONTEND                      │
+│                                                      │
+│ Pages • Components • Routes • Hooks • Services      │
+└──────────────────────────┬───────────────────────────┘
+                           │
+                      REST / HTTP
+                           │
+┌──────────────────────────▼───────────────────────────┐
+│                 EXPRESS BACKEND                      │
+│                                                      │
+│ Routes → Controllers → Services → Validation         │
+│                         │                            │
+│              Authentication / Security               │
+└──────────────────────────┬───────────────────────────┘
+                           │
+                      Prisma ORM
+                           │
+┌──────────────────────────▼───────────────────────────┐
+│                    PostgreSQL                        │
+│                                                      │
+│ Users • Employees • Attendance • Leave • Payroll    │
+│ Notifications • Reports                             │
+└──────────────────────────────────────────────────────┘
+```
+
+---
+
+# Project Structure
+
+The project is organized into separate frontend and backend applications.
+
+```text
+dayflow/
+│
+├── client/
+│   ├── public/
+│   │   └── ...
+│   │
+│   ├── src/
+│   │   ├── assets/
+│   │   │   └── ...
+│   │   │
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   ├── forms/
+│   │   │   ├── dashboard/
+│   │   │   └── ...
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── auth/
+│   │   │   ├── employee/
+│   │   │   ├── attendance/
+│   │   │   ├── leave/
+│   │   │   ├── payroll/
+│   │   │   ├── analytics/
+│   │   │   └── ...
+│   │   │
+│   │   ├── layouts/
+│   │   │   ├── EmployeeLayout.jsx
+│   │   │   ├── AdminLayout.jsx
+│   │   │   └── ...
+│   │   │
+│   │   ├── routes/
+│   │   │   └── ...
+│   │   │
+│   │   ├── hooks/
+│   │   │   └── ...
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── auth.js
+│   │   │   ├── employee.js
+│   │   │   ├── attendance.js
+│   │   │   ├── leave.js
+│   │   │   └── payroll.js
+│   │   │
+│   │   ├── context/
+│   │   │   └── ...
+│   │   │
+│   │   ├── utils/
+│   │   │   └── ...
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── package.json
+│   └── ...
+│
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── ...
+│   │   │
+│   │   ├── controllers/
+│   │   │   ├── auth.controller.js
+│   │   │   ├── employee.controller.js
+│   │   │   ├── attendance.controller.js
+│   │   │   ├── leave.controller.js
+│   │   │   ├── payroll.controller.js
+│   │   │   └── ...
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── auth.routes.js
+│   │   │   ├── employee.routes.js
+│   │   │   ├── attendance.routes.js
+│   │   │   ├── leave.routes.js
+│   │   │   ├── payroll.routes.js
+│   │   │   └── ...
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth.service.js
+│   │   │   ├── employee.service.js
+│   │   │   ├── attendance.service.js
+│   │   │   ├── leave.service.js
+│   │   │   ├── payroll.service.js
+│   │   │   └── ...
+│   │   │
+│   │   ├── middleware/
+│   │   │   ├── auth.middleware.js
+│   │   │   ├── csrf.middleware.js
+│   │   │   ├── validation.middleware.js
+│   │   │   ├── error.middleware.js
+│   │   │   └── ...
+│   │   │
+│   │   ├── validators/
+│   │   │   ├── auth.schema.js
+│   │   │   ├── employee.schema.js
+│   │   │   ├── attendance.schema.js
+│   │   │   ├── leave.schema.js
+│   │   │   └── payroll.schema.js
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── jwt.js
+│   │   │   ├── password.js
+│   │   │   └── ...
+│   │   │
+│   │   ├── lib/
+│   │   │   └── prisma.js
+│   │   │
+│   │   ├── app.js
+│   │   └── server.js
+│   │
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   ├── migrations/
+│   │   │   └── ...
+│   │   └── seed.js
+│   │
+│   ├── package.json
+│   └── ...
+│
+├── .env.example
+├── .gitignore
+├── package.json
+├── README.md
+└── ...
+```
+
+> The structure above represents the intended architecture. Existing repository conventions should be preserved when they differ from this reference structure.
+
+---
+
+# Backend Layer Responsibilities
+
+## Routes
+
+Define API endpoints and map requests to controllers.
+
+```text
+/auth
+/employees
+/attendance
+/leave
+/payroll
+/notifications
+/analytics
+```
+
+## Controllers
+
+Controllers handle:
+
+- HTTP requests
+- Request/response formatting
+- Calling application services
+
+Controllers should avoid containing large amounts of business logic.
+
+## Services
+
+Services contain the primary business logic for:
+
+- Authentication
+- Employee management
+- Attendance
+- Leave
+- Payroll
+- Notifications
+- Analytics
+
+## Validators
+
+Zod schemas validate incoming data before it reaches business logic.
+
+Example:
+
+```text
+Request
+   ↓
+Zod Validation
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Prisma
+```
+
+## Middleware
+
+Middleware handles cross-cutting concerns such as:
+
+- Authentication
+- Authorization
+- CSRF protection
+- Validation
+- Error handling
+
+---
+
+# Database
+
+PostgreSQL is the primary database and Prisma ORM provides the application data layer.
+
+Core entities include:
+
+```text
+User
+Employee
+Attendance
+LeaveRequest
+LeaveBalance
+Payroll
+Notification
+Department
+```
+
+A simplified relationship model:
+
+```text
+User
+ │
+ └── Employee
+       │
+       ├── Attendance
+       ├── LeaveRequest
+       ├── LeaveBalance
+       └── Payroll
+
+Department
+ │
+ └── Employee
+
+User
+ │
+ └── Notification
+```
+
+The exact Prisma schema should be treated as the source of truth for the implemented database model.
+
+---
+
+# Authentication Flow
+
+Dayflow uses JWT authentication with secure cookies.
+
+```text
+                LOGIN
+                  │
+                  ▼
+            Validate Input
+                  │
+                  ▼
+          Find User in Database
+                  │
+                  ▼
+       Verify Argon2 Password Hash
+                  │
+                  ▼
+             Create JWT
+                  │
+                  ▼
+      Set Secure HTTP-only Cookie
+                  │
+                  ▼
+          Authenticated Session
+```
+
+For protected requests:
+
+```text
+Client Request
+      │
+      ▼
+CSRF Validation
+      │
+      ▼
+Read Authentication Cookie
+      │
+      ▼
+Verify JWT
+      │
+      ▼
+Check User Role / Permissions
+      │
+      ▼
+Controller
+      │
+      ▼
+Service
+      │
+      ▼
+Prisma
+```
+
+---
+
+# API Design
+
+The backend follows a REST-oriented API structure.
+
+Example endpoint groups:
+
+```text
+/api/auth
+/api/employees
+/api/attendance
+/api/leave
+/api/payroll
+/api/notifications
+/api/analytics
+```
+
+Typical operations include:
+
+```text
+GET     → Retrieve resources
+POST    → Create resources
+PUT     → Update resources
+PATCH   → Partially update resources
+DELETE  → Remove resources
+```
+
+API responses should use consistent HTTP status codes and structured error responses.
+
+---
+
+# Security Principles
+
+Dayflow treats security as a core part of the application architecture.
+
+### Password Security
+
+Passwords are hashed with:
+
+```text
+Argon2
+```
+
+Plaintext passwords are never stored.
+
+### Authentication
+
+Authentication uses:
+
+```text
+JWT
++
+HTTP-only Cookies
+```
+
+### CSRF Protection
+
+State-changing requests are protected against cross-site request forgery.
+
+### Input Validation
+
+All externally supplied data should be validated using:
+
+```text
+Zod
+```
+
+### Authorization
+
+Authentication alone is not sufficient.
+
+The backend verifies:
+
+```text
+Authenticated User
+        ↓
+User Role
+        ↓
+Resource Ownership
+        ↓
+Requested Action
+```
+
+This prevents employees from accessing or modifying other employees' private records.
+
+---
+
+# User Roles & Permissions
+
+## Employee
+
+```text
+Profile
+   ├── View own profile
+   └── Edit permitted fields
+
+Attendance
+   ├── Check in/out
+   └── View own attendance
+
+Leave
+   ├── Apply
+   └── View own requests
+
+Payroll
+   └── View own salary
+
+Notifications
+   └── View own notifications
+```
+
+## HR / Admin
+
+```text
+Employees
+   ├── View
+   ├── Search
+   └── Manage
+
+Attendance
+   └── Organization-wide access
+
+Leave
+   ├── View requests
+   ├── Approve
+   ├── Reject
+   └── Comment
+
+Payroll
+   ├── View
+   └── Manage salary structure
+
+Analytics
+   └── Organization-wide insights
+```
+
+---
+
+# Core User Workflows
+
+## Employee Attendance
+
+```text
+Employee Login
+      ↓
+Dashboard
+      ↓
+Check In
+      ↓
+Working
+      ↓
+Check Out
+      ↓
+Attendance Record
+```
+
+## Leave Request
+
+```text
+Employee
+      ↓
+Select Leave Type
+      ↓
+Select Date Range
+      ↓
+Add Remarks
+      ↓
+Submit
+      ↓
+Pending
+      ↓
+HR Review
+      ↓
+Approved / Rejected
+      ↓
+Employee Notification
+```
+
+## Payroll
+
+```text
+Salary Structure
+      ↓
+Basic Salary
+      +
+Allowances
+      -
+Deductions
+      ↓
+Net Salary
+      ↓
+Employee Payroll
+      ↓
+Salary Slip
+```
+
+---
+
+# Setup
+
+## Prerequisites
+
+Make sure the development environment has:
+
+- Node.js
+- npm
+- PostgreSQL
+- Git
+
+## Clone the Repository
+
+```bash
+git clone <repository-url>
+cd dayflow
+```
+
+## Install Dependencies
+
+Install frontend dependencies:
+
 ```bash
 cd client
-cp .env.example .env
+npm install
 ```
-Ensure `VITE_API_URL` points to your backend instance (default: `http://localhost:4000`).
+
+Install backend dependencies:
+
+```bash
+cd ../server
+npm install
+```
+
+## Environment Variables
+
+Create environment files based on `.env.example`.
+
+Typical backend configuration may include:
+
+```env
+DATABASE_URL=
+JWT_SECRET=
+JWT_EXPIRES_IN=
+COOKIE_SECRET=
+CSRF_SECRET=
+CLIENT_URL=
+PORT=
+```
+
+Never commit real credentials or secrets.
+
+## Database Setup
+
+From the server directory:
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+If seed data is provided:
+
+```bash
+npx prisma db seed
+```
+
+## Start Backend
+
+```bash
+cd server
+npm run dev
+```
+
+## Start Frontend
+
+In another terminal:
+
+```bash
+cd client
+npm run dev
+```
+
+The exact commands may differ depending on the package scripts configured in the repository.
 
 ---
 
-## Running Development Environment
+# Development Guidelines
 
-1. **Spin up PostgreSQL Database**:
-   ```bash
-   docker compose up -d
-   ```
+### Keep Frontend and Backend Responsibilities Clear
 
-2. **Initialize Database and Client**:
-   ```bash
-   cd server
-   pnpm install
-   pnpm prisma:migrate
-   pnpm prisma:generate
-   ```
+Frontend:
 
-3. **Start backend developer server**:
-   ```bash
-   pnpm run dev
-   ```
+```text
+UI
+Routing
+User Interaction
+Client State
+API Consumption
+```
 
-4. **Initialize Frontend Client**:
-   ```bash
-   cd ../client
-   pnpm install
-   pnpm run gen:api
-   pnpm run dev
-   ```
+Backend:
+
+```text
+Authentication
+Authorization
+Validation
+Business Logic
+Database Operations
+Security
+```
+
+### Keep Business Logic on the Server
+
+Critical operations such as:
+
+- Leave approval
+- Payroll modification
+- Attendance modification
+- Role checks
+- Resource ownership
+
+must be validated server-side.
+
+### Use Prisma for Database Access
+
+Avoid writing raw SQL for normal application operations unless there is a clear technical reason.
+
+### Validate External Input
+
+All request bodies, query parameters, and relevant route parameters should be validated with Zod.
+
+### Protect Sensitive Data
+
+Do not expose:
+
+- Password hashes
+- JWT secrets
+- Database credentials
+- Private tokens
+- Internal security configuration
 
 ---
 
-## Verification & Testing
+# Future Enhancements
 
-Verify code quality, formatting, compilation, and tests across both applications:
+Potential future improvements include:
 
-* **Backend**:
-  ```bash
-  cd server
-  pnpm run verify
-  ```
+- 🤖 AI-powered HR assistant
+- 📱 QR-based attendance
+- 📈 Advanced workforce analytics
+- 📧 Automated email notifications
+- 🧮 Advanced payroll calculations
+- 👥 Employee performance management
+- 📱 Mobile-first employee experience
+- 📄 Advanced document management
+- 🔮 Workforce forecasting
+- ⚙️ Advanced HR automation
 
-* **Frontend**:
-  ```bash
-  cd client
-  pnpm run verify
-  ```
+---
 
-The verification pipeline executes the following checks:
-`prettier (format:check)` → `oxlint (lint)` → `tsc (typecheck)` → `vitest (test)` → `build`
+# Project Vision
+
+Dayflow aims to bring essential HR workflows into one centralized platform.
+
+Instead of managing employee information, attendance, leave, payroll, approvals, notifications, and reports through disconnected processes, Dayflow provides a unified experience for employees and HR teams.
+
+> **Dayflow — Every workday, perfectly aligned.**
