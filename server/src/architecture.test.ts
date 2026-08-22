@@ -57,7 +57,7 @@ describe('Backend Architecture Constraints', () => {
       while ((match = importRegex.exec(content)) !== null) {
         const importPath = match[1];
         if (
-          importPath.includes('client') ||
+          (importPath.includes('client') && !importPath.includes('@prisma/client')) ||
           importPath.startsWith('../../../')
         ) {
           const relativePath = path.relative(SRC_DIR, file);

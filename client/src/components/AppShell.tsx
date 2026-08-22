@@ -15,6 +15,7 @@ import {
   HelpCircle,
   Palette,
   Search,
+  Calendar,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
@@ -25,6 +26,8 @@ import { SearchPalette } from './SearchPalette.js';
 
 function renderIcon(icon?: string) {
   switch (icon) {
+    case 'calendar':
+      return <Calendar size={16} aria-hidden="true" />;
     case 'dashboard':
       return <LayoutDashboard size={16} aria-hidden="true" />;
     case 'diagnostics':

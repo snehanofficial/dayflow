@@ -193,19 +193,19 @@ router.post(
         const defaultPermissions =
           upperRole === 'HR'
             ? [
-                { resource: 'dashboard', action: 'read' },
-                { resource: 'profile', action: 'read' },
-                { resource: 'profile', action: 'update' },
-                { resource: 'resources', action: 'read' },
-                { resource: 'resources', action: 'create' },
-                { resource: 'resources', action: 'delete' },
-              ]
+              { resource: 'dashboard', action: 'read' },
+              { resource: 'profile', action: 'read' },
+              { resource: 'profile', action: 'update' },
+              { resource: 'resources', action: 'read' },
+              { resource: 'resources', action: 'create' },
+              { resource: 'resources', action: 'delete' },
+            ]
             : [
-                { resource: 'dashboard', action: 'read' },
-                { resource: 'profile', action: 'read' },
-                { resource: 'profile', action: 'update' },
-                { resource: 'resources', action: 'read' },
-              ];
+              { resource: 'dashboard', action: 'read' },
+              { resource: 'profile', action: 'read' },
+              { resource: 'profile', action: 'update' },
+              { resource: 'resources', action: 'read' },
+            ];
 
         await Promise.all(
           defaultPermissions.map((perm) =>

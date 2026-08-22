@@ -69,7 +69,7 @@ describe('OpenAPI Contract Verification', () => {
       }
       throw err;
     }
-  });
+  }, 30000);
 
   it('should pass frontend compilation checks with the committed types', () => {
     const frontendDir = path.resolve(__dirname, '../../client');

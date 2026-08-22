@@ -31,6 +31,23 @@ const baseGroups: NavGroup[] = [
       },
     ],
   },
+  {
+    group: 'Time Off',
+    items: [
+      {
+        label: 'Leaves',
+        route: '/leave',
+        icon: 'calendar',
+        requiredPermission: { resource: 'leave', action: 'read' },
+      },
+      {
+        label: 'Manage Leaves',
+        route: '/hr/leave',
+        icon: 'users',
+        requiredPermission: { resource: 'leave', action: 'manage' },
+      },
+    ],
+  },
 ];
 
 // Append playground for developer inspection in local development

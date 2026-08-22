@@ -25,6 +25,8 @@ import { ForgotPassword } from './pages/Auth/ForgotPassword.js';
 import { ResetPassword } from './pages/Auth/ResetPassword.js';
 import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
+import { LeaveRequestPage } from './features/leave/LeaveRequestPage.js';
+import { HrLeavePage } from './features/leave/HrLeavePage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -449,6 +451,26 @@ export default function App() {
                       permission={{ resource: 'resources', action: 'read' }}
                     >
                       <DiagnosticsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="leave"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'leave', action: 'read' }}
+                    >
+                      <LeaveRequestPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="hr/leave"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'leave', action: 'manage' }}
+                    >
+                      <HrLeavePage />
                     </ProtectedRoute>
                   }
                 />

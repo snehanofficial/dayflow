@@ -36,7 +36,7 @@ async function main() {
     },
   });
 
-  // Seed permissions: dashboard.read, profile.read, profile.update, resources.read, resources.create, resources.delete
+  // Seed permissions
   const permissions = [
     { resource: 'dashboard', action: 'read' },
     { resource: 'profile', action: 'read' },
@@ -44,6 +44,8 @@ async function main() {
     { resource: 'resources', action: 'read' },
     { resource: 'resources', action: 'create' },
     { resource: 'resources', action: 'delete' },
+    { resource: 'leave', action: 'read' },
+    { resource: 'leave', action: 'manage' },
   ];
 
   for (const perm of permissions) {
