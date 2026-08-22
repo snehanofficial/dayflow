@@ -34,6 +34,10 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
 export const signupSchema = z
   .object({
+    employeeId: z
+      .string()
+      .min(1, 'Employee ID is required.')
+      .regex(/^EMP-\w+$/i, 'Employee ID must start with EMP- (e.g. EMP-101)'),
     email: z
       .string()
       .min(1, 'Email is required.')
@@ -43,6 +47,9 @@ export const signupSchema = z
       .min(1, 'Password is required.')
       .min(8, 'Password must be at least 8 characters.'),
     confirmPassword: z.string().min(1, 'Please confirm your password.'),
+    role: z.enum(['Employee', 'HR'], {
+      errorMap: () => ({ message: 'Please select a valid role.' }),
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match.',

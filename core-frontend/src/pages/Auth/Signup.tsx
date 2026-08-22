@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff, Code2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
-import { Button, Label, Input } from '../../components/ui/index.js';
+import { Button, Label, Input, Select } from '../../components/ui/index.js';
 import {
   signupSchema,
   type SignupFormData,
@@ -13,16 +13,10 @@ import {
 export function Signup() {
   const { signup } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const searchParams = new URLSearchParams(location.search);
-  const redirectTo =
-    searchParams.get('redirectTo') ||
-    searchParams.get('redirect') ||
-    searchParams.get('returnTo');
-  const from = redirectTo || location.state?.from?.pathname || '/';
+
 
   const {
     register,
@@ -31,12 +25,19 @@ export function Signup() {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      employeeId: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'Employee',
+    },
   });
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      await signup('EMP-TEMP', data.email, data.password, 'Employee');
-      navigate(from, { replace: true });
+      await signup(data.employeeId, data.email, data.password, data.role);
+      navigate('/verify-email', { state: { email: data.email }, replace: true });
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : 'Signup failed. Please try again.';
@@ -50,11 +51,11 @@ export function Signup() {
         <div className="auth-header">
           <Link to="/" className="auth-brand">
             <Code2 size={16} strokeWidth={2.5} aria-hidden="true" />
-            <span>HackCore</span>
+            <span>Dayflow</span>
           </Link>
           <h1 className="auth-title">Create account</h1>
           <p className="auth-description">
-            Get started with your developer dashboard.
+            Get started with your employee dashboard.
           </p>
         </div>
 
@@ -65,6 +66,26 @@ export function Signup() {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <div className="form-group">
+            <Label htmlFor="employeeId" required>
+              Employee ID
+            </Label>
+            <Input
+              id="employeeId"
+              type="text"
+              placeholder="EMP-101"
+              error={errors.employeeId?.message}
+              aria-invalid={!!errors.employeeId}
+              aria-describedby={errors.employeeId ? 'employeeId-error' : undefined}
+              {...register('employeeId')}
+            />
+            {errors.employeeId && (
+              <span id="employeeId-error" className="form-error-msg" role="alert">
+                {errors.employeeId.message}
+              </span>
+            )}
+          </div>
+
           <div className="form-group">
             <Label htmlFor="email" required>
               Email
@@ -125,10 +146,7 @@ export function Signup() {
             )}
           </div>
 
-          <div
-            className="form-group"
-            style={{ marginBottom: 'var(--space-5)' }}
-          >
+          <div className="form-group">
             <Label htmlFor="confirmPassword" required>
               Confirm Password
             </Label>
@@ -171,6 +189,31 @@ export function Signup() {
                 role="alert"
               >
                 {errors.confirmPassword.message}
+              </span>
+            )}
+          </div>
+
+          <div
+            className="form-group"
+            style={{ marginBottom: 'var(--space-5)' }}
+          >
+            <Label htmlFor="role" required>
+              Role
+            </Label>
+            <Select
+              id="role"
+              error={errors.role?.message}
+              aria-invalid={!!errors.role}
+              aria-describedby={errors.role ? 'role-error' : undefined}
+              options={[
+                { label: 'Employee', value: 'Employee' },
+                { label: 'HR', value: 'HR' },
+              ]}
+              {...register('role')}
+            />
+            {errors.role && (
+              <span id="role-error" className="form-error-msg" role="alert">
+                {errors.role.message}
               </span>
             )}
           </div>

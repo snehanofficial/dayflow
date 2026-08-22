@@ -23,6 +23,7 @@ import { Login } from './pages/Auth/Login.js';
 import { Signup } from './pages/Auth/Signup.js';
 import { ForgotPassword } from './pages/Auth/ForgotPassword.js';
 import { ResetPassword } from './pages/Auth/ResetPassword.js';
+import { VerifyEmail } from './pages/Auth/VerifyEmail.js';
 import { Playground } from './pages/Playground.js';
 
 /**
@@ -429,6 +430,7 @@ export default function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
 
               {/* Protected App Shell Pages */}
               <Route
