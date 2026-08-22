@@ -363,7 +363,10 @@ export const openApiDocument = {
               schema: {
                 type: 'object',
                 properties: {
-                  leaveType: { type: 'string', enum: ['PAID', 'SICK', 'UNPAID'] },
+                  leaveType: {
+                    type: 'string',
+                    enum: ['PAID', 'SICK', 'UNPAID'],
+                  },
                   startDate: { type: 'string', format: 'date-time' },
                   endDate: { type: 'string', format: 'date-time' },
                   reason: { type: 'string' },
@@ -393,7 +396,17 @@ export const openApiDocument = {
                     createdAt: { type: 'string', format: 'date-time' },
                     updatedAt: { type: 'string', format: 'date-time' },
                   },
-                  required: ['id', 'employeeId', 'leaveType', 'startDate', 'endDate', 'reason', 'status', 'createdAt', 'updatedAt'],
+                  required: [
+                    'id',
+                    'employeeId',
+                    'leaveType',
+                    'startDate',
+                    'endDate',
+                    'reason',
+                    'status',
+                    'createdAt',
+                    'updatedAt',
+                  ],
                 },
               },
             },
@@ -406,7 +419,8 @@ export const openApiDocument = {
     '/api/leave/my-requests': {
       get: {
         summary: 'Get My Leave Requests',
-        description: 'Retrieve all leave requests submitted by the logged-in employee.',
+        description:
+          'Retrieve all leave requests submitted by the logged-in employee.',
         responses: {
           '200': {
             description: 'Employee requests list',
@@ -432,7 +446,17 @@ export const openApiDocument = {
                           createdAt: { type: 'string', format: 'date-time' },
                           updatedAt: { type: 'string', format: 'date-time' },
                         },
-                        required: ['id', 'employeeId', 'leaveType', 'startDate', 'endDate', 'reason', 'status', 'createdAt', 'updatedAt'],
+                        required: [
+                          'id',
+                          'employeeId',
+                          'leaveType',
+                          'startDate',
+                          'endDate',
+                          'reason',
+                          'status',
+                          'createdAt',
+                          'updatedAt',
+                        ],
                       },
                     },
                   },
@@ -497,7 +521,8 @@ export const openApiDocument = {
     '/api/leave/all': {
       get: {
         summary: 'Get All Leave Requests',
-        description: 'Retrieve leave requests across the organization (HR only).',
+        description:
+          'Retrieve leave requests across the organization (HR only).',
         responses: {
           '200': {
             description: 'All requests list',
@@ -530,7 +555,18 @@ export const openApiDocument = {
                             required: ['email'],
                           },
                         },
-                        required: ['id', 'employeeId', 'leaveType', 'startDate', 'endDate', 'reason', 'status', 'createdAt', 'updatedAt', 'user'],
+                        required: [
+                          'id',
+                          'employeeId',
+                          'leaveType',
+                          'startDate',
+                          'endDate',
+                          'reason',
+                          'status',
+                          'createdAt',
+                          'updatedAt',
+                          'user',
+                        ],
                       },
                     },
                   },
@@ -647,7 +683,8 @@ export const openApiDocument = {
     '/api/payroll/salary-structure': {
       get: {
         summary: 'Get Salary Structure',
-        description: 'Retrieve salary structure configurations (Employee views own; HR can filter via query).',
+        description:
+          'Retrieve salary structure configurations (Employee views own; HR can filter via query).',
         parameters: [
           {
             name: 'employeeId',
@@ -676,7 +713,16 @@ export const openApiDocument = {
                     createdAt: { type: 'string', format: 'date-time' },
                     updatedAt: { type: 'string', format: 'date-time' },
                   },
-                  required: ['id', 'employeeId', 'basicSalary', 'allowances', 'deductions', 'netSalary', 'department', 'designation'],
+                  required: [
+                    'id',
+                    'employeeId',
+                    'basicSalary',
+                    'allowances',
+                    'deductions',
+                    'netSalary',
+                    'department',
+                    'designation',
+                  ],
                 },
               },
             },
@@ -687,7 +733,8 @@ export const openApiDocument = {
       },
       put: {
         summary: 'Configure Salary Structure',
-        description: 'Configure or update salary structure settings for an employee (HR only).',
+        description:
+          'Configure or update salary structure settings for an employee (HR only).',
         requestBody: {
           required: true,
           content: {
@@ -702,7 +749,14 @@ export const openApiDocument = {
                   department: { type: 'string' },
                   designation: { type: 'string' },
                 },
-                required: ['employeeId', 'basicSalary', 'allowances', 'deductions', 'department', 'designation'],
+                required: [
+                  'employeeId',
+                  'basicSalary',
+                  'allowances',
+                  'deductions',
+                  'department',
+                  'designation',
+                ],
               },
             },
           },
@@ -724,7 +778,16 @@ export const openApiDocument = {
                     department: { type: 'string' },
                     designation: { type: 'string' },
                   },
-                  required: ['id', 'employeeId', 'basicSalary', 'allowances', 'deductions', 'netSalary', 'department', 'designation'],
+                  required: [
+                    'id',
+                    'employeeId',
+                    'basicSalary',
+                    'allowances',
+                    'deductions',
+                    'netSalary',
+                    'department',
+                    'designation',
+                  ],
                 },
               },
             },
@@ -738,7 +801,8 @@ export const openApiDocument = {
     '/api/payroll/slips': {
       get: {
         summary: 'Get Salary Slips',
-        description: 'Retrieve salary slips list (Employee views own; HR views all).',
+        description:
+          'Retrieve salary slips list (Employee views own; HR views all).',
         parameters: [
           {
             name: 'employeeId',
@@ -808,7 +872,8 @@ export const openApiDocument = {
     '/api/payroll/slip/generate': {
       post: {
         summary: 'Generate Salary Slip',
-        description: 'Generate a salary slip for an employee and month (HR only).',
+        description:
+          'Generate a salary slip for an employee and month (HR only).',
         requestBody: {
           required: true,
           content: {
@@ -843,7 +908,18 @@ export const openApiDocument = {
                     designation: { type: 'string' },
                     status: { type: 'string' },
                   },
-                  required: ['id', 'employeeId', 'month', 'basicSalary', 'allowances', 'deductions', 'netSalary', 'department', 'designation', 'status'],
+                  required: [
+                    'id',
+                    'employeeId',
+                    'month',
+                    'basicSalary',
+                    'allowances',
+                    'deductions',
+                    'netSalary',
+                    'department',
+                    'designation',
+                    'status',
+                  ],
                 },
               },
             },
@@ -857,7 +933,8 @@ export const openApiDocument = {
     '/api/payroll/slip/{id}': {
       get: {
         summary: 'Get Salary Slip Details',
-        description: 'Retrieve a single salary slip details by ID (Employee/HR).',
+        description:
+          'Retrieve a single salary slip details by ID (Employee/HR).',
         parameters: [
           {
             name: 'id',
@@ -921,7 +998,8 @@ export const openApiDocument = {
     '/api/analytics/dashboard': {
       get: {
         summary: 'Get HR Analytics Dashboard Data',
-        description: 'Retrieve high-level HR metrics and charting distributions (HR only).',
+        description:
+          'Retrieve high-level HR metrics and charting distributions (HR only).',
         responses: {
           '200': {
             description: 'Dashboard metrics and charts data',
@@ -998,11 +1076,22 @@ export const openApiDocument = {
                               deductions: { type: 'number' },
                               net: { type: 'number' },
                             },
-                            required: ['department', 'basic', 'allowances', 'deductions', 'net'],
+                            required: [
+                              'department',
+                              'basic',
+                              'allowances',
+                              'deductions',
+                              'net',
+                            ],
                           },
                         },
                       },
-                      required: ['attendanceTrend', 'leaveDistribution', 'departmentDistribution', 'payrollSummary'],
+                      required: [
+                        'attendanceTrend',
+                        'leaveDistribution',
+                        'departmentDistribution',
+                        'payrollSummary',
+                      ],
                     },
                   },
                   required: ['metrics', 'charts'],
@@ -1018,13 +1107,17 @@ export const openApiDocument = {
     '/api/analytics/reports': {
       get: {
         summary: 'Get HR Analytics Tabular Reports',
-        description: 'Retrieve detailed tabular reports by report type (HR only).',
+        description:
+          'Retrieve detailed tabular reports by report type (HR only).',
         parameters: [
           {
             name: 'type',
             in: 'query',
             required: true,
-            schema: { type: 'string', enum: ['attendance', 'leave', 'payroll'] },
+            schema: {
+              type: 'string',
+              enum: ['attendance', 'leave', 'payroll'],
+            },
             description: 'The type of report to retrieve',
           },
         ],
@@ -1053,6 +1146,92 @@ export const openApiDocument = {
           '400': { description: 'Bad request parameters' },
           '401': { description: 'Unauthorized' },
           '403': { description: 'Forbidden' },
+        },
+      },
+    },
+    '/api/notifications': {
+      get: {
+        summary: 'Get User Notifications Feed',
+        description:
+          'Retrieve all read and unread notifications for the active user (Employee/HR).',
+        responses: {
+          '200': {
+            description: 'List of notifications',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    notifications: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', format: 'uuid' },
+                          userId: { type: 'string', format: 'uuid' },
+                          title: { type: 'string' },
+                          message: { type: 'string' },
+                          type: { type: 'string' },
+                          read: { type: 'boolean' },
+                          createdAt: { type: 'string', format: 'date-time' },
+                        },
+                        required: [
+                          'id',
+                          'userId',
+                          'title',
+                          'message',
+                          'type',
+                          'read',
+                          'createdAt',
+                        ],
+                      },
+                    },
+                  },
+                  required: ['notifications'],
+                },
+              },
+            },
+          },
+          '401': { description: 'Unauthorized' },
+        },
+      },
+    },
+    '/api/notifications/mark-read': {
+      post: {
+        summary: 'Mark Notifications as Read',
+        description:
+          'Mark selected notifications or all notifications as read for the active user.',
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  ids: {
+                    type: 'array',
+                    items: { type: 'string', format: 'uuid' },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          '200': {
+            description: 'Operation success status',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                  },
+                  required: ['success'],
+                },
+              },
+            },
+          },
+          '401': { description: 'Unauthorized' },
         },
       },
     },

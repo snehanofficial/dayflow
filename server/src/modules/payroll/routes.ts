@@ -1,7 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { prisma } from '../core/database/index.js';
 import { requireAuth, requireRole } from '../core/auth/middleware.js';
-import { BadRequestError, NotFoundError, ForbiddenError } from '../core/errors/index.js';
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from '../core/errors/index.js';
 import { z } from 'zod';
 
 const router = Router();
@@ -47,7 +51,8 @@ router.get(
         throw new NotFoundError('Salary structure not found');
       }
 
-      const netSalary = structure.basicSalary + structure.allowances - structure.deductions;
+      const netSalary =
+        structure.basicSalary + structure.allowances - structure.deductions;
       res.json({
         ...structure,
         netSalary,
@@ -55,7 +60,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -70,10 +75,20 @@ router.put(
     try {
       const validation = configureStructureSchema.safeParse(req.body);
       if (!validation.success) {
-        throw new BadRequestError('Invalid parameters', validation.error.format());
+        throw new BadRequestError(
+          'Invalid parameters',
+          validation.error.format(),
+        );
       }
 
-      const { employeeId, basicSalary, allowances, deductions, department, designation } = validation.data;
+      const {
+        employeeId,
+        basicSalary,
+        allowances,
+        deductions,
+        department,
+        designation,
+      } = validation.data;
 
       // Verify target user exists
       const targetUser = await prisma.user.findUnique({
@@ -103,7 +118,8 @@ router.put(
         },
       });
 
-      const netSalary = structure.basicSalary + structure.allowances - structure.deductions;
+      const netSalary =
+        structure.basicSalary + structure.allowances - structure.deductions;
       res.json({
         ...structure,
         netSalary,
@@ -111,7 +127,7 @@ router.put(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -150,7 +166,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -165,7 +181,10 @@ router.post(
     try {
       const validation = generateSlipSchema.safeParse(req.body);
       if (!validation.success) {
-        throw new BadRequestError('Invalid parameters', validation.error.format());
+        throw new BadRequestError(
+          'Invalid parameters',
+          validation.error.format(),
+        );
       }
 
       const { employeeId, month } = validation.data;
@@ -176,10 +195,13 @@ router.post(
       });
 
       if (!structure) {
-        throw new BadRequestError('Salary structure must be configured before generating slip');
+        throw new BadRequestError(
+          'Salary structure must be configured before generating slip',
+        );
       }
 
-      const netSalary = structure.basicSalary + structure.allowances - structure.deductions;
+      const netSalary =
+        structure.basicSalary + structure.allowances - structure.deductions;
 
       const slip = await prisma.salarySlip.upsert({
         where: {
@@ -209,11 +231,31 @@ router.post(
         },
       });
 
+      // Notify the target employee
+      try {
+        const targetUser = await prisma.user.findUnique({
+          where: { employeeId },
+        });
+        if (targetUser) {
+          await prisma.notification.create({
+            data: {
+              userId: targetUser.id,
+              title: 'Payslip Generated',
+              message: `Your salary slip for ${month} has been generated and marked as PAID.`,
+              type: 'PAYROLL_GENERATED',
+              read: false,
+            },
+          });
+        }
+      } catch (err) {
+        // Ignore notification failure
+      }
+
       res.status(201).json(slip);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -225,7 +267,7 @@ router.get(
   requireAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
 
       const slip = await prisma.salarySlip.findUnique({
         where: { id },
@@ -250,7 +292,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { router as payrollRouter };

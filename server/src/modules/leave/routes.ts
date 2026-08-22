@@ -14,8 +14,16 @@ const createRequestSchema = z.object({
 });
 
 function calculateDays(startDate: Date, endDate: Date): number {
-  const sDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-  const eDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  const sDate = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate(),
+  );
+  const eDate = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate(),
+  );
   const diffTime = eDate.getTime() - sDate.getTime();
   return Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 }
@@ -31,7 +39,10 @@ router.post(
     try {
       const validation = createRequestSchema.safeParse(req.body);
       if (!validation.success) {
-        throw new BadRequestError('Invalid parameters', validation.error.format());
+        throw new BadRequestError(
+          'Invalid parameters',
+          validation.error.format(),
+        );
       }
 
       const { leaveType, startDate, endDate, reason } = validation.data;
@@ -53,11 +64,35 @@ router.post(
         },
       });
 
+      // Notify HR users of the new request
+      try {
+        const hrUsers = await prisma.user.findMany({
+          where: { role: 'HR' },
+        });
+        for (const hr of hrUsers) {
+          try {
+            await prisma.notification.create({
+              data: {
+                userId: hr.id,
+                title: 'New Leave Request',
+                message: `Employee ${req.user!.employeeId} has requested ${leaveType} leave starting ${start.toISOString().split('T')[0]}.`,
+                type: 'LEAVE_REQUEST',
+                read: false,
+              },
+            });
+          } catch (err) {
+            // Ignore notification failure
+          }
+        }
+      } catch (err) {
+        // Ignore notification queries failure
+      }
+
       res.status(201).json(request);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -81,7 +116,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -135,7 +170,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -164,7 +199,7 @@ router.get(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -177,7 +212,7 @@ router.patch(
   requireRole('HR'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { remarks } = req.body || {};
 
       const leaveRequest = await prisma.leaveRequest.findUnique({
@@ -189,7 +224,9 @@ router.patch(
       }
 
       if (leaveRequest.status !== 'PENDING') {
-        throw new BadRequestError('Only pending leave requests can be approved');
+        throw new BadRequestError(
+          'Only pending leave requests can be approved',
+        );
       }
 
       const updated = await prisma.leaveRequest.update({
@@ -201,11 +238,31 @@ router.patch(
         },
       });
 
+      // Notify the applicant employee
+      try {
+        const applicant = await prisma.user.findUnique({
+          where: { employeeId: leaveRequest.employeeId },
+        });
+        if (applicant) {
+          await prisma.notification.create({
+            data: {
+              userId: applicant.id,
+              title: 'Leave Request Approved',
+              message: `Your request for ${leaveRequest.leaveType} leave starting ${leaveRequest.startDate.toISOString().split('T')[0]} has been approved.`,
+              type: 'LEAVE_STATUS',
+              read: false,
+            },
+          });
+        }
+      } catch (err) {
+        // Ignore notification failure
+      }
+
       res.json(updated);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 /**
@@ -218,7 +275,7 @@ router.patch(
   requireRole('HR'),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { remarks } = req.body || {};
 
       const leaveRequest = await prisma.leaveRequest.findUnique({
@@ -230,7 +287,9 @@ router.patch(
       }
 
       if (leaveRequest.status !== 'PENDING') {
-        throw new BadRequestError('Only pending leave requests can be rejected');
+        throw new BadRequestError(
+          'Only pending leave requests can be rejected',
+        );
       }
 
       const updated = await prisma.leaveRequest.update({
@@ -242,11 +301,31 @@ router.patch(
         },
       });
 
+      // Notify the applicant employee
+      try {
+        const applicant = await prisma.user.findUnique({
+          where: { employeeId: leaveRequest.employeeId },
+        });
+        if (applicant) {
+          await prisma.notification.create({
+            data: {
+              userId: applicant.id,
+              title: 'Leave Request Rejected',
+              message: `Your request for ${leaveRequest.leaveType} leave starting ${leaveRequest.startDate.toISOString().split('T')[0]} has been rejected.`,
+              type: 'LEAVE_STATUS',
+              read: false,
+            },
+          });
+        }
+      } catch (err) {
+        // Ignore notification failure
+      }
+
       res.json(updated);
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export { router as leaveRouter };
