@@ -13,6 +13,8 @@ export const corsMiddleware = cors({
     'Authorization',
     'x-request-id',
     'x-csrf-token',
+    'Cache-Control',
+    'Pragma',
   ],
   credentials: true,
 });
