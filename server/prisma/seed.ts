@@ -48,6 +48,7 @@ async function main() {
     { resource: 'leave', action: 'manage' },
     { resource: 'payroll', action: 'read' },
     { resource: 'payroll', action: 'manage' },
+    { resource: 'analytics', action: 'read' },
   ];
 
   for (const perm of permissions) {

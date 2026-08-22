@@ -1294,6 +1294,161 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/analytics/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get HR Analytics Dashboard Data
+         * @description Retrieve high-level HR metrics and charting distributions (HR only).
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Dashboard metrics and charts data */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            metrics: {
+                                totalEmployees: number;
+                                presentToday: number;
+                                absentToday: number;
+                                onLeaveToday: number;
+                                attendancePercentage: number;
+                                pendingLeavesCount: number;
+                                payrollTotal: number;
+                            };
+                            charts: {
+                                attendanceTrend: {
+                                    date: string;
+                                    present: number;
+                                    absent: number;
+                                    leave: number;
+                                }[];
+                                leaveDistribution: {
+                                    paid: number;
+                                    sick: number;
+                                    unpaid: number;
+                                };
+                                departmentDistribution: {
+                                    department: string;
+                                    count: number;
+                                }[];
+                                payrollSummary: {
+                                    department: string;
+                                    basic: number;
+                                    allowances: number;
+                                    deductions: number;
+                                    net: number;
+                                }[];
+                            };
+                        };
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/analytics/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get HR Analytics Tabular Reports
+         * @description Retrieve detailed tabular reports by report type (HR only).
+         */
+        get: {
+            parameters: {
+                query: {
+                    /** @description The type of report to retrieve */
+                    type: "attendance" | "leave" | "payroll";
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Tabular report rows */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            type: string;
+                            data: {
+                                [key: string]: unknown;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Bad request parameters */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {

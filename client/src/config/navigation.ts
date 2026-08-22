@@ -65,6 +65,17 @@ const baseGroups: NavGroup[] = [
       },
     ],
   },
+  {
+    group: 'Analytics',
+    items: [
+      {
+        label: 'HR Intelligence',
+        route: '/hr/analytics',
+        icon: 'analytics',
+        requiredPermission: { resource: 'analytics', action: 'read' },
+      },
+    ],
+  },
 ];
 
 // Append playground for developer inspection in local development

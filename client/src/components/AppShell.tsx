@@ -17,6 +17,7 @@ import {
   Search,
   Calendar,
   CreditCard,
+  BarChart3,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.js';
 import { useTheme } from '../context/ThemeContext.js';
@@ -27,6 +28,8 @@ import { SearchPalette } from './SearchPalette.js';
 
 function renderIcon(icon?: string) {
   switch (icon) {
+    case 'analytics':
+      return <BarChart3 size={16} aria-hidden="true" />;
     case 'payroll':
       return <CreditCard size={16} aria-hidden="true" />;
     case 'calendar':

@@ -203,6 +203,7 @@ router.post(
               { resource: 'leave', action: 'manage' },
               { resource: 'payroll', action: 'read' },
               { resource: 'payroll', action: 'manage' },
+              { resource: 'analytics', action: 'read' },
             ]
             : [
               { resource: 'dashboard', action: 'read' },

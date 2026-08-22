@@ -29,6 +29,7 @@ import { LeaveRequestPage } from './features/leave/LeaveRequestPage.js';
 import { HrLeavePage } from './features/leave/HrLeavePage.js';
 import { SalarySlipsPage } from './features/payroll/SalarySlipsPage.js';
 import { HrPayrollPage } from './features/payroll/HrPayrollPage.js';
+import { HrAnalyticsPage } from './features/analytics/HrAnalyticsPage.js';
 
 /**
  * Dashboard - verified session info, permissions, and component primitives.
@@ -493,6 +494,16 @@ export default function App() {
                       permission={{ resource: 'payroll', action: 'manage' }}
                     >
                       <HrPayrollPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="hr/analytics"
+                  element={
+                    <ProtectedRoute
+                      permission={{ resource: 'analytics', action: 'read' }}
+                    >
+                      <HrAnalyticsPage />
                     </ProtectedRoute>
                   }
                 />
