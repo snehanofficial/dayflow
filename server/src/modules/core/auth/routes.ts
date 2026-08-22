@@ -193,27 +193,27 @@ router.post(
         const defaultPermissions =
           upperRole === 'HR'
             ? [
-              { resource: 'dashboard', action: 'read' },
-              { resource: 'profile', action: 'read' },
-              { resource: 'profile', action: 'update' },
-              { resource: 'resources', action: 'read' },
-              { resource: 'resources', action: 'create' },
-              { resource: 'resources', action: 'delete' },
-              { resource: 'leave', action: 'read' },
-              { resource: 'leave', action: 'manage' },
-              { resource: 'payroll', action: 'read' },
-              { resource: 'payroll', action: 'manage' },
-              { resource: 'analytics', action: 'read' },
-            ]
+                { resource: 'dashboard', action: 'read' },
+                { resource: 'profile', action: 'read' },
+                { resource: 'profile', action: 'update' },
+                { resource: 'resources', action: 'read' },
+                { resource: 'resources', action: 'create' },
+                { resource: 'resources', action: 'delete' },
+                { resource: 'leave', action: 'read' },
+                { resource: 'leave', action: 'manage' },
+                { resource: 'payroll', action: 'read' },
+                { resource: 'payroll', action: 'manage' },
+                { resource: 'analytics', action: 'read' },
+              ]
             : [
-              { resource: 'dashboard', action: 'read' },
-              { resource: 'profile', action: 'read' },
-              { resource: 'profile', action: 'update' },
-              { resource: 'resources', action: 'read' },
-              { resource: 'leave', action: 'read' },
-              { resource: 'leave', action: 'create' },
-              { resource: 'payroll', action: 'read' },
-            ];
+                { resource: 'dashboard', action: 'read' },
+                { resource: 'profile', action: 'read' },
+                { resource: 'profile', action: 'update' },
+                { resource: 'resources', action: 'read' },
+                { resource: 'leave', action: 'read' },
+                { resource: 'leave', action: 'create' },
+                { resource: 'payroll', action: 'read' },
+              ];
 
         await Promise.all(
           defaultPermissions.map((perm) =>

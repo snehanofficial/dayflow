@@ -89,7 +89,9 @@ async function main() {
     },
   });
 
-  console.log(`✅ Seeding completed. Created user ${email} with permissions and salary structure.`);
+  console.log(
+    `✅ Seeding completed. Created user ${email} with permissions and salary structure.`,
+  );
 }
 
 main()

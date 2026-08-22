@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../api/client.js';
+import { LeaveCalendar } from './LeaveCalendar.js';
 import {
   Card,
   Button,
@@ -13,7 +14,7 @@ import {
   ErrorState,
 } from '../../components/ui/index.js';
 import { toast } from '../../components/Toast/toastStore.js';
-import { Calendar, Info, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, Info, Clock, CheckCircle, XCircle } from 'lucide-react';
 
 interface BalanceItem {
   allocated: number;
@@ -42,6 +43,7 @@ interface LeaveRequest {
 
 export function LeaveRequestPage() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<'portal' | 'calendar'>('portal');
   const [leaveType, setLeaveType] = useState('PAID');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -195,366 +197,416 @@ export function LeaveRequestPage() {
         </p>
       </div>
 
-      {/* Balance Cards */}
-      {isBalanceLoading ? (
-        <div style={{ marginBottom: 'var(--space-6)' }}>
-          <LoadingState message="Loading leave balances..." />
-        </div>
+      {/* Tabs Control */}
+      <div
+        className="tabs-container"
+        style={{ marginBottom: 'var(--space-5)' }}
+      >
+        <button
+          type="button"
+          className={`tab-trigger ${activeTab === 'portal' ? 'active' : ''}`}
+          onClick={() => setActiveTab('portal')}
+        >
+          Leave Applications
+        </button>
+        <button
+          type="button"
+          className={`tab-trigger ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => setActiveTab('calendar')}
+        >
+          Calendar View
+        </button>
+      </div>
+
+      {activeTab === 'calendar' ? (
+        <LeaveCalendar requests={historyData?.requests || []} />
       ) : (
-        balance && (
+        <>
+          {/* Balance Cards */}
+          {isBalanceLoading ? (
+            <div style={{ marginBottom: 'var(--space-6)' }}>
+              <LoadingState message="Loading leave balances..." />
+            </div>
+          ) : (
+            balance && (
+              <div
+                className="adaptive-grid"
+                style={{
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+                  marginBottom: 'var(--space-6)',
+                  gap: 'var(--space-4)',
+                }}
+              >
+                {/* Paid Leave Card */}
+                <Card style={{ position: 'relative', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: -10,
+                      top: -10,
+                      opacity: 0.05,
+                      color: 'var(--color-primary)',
+                    }}
+                  >
+                    <CalendarIcon size={120} />
+                  </div>
+                  <h3
+                    className="card-title"
+                    style={{ color: 'var(--color-primary)' }}
+                  >
+                    Paid Leaves
+                  </h3>
+                  <div className="kv-row">
+                    <span className="kv-label">Allocated</span>
+                    <span className="kv-value">
+                      {balance.paid.allocated} Days
+                    </span>
+                  </div>
+                  <div className="kv-row">
+                    <span className="kv-label">Used</span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      {balance.paid.used} Days
+                    </span>
+                  </div>
+                  <div
+                    className="kv-row"
+                    style={{
+                      borderTop: '1px dashed var(--color-border)',
+                      paddingTop: 'var(--space-2)',
+                    }}
+                  >
+                    <span className="kv-label" style={{ fontWeight: 600 }}>
+                      Remaining
+                    </span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-success)', fontWeight: 600 }}
+                    >
+                      {balance.paid.remaining} Days
+                    </span>
+                  </div>
+                </Card>
+
+                {/* Sick Leave Card */}
+                <Card style={{ position: 'relative', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: -10,
+                      top: -10,
+                      opacity: 0.05,
+                      color: 'var(--color-info)',
+                    }}
+                  >
+                    <CalendarIcon size={120} />
+                  </div>
+                  <h3
+                    className="card-title"
+                    style={{ color: 'var(--color-info)' }}
+                  >
+                    Sick Leaves
+                  </h3>
+                  <div className="kv-row">
+                    <span className="kv-label">Allocated</span>
+                    <span className="kv-value">
+                      {balance.sick.allocated} Days
+                    </span>
+                  </div>
+                  <div className="kv-row">
+                    <span className="kv-label">Used</span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      {balance.sick.used} Days
+                    </span>
+                  </div>
+                  <div
+                    className="kv-row"
+                    style={{
+                      borderTop: '1px dashed var(--color-border)',
+                      paddingTop: 'var(--space-2)',
+                    }}
+                  >
+                    <span className="kv-label" style={{ fontWeight: 600 }}>
+                      Remaining
+                    </span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-success)', fontWeight: 600 }}
+                    >
+                      {balance.sick.remaining} Days
+                    </span>
+                  </div>
+                </Card>
+
+                {/* Unpaid Leave Card */}
+                <Card style={{ position: 'relative', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      right: -10,
+                      top: -10,
+                      opacity: 0.05,
+                      color: 'var(--color-text-muted)',
+                    }}
+                  >
+                    <CalendarIcon size={120} />
+                  </div>
+                  <h3
+                    className="card-title"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
+                    Unpaid Leaves
+                  </h3>
+                  <div className="kv-row">
+                    <span className="kv-label">Allocated</span>
+                    <span className="kv-value">
+                      {balance.unpaid.allocated} Days
+                    </span>
+                  </div>
+                  <div className="kv-row">
+                    <span className="kv-label">Used</span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      {balance.unpaid.used} Days
+                    </span>
+                  </div>
+                  <div
+                    className="kv-row"
+                    style={{
+                      borderTop: '1px dashed var(--color-border)',
+                      paddingTop: 'var(--space-2)',
+                    }}
+                  >
+                    <span className="kv-label" style={{ fontWeight: 600 }}>
+                      Approved Unpaid
+                    </span>
+                    <span
+                      className="kv-value"
+                      style={{ color: 'var(--color-warning)', fontWeight: 600 }}
+                    >
+                      {balance.unpaid.used} Days
+                    </span>
+                  </div>
+                </Card>
+              </div>
+            )
+          )}
+
+          {/* Grid: Apply Form on Left, History Table on Right */}
           <div
             className="adaptive-grid"
             style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-              marginBottom: 'var(--space-6)',
-              gap: 'var(--space-4)',
+              gridTemplateColumns: 'minmax(300px, 1fr) 2.2fr',
+              alignItems: 'start',
+              gap: 'var(--space-6)',
             }}
           >
-            {/* Paid Leave Card */}
-            <Card style={{ position: 'relative', overflow: 'hidden' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -10,
-                  top: -10,
-                  opacity: 0.05,
-                  color: 'var(--color-primary)',
-                }}
-              >
-                <Calendar size={120} />
-              </div>
+            {/* Leave Request Form */}
+            <Card>
               <h3
                 className="card-title"
-                style={{ color: 'var(--color-primary)' }}
+                style={{ marginBottom: 'var(--space-4)' }}
               >
-                Paid Leaves
+                Apply for Leave
               </h3>
-              <div className="kv-row">
-                <span className="kv-label">Allocated</span>
-                <span className="kv-value">{balance.paid.allocated} Days</span>
-              </div>
-              <div className="kv-row">
-                <span className="kv-label">Used</span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-text-secondary)' }}
+              <form onSubmit={handleSubmit}>
+                <div
+                  className="form-group"
+                  style={{ marginBottom: 'var(--space-4)' }}
                 >
-                  {balance.paid.used} Days
-                </span>
-              </div>
-              <div
-                className="kv-row"
-                style={{
-                  borderTop: '1px dashed var(--color-border)',
-                  paddingTop: 'var(--space-2)',
-                }}
-              >
-                <span className="kv-label" style={{ fontWeight: 600 }}>
-                  Remaining
-                </span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-success)', fontWeight: 600 }}
+                  <Label htmlFor="leaveType">Leave Type</Label>
+                  <Select
+                    id="leaveType"
+                    options={[
+                      { label: 'Paid Leave', value: 'PAID' },
+                      { label: 'Sick Leave', value: 'SICK' },
+                      { label: 'Unpaid Leave', value: 'UNPAID' },
+                    ]}
+                    value={leaveType}
+                    onChange={(e) => setLeaveType(e.target.value)}
+                  />
+                </div>
+
+                <div
+                  className="form-group"
+                  style={{ marginBottom: 'var(--space-4)' }}
                 >
-                  {balance.paid.remaining} Days
-                </span>
-              </div>
+                  <Label htmlFor="startDate">Start Date</Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div
+                  className="form-group"
+                  style={{ marginBottom: 'var(--space-4)' }}
+                >
+                  <Label htmlFor="endDate">End Date</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div
+                  className="form-group"
+                  style={{ marginBottom: 'var(--space-5)' }}
+                >
+                  <Label htmlFor="reason">Reason for Leave</Label>
+                  <Textarea
+                    id="reason"
+                    placeholder="Please state the reason for your leave request..."
+                    rows={4}
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  isLoading={submitLeaveMutation.isPending}
+                  style={{ width: '100%' }}
+                >
+                  Submit Application
+                </Button>
+              </form>
             </Card>
 
-            {/* Sick Leave Card */}
-            <Card style={{ position: 'relative', overflow: 'hidden' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -10,
-                  top: -10,
-                  opacity: 0.05,
-                  color: 'var(--color-info)',
-                }}
-              >
-                <Calendar size={120} />
-              </div>
-              <h3 className="card-title" style={{ color: 'var(--color-info)' }}>
-                Sick Leaves
-              </h3>
-              <div className="kv-row">
-                <span className="kv-label">Allocated</span>
-                <span className="kv-value">{balance.sick.allocated} Days</span>
-              </div>
-              <div className="kv-row">
-                <span className="kv-label">Used</span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  {balance.sick.used} Days
-                </span>
-              </div>
-              <div
-                className="kv-row"
-                style={{
-                  borderTop: '1px dashed var(--color-border)',
-                  paddingTop: 'var(--space-2)',
-                }}
-              >
-                <span className="kv-label" style={{ fontWeight: 600 }}>
-                  Remaining
-                </span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-success)', fontWeight: 600 }}
-                >
-                  {balance.sick.remaining} Days
-                </span>
-              </div>
-            </Card>
-
-            {/* Unpaid Leave Card */}
-            <Card style={{ position: 'relative', overflow: 'hidden' }}>
-              <div
-                style={{
-                  position: 'absolute',
-                  right: -10,
-                  top: -10,
-                  opacity: 0.05,
-                  color: 'var(--color-text-muted)',
-                }}
-              >
-                <Calendar size={120} />
-              </div>
+            {/* History Table */}
+            <Card style={{ minHeight: 400 }}>
               <h3
                 className="card-title"
-                style={{ color: 'var(--color-text-secondary)' }}
+                style={{ marginBottom: 'var(--space-4)' }}
               >
-                Unpaid Leaves
+                My Leave Requests History
               </h3>
-              <div className="kv-row">
-                <span className="kv-label">Allocated</span>
-                <span className="kv-value">
-                  {balance.unpaid.allocated} Days
-                </span>
-              </div>
-              <div className="kv-row">
-                <span className="kv-label">Used</span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-text-secondary)' }}
+              {isHistoryLoading ? (
+                <LoadingState message="Loading requests history..." />
+              ) : !historyData?.requests ||
+                historyData.requests.length === 0 ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 'var(--space-8) 0',
+                    color: 'var(--color-text-muted)',
+                  }}
                 >
-                  {balance.unpaid.used} Days
-                </span>
-              </div>
-              <div
-                className="kv-row"
-                style={{
-                  borderTop: '1px dashed var(--color-border)',
-                  paddingTop: 'var(--space-2)',
-                }}
-              >
-                <span className="kv-label" style={{ fontWeight: 600 }}>
-                  Approved Unpaid
-                </span>
-                <span
-                  className="kv-value"
-                  style={{ color: 'var(--color-warning)', fontWeight: 600 }}
-                >
-                  {balance.unpaid.used} Days
-                </span>
-              </div>
+                  <Info
+                    size={32}
+                    style={{ marginBottom: 'var(--space-2)', opacity: 0.5 }}
+                  >
+                    No leave requests found.
+                  </Info>
+                  <p style={{ fontSize: '0.875rem' }}>
+                    No leave requests found.
+                  </p>
+                </div>
+              ) : (
+                <div className="responsive-table-wrapper">
+                  <table className="adaptive-table">
+                    <thead>
+                      <tr>
+                        <th>Type</th>
+                        <th>Date Range</th>
+                        <th>Days</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>HR Response</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {historyData.requests.map((req) => (
+                        <tr key={req.id}>
+                          <td data-label="Type" style={{ fontWeight: 600 }}>
+                            {req.leaveType}
+                          </td>
+                          <td
+                            data-label="Date Range"
+                            style={{
+                              fontSize: '0.75rem',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {formatLocalDate(req.startDate)} -{' '}
+                            {formatLocalDate(req.endDate)}
+                          </td>
+                          <td data-label="Days" style={{ textAlign: 'center' }}>
+                            {calculateDuration(req.startDate, req.endDate)}
+                          </td>
+                          <td
+                            data-label="Reason"
+                            style={{
+                              maxWidth: 220,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              fontSize: '0.8125rem',
+                            }}
+                          >
+                            {req.reason}
+                          </td>
+                          <td data-label="Status">
+                            {getStatusBadge(req.status)}
+                          </td>
+                          <td data-label="HR Response">
+                            {req.remarks ? (
+                              <div
+                                style={{
+                                  fontSize: '0.75rem',
+                                  color: 'var(--color-text-secondary)',
+                                }}
+                              >
+                                <strong>Remarks:</strong> {req.remarks}
+                              </div>
+                            ) : req.status === 'PENDING' ? (
+                              <span
+                                style={{
+                                  fontSize: '0.75rem',
+                                  color: 'var(--color-text-muted)',
+                                  fontStyle: 'italic',
+                                }}
+                              >
+                                Awaiting review
+                              </span>
+                            ) : (
+                              <span
+                                style={{
+                                  fontSize: '0.75rem',
+                                  color: 'var(--color-text-muted)',
+                                }}
+                              >
+                                No comments
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </Card>
           </div>
-        )
+        </>
       )}
-
-      {/* Grid: Apply Form on Left, History Table on Right */}
-      <div
-        className="adaptive-grid"
-        style={{
-          gridTemplateColumns: 'minmax(300px, 1fr) 2.2fr',
-          alignItems: 'start',
-          gap: 'var(--space-6)',
-        }}
-      >
-        {/* Leave Request Form */}
-        <Card>
-          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>
-            Apply for Leave
-          </h3>
-          <form onSubmit={handleSubmit}>
-            <div
-              className="form-group"
-              style={{ marginBottom: 'var(--space-4)' }}
-            >
-              <Label htmlFor="leaveType">Leave Type</Label>
-              <Select
-                id="leaveType"
-                options={[
-                  { label: 'Paid Leave', value: 'PAID' },
-                  { label: 'Sick Leave', value: 'SICK' },
-                  { label: 'Unpaid Leave', value: 'UNPAID' },
-                ]}
-                value={leaveType}
-                onChange={(e) => setLeaveType(e.target.value)}
-              />
-            </div>
-
-            <div
-              className="form-group"
-              style={{ marginBottom: 'var(--space-4)' }}
-            >
-              <Label htmlFor="startDate">Start Date</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-              />
-            </div>
-
-            <div
-              className="form-group"
-              style={{ marginBottom: 'var(--space-4)' }}
-            >
-              <Label htmlFor="endDate">End Date</Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-              />
-            </div>
-
-            <div
-              className="form-group"
-              style={{ marginBottom: 'var(--space-5)' }}
-            >
-              <Label htmlFor="reason">Reason for Leave</Label>
-              <Textarea
-                id="reason"
-                placeholder="Please state the reason for your leave request..."
-                rows={4}
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              isLoading={submitLeaveMutation.isPending}
-              style={{ width: '100%' }}
-            >
-              Submit Application
-            </Button>
-          </form>
-        </Card>
-
-        {/* History Table */}
-        <Card style={{ minHeight: 400 }}>
-          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>
-            My Leave Requests History
-          </h3>
-          {isHistoryLoading ? (
-            <LoadingState message="Loading requests history..." />
-          ) : !historyData?.requests || historyData.requests.length === 0 ? (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 'var(--space-8) 0',
-                color: 'var(--color-text-muted)',
-              }}
-            >
-              <Info
-                size={32}
-                style={{ marginBottom: 'var(--space-2)', opacity: 0.5 }}
-              />
-              <p style={{ fontSize: '0.875rem' }}>No leave requests found.</p>
-            </div>
-          ) : (
-            <div className="responsive-table-wrapper">
-              <table className="adaptive-table">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Date Range</th>
-                    <th>Days</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>HR Response</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historyData.requests.map((req) => (
-                    <tr key={req.id}>
-                      <td data-label="Type" style={{ fontWeight: 600 }}>
-                        {req.leaveType}
-                      </td>
-                      <td
-                        data-label="Date Range"
-                        style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}
-                      >
-                        {formatLocalDate(req.startDate)} -{' '}
-                        {formatLocalDate(req.endDate)}
-                      </td>
-                      <td data-label="Days" style={{ textAlign: 'center' }}>
-                        {calculateDuration(req.startDate, req.endDate)}
-                      </td>
-                      <td
-                        data-label="Reason"
-                        style={{
-                          maxWidth: 220,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          fontSize: '0.8125rem',
-                        }}
-                      >
-                        {req.reason}
-                      </td>
-                      <td data-label="Status">{getStatusBadge(req.status)}</td>
-                      <td data-label="HR Response">
-                        {req.remarks ? (
-                          <div
-                            style={{
-                              fontSize: '0.75rem',
-                              color: 'var(--color-text-secondary)',
-                            }}
-                          >
-                            <strong>Remarks:</strong> {req.remarks}
-                          </div>
-                        ) : req.status === 'PENDING' ? (
-                          <span
-                            style={{
-                              fontSize: '0.75rem',
-                              color: 'var(--color-text-muted)',
-                              fontStyle: 'italic',
-                            }}
-                          >
-                            Awaiting review
-                          </span>
-                        ) : (
-                          <span
-                            style={{
-                              fontSize: '0.75rem',
-                              color: 'var(--color-text-muted)',
-                            }}
-                          >
-                            No comments
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-      </div>
     </section>
   );
 }

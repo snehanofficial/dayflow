@@ -23,11 +23,25 @@ describe('Analytics Module Integration Tests', () => {
       where: { employeeId: { in: ['EMP-ANALYTICS-01', 'EMP-ANALYTICS-HR'] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-analytics-test@example.com', 'hr-analytics-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: [
+              'emp-analytics-test@example.com',
+              'hr-analytics-test@example.com',
+            ],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-analytics-test@example.com', 'hr-analytics-test@example.com'] },
+        email: {
+          in: [
+            'emp-analytics-test@example.com',
+            'hr-analytics-test@example.com',
+          ],
+        },
       },
     });
 
@@ -128,11 +142,25 @@ describe('Analytics Module Integration Tests', () => {
       where: { userId: { in: [employeeUserId, hrUserId] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-analytics-test@example.com', 'hr-analytics-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: [
+              'emp-analytics-test@example.com',
+              'hr-analytics-test@example.com',
+            ],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-analytics-test@example.com', 'hr-analytics-test@example.com'] },
+        email: {
+          in: [
+            'emp-analytics-test@example.com',
+            'hr-analytics-test@example.com',
+          ],
+        },
       },
     });
     return new Promise<void>((resolve) => {
@@ -153,9 +181,12 @@ describe('Analytics Module Integration Tests', () => {
     });
 
     it('should deny Employee from loading reports list', async () => {
-      const response = await fetch(`${testUrl}/api/analytics/reports?type=payroll`, {
-        headers: { Cookie: employeeCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/analytics/reports?type=payroll`,
+        {
+          headers: { Cookie: employeeCookie },
+        },
+      );
       expect(response.status).toBe(403);
     });
 
@@ -192,9 +223,12 @@ describe('Analytics Module Integration Tests', () => {
 
   describe('HR Report Queries', () => {
     it('should return payroll tabular report rows successfully', async () => {
-      const response = await fetch(`${testUrl}/api/analytics/reports?type=payroll`, {
-        headers: { Cookie: hrCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/analytics/reports?type=payroll`,
+        {
+          headers: { Cookie: hrCookie },
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = (await response.json()) as any;
@@ -203,7 +237,9 @@ describe('Analytics Module Integration Tests', () => {
       expect(Array.isArray(data.data)).toBe(true);
       expect(data.data.length).toBeGreaterThanOrEqual(2);
 
-      const empRow = data.data.find((r: any) => r.employeeId === 'EMP-ANALYTICS-01');
+      const empRow = data.data.find(
+        (r: any) => r.employeeId === 'EMP-ANALYTICS-01',
+      );
       expect(empRow).toBeDefined();
       expect(empRow.basicSalary).toBe(4000);
       expect(empRow.netSalary).toBe(4500);
@@ -211,9 +247,12 @@ describe('Analytics Module Integration Tests', () => {
     });
 
     it('should return leave report rows successfully', async () => {
-      const response = await fetch(`${testUrl}/api/analytics/reports?type=leave`, {
-        headers: { Cookie: hrCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/analytics/reports?type=leave`,
+        {
+          headers: { Cookie: hrCookie },
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = (await response.json()) as any;
@@ -221,15 +260,20 @@ describe('Analytics Module Integration Tests', () => {
       expect(data.type).toBe('leave');
       expect(Array.isArray(data.data)).toBe(true);
 
-      const empRow = data.data.find((r: any) => r.employeeId === 'EMP-ANALYTICS-01');
+      const empRow = data.data.find(
+        (r: any) => r.employeeId === 'EMP-ANALYTICS-01',
+      );
       expect(empRow).toBeDefined();
       expect(empRow.approvedCount).toBe(0);
     });
 
     it('should return attendance report rows successfully', async () => {
-      const response = await fetch(`${testUrl}/api/analytics/reports?type=attendance`, {
-        headers: { Cookie: hrCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/analytics/reports?type=attendance`,
+        {
+          headers: { Cookie: hrCookie },
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = (await response.json()) as any;
@@ -237,16 +281,21 @@ describe('Analytics Module Integration Tests', () => {
       expect(data.type).toBe('attendance');
       expect(Array.isArray(data.data)).toBe(true);
 
-      const empRow = data.data.find((r: any) => r.employeeId === 'EMP-ANALYTICS-01');
+      const empRow = data.data.find(
+        (r: any) => r.employeeId === 'EMP-ANALYTICS-01',
+      );
       expect(empRow).toBeDefined();
       expect(empRow.presentDays).toBeDefined();
       expect(empRow.attendancePercentage).toBeLessThanOrEqual(100);
     });
 
     it('should fail with 400 Bad Request on invalid report types', async () => {
-      const response = await fetch(`${testUrl}/api/analytics/reports?type=invalid`, {
-        headers: { Cookie: hrCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/analytics/reports?type=invalid`,
+        {
+          headers: { Cookie: hrCookie },
+        },
+      );
       expect(response.status).toBe(400);
     });
   });

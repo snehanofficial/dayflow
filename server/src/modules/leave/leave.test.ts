@@ -22,11 +22,19 @@ describe('Leave Module Integration Tests', () => {
       where: { employeeId: { in: ['EMP-LEAVE-01', 'EMP-LEAVE-HR'] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] },
+        email: {
+          in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'],
+        },
       },
     });
 
@@ -87,11 +95,19 @@ describe('Leave Module Integration Tests', () => {
       where: { employeeId: { in: ['EMP-LEAVE-01', 'EMP-LEAVE-HR'] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'] },
+        email: {
+          in: ['emp-leave-test@example.com', 'hr-leave-test@example.com'],
+        },
       },
     });
     return new Promise<void>((resolve) => {
@@ -161,7 +177,9 @@ describe('Leave Module Integration Tests', () => {
 
       expect(response.status).toBe(400);
       const body: any = await response.json();
-      expect(body.error.message).toContain('Start date cannot be after end date');
+      expect(body.error.message).toContain(
+        'Start date cannot be after end date',
+      );
     });
 
     it('should successfully create leave request for Employee with PENDING status', async () => {
@@ -267,19 +285,24 @@ describe('Leave Module Integration Tests', () => {
       const body: any = await response.json();
       expect(body.requests).toBeDefined();
       expect(body.requests.length).toBeGreaterThan(0);
-      expect(body.requests.find((r: any) => r.id === targetRequestId).user.email).toBe('emp-leave-test@example.com');
+      expect(
+        body.requests.find((r: any) => r.id === targetRequestId).user.email,
+      ).toBe('emp-leave-test@example.com');
     });
 
     it('should successfully approve a pending leave request', async () => {
-      const response = await fetch(`${testUrl}/api/leave/${targetRequestId}/approve`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken,
-          Cookie: `${hrCookie}; csrf-token=${csrfToken}`,
+      const response = await fetch(
+        `${testUrl}/api/leave/${targetRequestId}/approve`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
+            Cookie: `${hrCookie}; csrf-token=${csrfToken}`,
+          },
+          body: JSON.stringify({ remarks: 'Get well soon' }),
         },
-        body: JSON.stringify({ remarks: 'Get well soon' }),
-      });
+      );
 
       expect(response.status).toBe(200);
       const updated: any = await response.json();
@@ -300,14 +323,17 @@ describe('Leave Module Integration Tests', () => {
     });
 
     it('should fail to approve/reject an already processed leave request', async () => {
-      const response = await fetch(`${testUrl}/api/leave/${targetRequestId}/reject`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-csrf-token': csrfToken,
-          Cookie: `${hrCookie}; csrf-token=${csrfToken}`,
+      const response = await fetch(
+        `${testUrl}/api/leave/${targetRequestId}/reject`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
+            Cookie: `${hrCookie}; csrf-token=${csrfToken}`,
+          },
         },
-      });
+      );
       expect(response.status).toBe(400);
     });
   });

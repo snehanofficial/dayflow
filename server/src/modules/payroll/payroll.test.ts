@@ -24,11 +24,19 @@ describe('Payroll Module Integration Tests', () => {
       where: { employeeId: { in: ['EMP-PAYROLL-01', 'EMP-PAYROLL-HR'] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'] },
+        email: {
+          in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'],
+        },
       },
     });
 
@@ -92,11 +100,19 @@ describe('Payroll Module Integration Tests', () => {
       where: { employeeId: { in: ['EMP-PAYROLL-01', 'EMP-PAYROLL-HR'] } },
     });
     await prisma.session.deleteMany({
-      where: { user: { email: { in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'] } } },
+      where: {
+        user: {
+          email: {
+            in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'],
+          },
+        },
+      },
     });
     await prisma.user.deleteMany({
       where: {
-        email: { in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'] },
+        email: {
+          in: ['emp-payroll-test@example.com', 'hr-payroll-test@example.com'],
+        },
       },
     });
     return new Promise<void>((resolve) => {
@@ -166,17 +182,23 @@ describe('Payroll Module Integration Tests', () => {
     });
 
     it('should deny Employee from querying another employee structure via query parameter', async () => {
-      const response = await fetch(`${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-HR`, {
-        headers: { Cookie: employeeCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-HR`,
+        {
+          headers: { Cookie: employeeCookie },
+        },
+      );
 
       expect(response.status).toBe(403);
     });
 
     it('should allow HR to query any employee structure via query parameter', async () => {
-      const response = await fetch(`${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-01`, {
-        headers: { Cookie: hrCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/payroll/salary-structure?employeeId=EMP-PAYROLL-01`,
+        {
+          headers: { Cookie: hrCookie },
+        },
+      );
 
       expect(response.status).toBe(200);
       const data: any = await response.json();
@@ -255,9 +277,12 @@ describe('Payroll Module Integration Tests', () => {
     });
 
     it('should allow Employee to fetch their own slip details', async () => {
-      const response = await fetch(`${testUrl}/api/payroll/slip/${generatedSlipId}`, {
-        headers: { Cookie: employeeCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/payroll/slip/${generatedSlipId}`,
+        {
+          headers: { Cookie: employeeCookie },
+        },
+      );
 
       expect(response.status).toBe(200);
       const data: any = await response.json();
@@ -292,9 +317,12 @@ describe('Payroll Module Integration Tests', () => {
         },
       });
 
-      const response = await fetch(`${testUrl}/api/payroll/slip/${tempSlip.id}`, {
-        headers: { Cookie: employeeCookie },
-      });
+      const response = await fetch(
+        `${testUrl}/api/payroll/slip/${tempSlip.id}`,
+        {
+          headers: { Cookie: employeeCookie },
+        },
+      );
 
       expect(response.status).toBe(403);
     });

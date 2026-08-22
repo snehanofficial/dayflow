@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../api/client.js';
+import { LeaveCalendar } from './LeaveCalendar.js';
 import {
   Card,
   Button,
@@ -33,6 +34,9 @@ interface LeaveRequest {
 
 export function HrLeavePage() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<'requests' | 'calendar'>(
+    'requests',
+  );
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
 
@@ -195,176 +199,201 @@ export function HrLeavePage() {
         </p>
       </div>
 
-      {/* Filters and List */}
-      <Card>
-        {/* Filters Panel */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 'var(--space-4)',
-            marginBottom: 'var(--space-5)',
-            borderBottom: '1px solid var(--color-border)',
-            paddingBottom: 'var(--space-4)',
-          }}
+      {/* Tabs Control */}
+      <div
+        className="tabs-container"
+        style={{ marginBottom: 'var(--space-5)' }}
+      >
+        <button
+          type="button"
+          className={`tab-trigger ${activeTab === 'requests' ? 'active' : ''}`}
+          onClick={() => setActiveTab('requests')}
         >
-          <div className="form-group" style={{ minWidth: 200 }}>
-            <Label htmlFor="statusFilter" style={{ marginBottom: 4 }}>
-              Filter by Status
-            </Label>
-            <Select
-              id="statusFilter"
-              options={[
-                { label: 'All Statuses', value: 'ALL' },
-                { label: 'Pending Only', value: 'PENDING' },
-                { label: 'Approved Only', value: 'APPROVED' },
-                { label: 'Rejected Only', value: 'REJECTED' },
-              ]}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            />
-          </div>
+          Leave Applications
+        </button>
+        <button
+          type="button"
+          className={`tab-trigger ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => setActiveTab('calendar')}
+        >
+          Calendar View
+        </button>
+      </div>
 
-          <div className="form-group" style={{ minWidth: 200 }}>
-            <Label htmlFor="typeFilter" style={{ marginBottom: 4 }}>
-              Filter by Leave Type
-            </Label>
-            <Select
-              id="typeFilter"
-              options={[
-                { label: 'All Leave Types', value: 'ALL' },
-                { label: 'Paid Leave', value: 'PAID' },
-                { label: 'Sick Leave', value: 'SICK' },
-                { label: 'Unpaid Leave', value: 'UNPAID' },
-              ]}
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Requests List */}
-        {isLoading ? (
-          <LoadingState message="Loading employee requests..." />
-        ) : !filteredRequests || filteredRequests.length === 0 ? (
+      {activeTab === 'calendar' ? (
+        <LeaveCalendar
+          requests={allRequestsData?.requests || []}
+          isHrView={true}
+        />
+      ) : (
+        /* Filters and List */
+        <Card>
+          {/* Filters Panel */}
           <div
             style={{
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 'var(--space-8) 0',
-              color: 'var(--color-text-muted)',
+              flexWrap: 'wrap',
+              gap: 'var(--space-4)',
+              marginBottom: 'var(--space-5)',
+              borderBottom: '1px solid var(--color-border)',
+              paddingBottom: 'var(--space-4)',
             }}
           >
-            <ShieldAlert
-              size={36}
-              style={{ marginBottom: 'var(--space-2)', opacity: 0.5 }}
-            />
-            <p style={{ fontSize: '0.875rem' }}>
-              No leave requests match the selected filters.
-            </p>
+            <div className="form-group" style={{ minWidth: 200 }}>
+              <Label htmlFor="statusFilter" style={{ marginBottom: 4 }}>
+                Filter by Status
+              </Label>
+              <Select
+                id="statusFilter"
+                options={[
+                  { label: 'All Statuses', value: 'ALL' },
+                  { label: 'Pending Only', value: 'PENDING' },
+                  { label: 'Approved Only', value: 'APPROVED' },
+                  { label: 'Rejected Only', value: 'REJECTED' },
+                ]}
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group" style={{ minWidth: 200 }}>
+              <Label htmlFor="typeFilter" style={{ marginBottom: 4 }}>
+                Filter by Leave Type
+              </Label>
+              <Select
+                id="typeFilter"
+                options={[
+                  { label: 'All Types', value: 'ALL' },
+                  { label: 'Paid Leave', value: 'PAID' },
+                  { label: 'Sick Leave', value: 'SICK' },
+                  { label: 'Unpaid Leave', value: 'UNPAID' },
+                ]}
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              />
+            </div>
           </div>
-        ) : (
-          <div className="responsive-table-wrapper">
-            <table className="adaptive-table">
-              <thead>
-                <tr>
-                  <th>Employee ID</th>
-                  <th>Email</th>
-                  <th>Leave Type</th>
-                  <th>Date Range</th>
-                  <th>Days</th>
-                  <th>Reason</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRequests.map((req) => (
-                  <tr key={req.id}>
-                    <td data-label="Employee ID" style={{ fontWeight: 600 }}>
-                      {req.employeeId}
-                    </td>
-                    <td data-label="Email" style={{ fontSize: '0.8125rem' }}>
-                      {req.user.email}
-                    </td>
-                    <td data-label="Leave Type">{req.leaveType}</td>
-                    <td
-                      data-label="Date Range"
-                      style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}
-                    >
-                      {formatLocalDate(req.startDate)} -{' '}
-                      {formatLocalDate(req.endDate)}
-                    </td>
-                    <td data-label="Days" style={{ textAlign: 'center' }}>
-                      {calculateDuration(req.startDate, req.endDate)}
-                    </td>
-                    <td
-                      data-label="Reason"
-                      style={{
-                        maxWidth: 260,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        fontSize: '0.8125rem',
-                      }}
-                    >
-                      {req.reason}
-                    </td>
-                    <td data-label="Status">{getStatusBadge(req.status)}</td>
-                    <td
-                      data-label="Actions"
-                      style={{ textAlign: 'right', whiteSpace: 'nowrap' }}
-                    >
-                      {req.status === 'PENDING' ? (
-                        <div
-                          style={{
-                            display: 'inline-flex',
-                            gap: 'var(--space-2)',
-                          }}
-                        >
-                          <Button
-                            variant="primary"
-                            onClick={() => openActionDialog(req, 'APPROVE')}
-                            style={{
-                              height: 28,
-                              padding: '0 var(--space-2)',
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => openActionDialog(req, 'REJECT')}
-                            style={{
-                              height: 28,
-                              padding: '0 var(--space-2)',
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            Reject
-                          </Button>
-                        </div>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: '0.75rem',
-                            color: 'var(--color-text-muted)',
-                            fontStyle: 'italic',
-                          }}
-                        >
-                          Processed by {req.approvedBy}
-                        </span>
-                      )}
-                    </td>
+
+          {isLoading ? (
+            <LoadingState message="Loading leave requests..." />
+          ) : !filteredRequests || filteredRequests.length === 0 ? (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 'var(--space-12) 0',
+                color: 'var(--color-text-muted)',
+              }}
+            >
+              <ShieldAlert
+                size={40}
+                style={{ marginBottom: 'var(--space-3)', opacity: 0.5 }}
+              />
+              <p style={{ fontSize: '0.875rem' }}>
+                No leave requests match the selected filters.
+              </p>
+            </div>
+          ) : (
+            <div className="responsive-table-wrapper">
+              <table className="adaptive-table">
+                <thead>
+                  <tr>
+                    <th>Employee ID</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>Date Range</th>
+                    <th>Days</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Actions / Status Info</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+                </thead>
+                <tbody>
+                  {filteredRequests.map((req) => (
+                    <tr key={req.id}>
+                      <td data-label="Employee ID" style={{ fontWeight: 500 }}>
+                        {req.employeeId}
+                      </td>
+                      <td data-label="Email" style={{ fontSize: '0.8125rem' }}>
+                        {req.user.email}
+                      </td>
+                      <td data-label="Type" style={{ fontWeight: 600 }}>
+                        {req.leaveType}
+                      </td>
+                      <td
+                        data-label="Date Range"
+                        style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}
+                      >
+                        {formatLocalDate(req.startDate)} -{' '}
+                        {formatLocalDate(req.endDate)}
+                      </td>
+                      <td data-label="Days" style={{ textAlign: 'center' }}>
+                        {calculateDuration(req.startDate, req.endDate)}
+                      </td>
+                      <td
+                        data-label="Reason"
+                        style={{
+                          maxWidth: 200,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          fontSize: '0.8125rem',
+                        }}
+                      >
+                        {req.reason}
+                      </td>
+                      <td data-label="Status">{getStatusBadge(req.status)}</td>
+                      <td data-label="Actions / Status Info">
+                        {req.status === 'PENDING' ? (
+                          <div
+                            style={{ display: 'flex', gap: 'var(--space-2)' }}
+                          >
+                            <Button
+                              variant="primary"
+                              style={{
+                                height: 28,
+                                padding: '0 var(--space-2)',
+                                fontSize: '0.6875rem',
+                              }}
+                              onClick={() => openActionDialog(req, 'APPROVE')}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              style={{
+                                height: 28,
+                                padding: '0 var(--space-2)',
+                                fontSize: '0.6875rem',
+                                color: 'var(--color-danger)',
+                                borderColor: 'rgba(239, 68, 68, 0.2)',
+                              }}
+                              onClick={() => openActionDialog(req, 'REJECT')}
+                            >
+                              Reject
+                            </Button>
+                          </div>
+                        ) : (
+                          <span
+                            style={{
+                              fontSize: '0.75rem',
+                              color: 'var(--color-text-muted)',
+                              fontStyle: 'italic',
+                            }}
+                          >
+                            Processed by {req.approvedBy}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Review Remarks Dialog */}
       {selectedRequest && actionType && (
