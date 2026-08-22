@@ -4,9 +4,9 @@ import { Search, User, Users, RefreshCw } from 'lucide-react';
 import {
   Card,
   Input,
-  LoadingState,
   ErrorState,
   Button,
+  Skeleton,
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import type { paths } from '../../types/api.js';
@@ -59,16 +59,120 @@ export function EmployeeDirectoryPage() {
 
   if (isLoading) {
     return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '50vh',
-        }}
-      >
-        <LoadingState message="Loading employees..." />
-      </div>
+      <section aria-busy="true" aria-live="polite">
+        <div className="page-header" style={{ marginBottom: 'var(--space-6)' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 'var(--space-4)',
+            }}
+          >
+            <div>
+              <h1 className="main-title">Employee Directory</h1>
+              <p className="subtitle">
+                Discover and manage employee information across the
+                organization.
+              </p>
+            </div>
+            <Button
+              variant="secondary"
+              disabled
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+              }}
+            >
+              <RefreshCw size={14} /> Refresh
+            </Button>
+          </div>
+        </div>
+
+        {/* Search and Filters Bar */}
+        <Card style={{ marginBottom: 'var(--space-6)' }}>
+          <div style={{ position: 'relative' }}>
+            <Search
+              size={18}
+              style={{
+                color: 'var(--color-text-muted)',
+                position: 'absolute',
+                left: 'var(--space-3)',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                pointerEvents: 'none',
+              }}
+            />
+            <Input
+              type="text"
+              placeholder="Search by name, employee code, department, or designation..."
+              disabled
+              style={{ paddingLeft: 'var(--space-10)', width: '100%' }}
+            />
+          </div>
+        </Card>
+
+        {/* Skeleton Table */}
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="responsive-table-wrapper">
+            <table className="adaptive-table" style={{ pointerEvents: 'none' }}>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Employee Code</th>
+                  <th>Department</th>
+                  <th>Designation</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <tr key={i}>
+                    <td>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 'var(--space-3)',
+                        }}
+                      >
+                        <Skeleton
+                          width="32px"
+                          height="32px"
+                          borderRadius="50%"
+                        />
+                        <Skeleton width="120px" height="16px" />
+                      </div>
+                    </td>
+                    <td>
+                      <Skeleton width="80px" height="16px" />
+                    </td>
+                    <td>
+                      <Skeleton width="100px" height="16px" />
+                    </td>
+                    <td>
+                      <Skeleton width="100px" height="16px" />
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          gap: 'var(--space-2)',
+                        }}
+                      >
+                        <Skeleton width="60px" height="28px" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </section>
     );
   }
 

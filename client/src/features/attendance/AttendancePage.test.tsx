@@ -54,9 +54,9 @@ describe('AttendancePage Component', () => {
       return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
     });
 
-    render(<AttendancePage />);
+    const { container } = render(<AttendancePage />);
 
-    expect(screen.getByText('Loading attendance status...')).toBeTruthy();
+    expect(container.querySelector('.skeleton')).toBeTruthy();
   });
 
   it("should render error state when API fails to load today's status", async () => {
@@ -293,9 +293,9 @@ describe('AttendancePage Component', () => {
         return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
       });
 
-      render(<AttendancePage />);
+      const { container } = render(<AttendancePage />);
 
-      expect(screen.getByText('Loading attendance insights...')).toBeTruthy();
+      expect(container.querySelector('.skeleton')).toBeTruthy();
     });
 
     it('should show error insights state when insights fetch fails', async () => {

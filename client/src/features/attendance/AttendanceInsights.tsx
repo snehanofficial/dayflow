@@ -3,11 +3,11 @@ import { RefreshCw, HelpCircle } from 'lucide-react';
 import {
   Card,
   Button,
-  LoadingState,
   ErrorState,
   EmptyState,
   Input,
   Label,
+  Skeleton,
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import type { paths } from '../../types/api.js';
@@ -290,8 +290,51 @@ export function AttendanceInsights() {
 
       {/* Main Content Area */}
       {isLoading ? (
-        <div style={{ padding: 'var(--space-8) 0' }}>
-          <LoadingState message="Loading attendance insights..." />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-6)',
+          }}
+          aria-busy="true"
+          aria-live="polite"
+        >
+          {/* Card row skeleton */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 'var(--space-4)',
+            }}
+          >
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Card
+                key={i}
+                style={{
+                  padding: 'var(--space-4)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-2)',
+                }}
+              >
+                <Skeleton width="80px" height="12px" />
+                <Skeleton width="40px" height="24px" />
+              </Card>
+            ))}
+          </div>
+          {/* Body content skeleton */}
+          <Card
+            style={{
+              height: '300px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-4)',
+              padding: 'var(--space-4)',
+            }}
+          >
+            <Skeleton width="200px" height="20px" />
+            <Skeleton width="100%" height="100%" />
+          </Card>
         </div>
       ) : error ? (
         <div style={{ padding: 'var(--space-4) 0' }}>

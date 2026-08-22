@@ -14,12 +14,12 @@ import { useAuth } from '../../context/AuthContext.js';
 import {
   Card,
   Button,
-  LoadingState,
   ErrorState,
   EmptyState,
   Input,
   Label,
   Badge,
+  Skeleton,
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import { toast } from '../../components/Toast/toastStore.js';
@@ -236,8 +236,17 @@ export function AttendancePage() {
           </h2>
 
           {isTodayLoading ? (
-            <div style={{ padding: 'var(--space-6) 0' }}>
-              <LoadingState message="Loading attendance status..." />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-4)',
+                padding: 'var(--space-2) 0',
+              }}
+            >
+              <Skeleton width="120px" height="16px" />
+              <Skeleton width="180px" height="32px" />
+              <Skeleton width="100%" height="40px" />
             </div>
           ) : todayError ? (
             <div style={{ padding: 'var(--space-4) 0' }}>
@@ -516,8 +525,16 @@ export function AttendancePage() {
 
         {/* Table / Cards Area */}
         {isHistoryLoading ? (
-          <div style={{ padding: 'var(--space-8) 0' }}>
-            <LoadingState message="Loading attendance logs..." />
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-3)',
+            }}
+          >
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Skeleton key={i} style={{ height: '48px', width: '100%' }} />
+            ))}
           </div>
         ) : historyError ? (
           <div style={{ padding: 'var(--space-4) 0' }}>

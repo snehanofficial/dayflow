@@ -17,12 +17,12 @@ import {
 import {
   Card,
   Button,
-  LoadingState,
   ErrorState,
   Badge,
   Input,
   Label,
   Select,
+  Skeleton,
 } from '../../components/ui/index.js';
 import { apiClient } from '../../api/client.js';
 import { useAuth } from '../../context/AuthContext.js';
@@ -149,16 +149,118 @@ export function EmployeeDetailPage() {
 
   if (isLoading) {
     return (
-      <div
+      <section
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '50vh',
+          maxWidth: '800px',
+          margin: '0 auto',
+          padding: 'var(--space-4) 0',
         }}
+        aria-busy="true"
+        aria-live="polite"
       >
-        <LoadingState message="Loading employee details..." />
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 'var(--space-6)',
+            flexWrap: 'wrap',
+            gap: 'var(--space-3)',
+          }}
+        >
+          <Skeleton width="150px" height="38px" />
+          <Skeleton width="130px" height="38px" />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-6)',
+          }}
+        >
+          {/* Identity Card Skeleton */}
+          <Card style={{ padding: 'var(--space-6)' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-4)',
+              }}
+            >
+              <Skeleton width="60px" height="60px" borderRadius="50%" />
+              <div style={{ flex: 1 }}>
+                <Skeleton
+                  width="200px"
+                  height="24px"
+                  style={{ marginBottom: 'var(--space-2)' }}
+                />
+                <Skeleton width="120px" height="16px" />
+              </div>
+            </div>
+          </Card>
+
+          {/* Personal Details Skeleton */}
+          <Card style={{ padding: 'var(--space-6)' }}>
+            <Skeleton
+              width="180px"
+              height="20px"
+              style={{ marginBottom: 'var(--space-4)' }}
+            />
+            <div
+              className="adaptive-grid"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 'var(--space-4)',
+              }}
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-2)',
+                  }}
+                >
+                  <Skeleton width="80px" height="14px" />
+                  <Skeleton width="100%" height="38px" />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Org Details Skeleton */}
+          <Card style={{ padding: 'var(--space-6)' }}>
+            <Skeleton
+              width="180px"
+              height="20px"
+              style={{ marginBottom: 'var(--space-4)' }}
+            />
+            <div
+              className="adaptive-grid"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 'var(--space-4)',
+              }}
+            >
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-2)',
+                  }}
+                >
+                  <Skeleton width="80px" height="14px" />
+                  <Skeleton width="100%" height="38px" />
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </section>
     );
   }
 

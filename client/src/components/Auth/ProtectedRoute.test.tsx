@@ -27,7 +27,7 @@ describe('ProtectedRoute', () => {
       resendVerification: vi.fn(),
     });
 
-    render(
+    const { container } = render(
       <MemoryRouter>
         <ProtectedRoute>
           <div>Protected Content</div>
@@ -35,7 +35,8 @@ describe('ProtectedRoute', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Verifying session...')).toBeTruthy();
+    expect(screen.queryByText('Verifying session...')).toBeNull();
+    expect(container.querySelector('.app-sidebar')).toBeTruthy();
   });
 
   it('should render children if user is authenticated', () => {
