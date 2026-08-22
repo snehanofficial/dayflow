@@ -265,3 +265,30 @@ Perform a full check for debug artifacts, run and verify the complete server and
 - **Server Verification Suite**: Ran `pnpm run verify` in the `server` folder, which runs linting, typechecking, 131 test cases, and production build compiles cleanly.
 - **Client Verification Suite**: Ran `pnpm run verify` in the `client` folder, which runs prettier, linting, typechecking, 51 test cases, and production build compiles cleanly.
 - **Database Migrations**: Staged and committed the Prisma migrations for the attendance model to support seamless deployment.
+
+## Data Freshness / TanStack Query
+
+Status: COMPLETE
+Verification: PASS
+Regression: PASS
+
+Objective:
+Resolve data-freshness and TanStack Query caching/refresh issues to support seamless offline cached rendering alongside automatic revalidation on browser refresh, reconnection, and window focus without global caching disablement.
+
+### Summary of Changes
+1. **QueryClient Global Configuration**:
+   - Centralized QueryClient instance in [`client/src/main.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/main.tsx) with robust, conservative defaults: `staleTime` of 5 minutes, `gcTime` of 10 minutes, and automatic revalidations (`refetchOnMount: true`, `refetchOnWindowFocus: true`, `refetchOnReconnect: true`).
+2. **Browser Cache Bypass**:
+   - Appended `Cache-Control: no-cache` and `Pragma: no-cache` headers on Axios apiClient requests in [`client/src/api/client.ts`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/api/client.ts) to force the browser to revalidate queries on standard page refresh without breaking TanStack Query's memory caching.
+3. **Frontend Server-State Migration**:
+   - Migrated manual React hooks (`useState`/`useEffect`) to TanStack `useQuery`/`useMutation` in the following features:
+     - **Profile Page**: [`ProfilePage.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/employee/ProfilePage.tsx) under key `['employee', 'profile']`.
+     - **Attendance Page**: [`AttendancePage.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/attendance/AttendancePage.tsx) under keys `['attendance', 'today']` and `['attendance', 'history']`.
+     - **Attendance Insights**: [`AttendanceInsights.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/attendance/AttendanceInsights.tsx) under key `['attendance', 'insights']`.
+     - **Employee Dashboard**: [`EmployeeDashboard.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/employee/EmployeeDashboard.tsx) using concurrent queries for all sub-sections.
+4. **Invalidation & Synchronization**:
+   - Implemented automatic invalidation of stale queries after successful mutations: check-in/out mutations trigger immediate invalidation of today's status, paginated history, and insights; profile mutations invalidate profile details and auth session queries.
+5. **Testing & Verification**:
+   - Updated existing test suites ([`EmployeeDashboard.test.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/employee/EmployeeDashboard.test.tsx) and [`AttendancePage.test.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/features/attendance/AttendancePage.test.tsx)) to wrap components in an isolated `QueryClientProvider` per test, eliminating mutable state pollution.
+   - Added focused tests in [`client/src/test/QueryRevalidation.test.tsx`](file:///home/snehan/personal/competitions/2026-08_odoo_nmit/dayflow/client/src/test/QueryRevalidation.test.tsx) verifying initial fetching, memory caching, stale refetching, reconnect/window focus revalidation, offline cached data rendering, and error retry limits.
+   - Verified that all 59 client unit/integration tests pass, and the application builds cleanly for production.

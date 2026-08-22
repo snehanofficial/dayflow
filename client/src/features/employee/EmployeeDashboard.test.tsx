@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { EmployeeDashboard } from './EmployeeDashboard.js';
 import * as client from '../../api/client.js';
 
@@ -87,6 +88,19 @@ const mockSlips = {
   ],
 };
 
+const renderWithQuery = (ui: React.ReactNode) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe('EmployeeDashboard Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -97,7 +111,7 @@ describe('EmployeeDashboard Component', () => {
       return new Promise(() => {}); // never resolves
     });
 
-    render(<EmployeeDashboard />);
+    renderWithQuery(<EmployeeDashboard />);
     // Just verify the skeletons exist
     expect(screen.queryByText('Welcome back')).toBeNull();
   });
@@ -113,7 +127,7 @@ describe('EmployeeDashboard Component', () => {
       return {};
     });
 
-    render(<EmployeeDashboard />);
+    renderWithQuery(<EmployeeDashboard />);
 
     await waitFor(() => {
       expect(screen.getByText('Welcome back, John Doe!')).toBeTruthy();
@@ -145,7 +159,7 @@ describe('EmployeeDashboard Component', () => {
       return {};
     });
 
-    render(<EmployeeDashboard />);
+    renderWithQuery(<EmployeeDashboard />);
 
     await waitFor(() => {
       expect(screen.getByText('Database connection failed')).toBeTruthy();

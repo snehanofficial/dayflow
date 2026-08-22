@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { User, Mail, Phone, Briefcase, Calendar, Save } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext.js';
 import {
   Card,
@@ -29,15 +30,24 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfilePage() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<EmployeeProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorText, setErrorText] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const {
+    data: profile,
+    isLoading,
+    error,
+    refetch: fetchProfile,
+  } = useQuery<EmployeeProfile>({
+    queryKey: ['employee', 'profile'],
+    queryFn: () => apiClient<EmployeeProfile>('/api/employee/profile'),
+  });
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isDirty },
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -47,60 +57,57 @@ export function ProfilePage() {
     },
   });
 
-  const fetchProfile = async () => {
-    try {
-      setIsLoading(true);
-      setErrorText(null);
-      const data = await apiClient<EmployeeProfile>('/api/employee/profile');
-      setProfile(data);
-      reset({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        phone: data.phone ?? '',
-      });
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to load employee profile.';
-      setErrorText(message);
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    if (profile && !isInitialized) {
+      reset({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.phone ?? '',
+      });
+      setIsInitialized(true);
+    }
+  }, [profile, isInitialized, reset]);
 
-  const onSubmit = async (data: ProfileFormData) => {
-    try {
+  const updateProfileMutation = useMutation<
+    EmployeeProfile,
+    Error,
+    ProfileFormData
+  >({
+    mutationFn: (data: ProfileFormData) => {
       const formattedData = {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone === '' ? null : data.phone,
       };
-
-      const updated = await apiClient<EmployeeProfile>(
-        '/api/employee/profile',
-        {
-          method: 'PATCH',
-          data: formattedData,
-        },
-      );
-
-      setProfile(updated);
+      return apiClient<EmployeeProfile>('/api/employee/profile', {
+        method: 'PATCH',
+        data: formattedData,
+      });
+    },
+    onSuccess: (updated) => {
+      toast.success('Profile updated successfully.');
+      queryClient.invalidateQueries({ queryKey: ['employee', 'profile'] });
+      queryClient.invalidateQueries({ queryKey: ['auth', 'session'] });
       reset({
         firstName: updated.firstName,
         lastName: updated.lastName,
         phone: updated.phone ?? '',
       });
-      toast.success('Profile updated successfully.');
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to update profile.';
-      toast.error(message);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Failed to update profile.');
+    },
+  });
+
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      await updateProfileMutation.mutateAsync(data);
+    } catch {
+      // Caught in mutation onError hook
     }
   };
+
+  const isSubmitting = updateProfileMutation.isPending;
 
   if (isLoading) {
     return (
@@ -184,10 +191,17 @@ export function ProfilePage() {
     );
   }
 
-  if (errorText) {
+  if (error) {
     return (
       <div style={{ padding: 'var(--space-6)' }}>
-        <ErrorState message={errorText} onRetry={fetchProfile} />
+        <ErrorState
+          message={
+            error instanceof Error
+              ? error.message
+              : 'Failed to load employee profile.'
+          }
+          onRetry={() => fetchProfile()}
+        />
       </div>
     );
   }

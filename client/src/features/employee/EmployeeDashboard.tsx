@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   User,
   Clock,
@@ -12,6 +12,7 @@ import {
   Square,
   Award,
 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext.js';
 import {
   Card,
@@ -32,7 +33,6 @@ type InsightsResponse =
   paths['/api/attendance/insights']['get']['responses']['200']['content']['application/json'];
 type HistoryResponse =
   paths['/api/attendance/history']['get']['responses']['200']['content']['application/json'];
-type HistoryItem = HistoryResponse['history'][number];
 
 type LeaveBalanceResponse = {
   paid: { allocated: number; used: number; remaining: number };
@@ -70,105 +70,99 @@ function getLocalDateString(date: Date): string {
 
 export function EmployeeDashboard() {
   const { user } = useAuth();
-
-  // Data states
-  const [profile, setProfile] = useState<EmployeeProfile | null>(null);
-  const [todayAttendance, setTodayAttendance] = useState<Attendance>(null);
-  const [insights, setInsights] = useState<InsightsResponse | null>(null);
-  const [recentLogs, setRecentLogs] = useState<HistoryItem[]>([]);
-  const [leaveBalance, setLeaveBalance] = useState<LeaveBalanceResponse | null>(
-    null,
-  );
-  const [latestSlip, setLatestSlip] = useState<
-    SalarySlipsResponse['slips'][number] | null
-  >(null);
-
-  // Status/Loading states
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorText, setErrorText] = useState<string | null>(null);
-  const [isActionPending, setIsActionPending] = useState(false);
+  const queryClient = useQueryClient();
 
   // Active clock counter
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  // Fetch all dashboard data
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setErrorText(null);
+  // Computed Date Range for Insights
+  const today = new Date();
+  const todayStr = getLocalDateString(today);
+  const [y, mStr] = todayStr.split('-');
+  const startOfMonth = `${y}-${mStr}-01`;
 
-      // 1. Fetch Profile
-      const profileData = await apiClient<EmployeeProfile>(
-        '/api/employee/profile',
-      );
-      setProfile(profileData);
+  // 1. Fetch Profile
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    error: profileError,
+  } = useQuery<EmployeeProfile, Error>({
+    queryKey: ['employee', 'profile'],
+    queryFn: () => apiClient<EmployeeProfile>('/api/employee/profile'),
+  });
 
-      // 2. Fetch Today's Attendance
-      const attendanceData = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/today',
-      );
-      setTodayAttendance(attendanceData.attendance);
+  // 2. Fetch Today's Attendance
+  const {
+    data: todayAttendanceData,
+    isLoading: isTodayLoading,
+    error: todayAttendanceError,
+  } = useQuery<{ attendance: Attendance }, Error>({
+    queryKey: ['attendance', 'today'],
+    queryFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/today'),
+  });
 
-      // 3. Fetch Insights (current month)
-      const today = new Date();
-      const todayStr = getLocalDateString(today);
-      const [y, m] = todayStr.split('-');
-      const startOfMonth = `${y}-${m}-01`;
+  const todayAttendance = todayAttendanceData?.attendance ?? null;
 
-      try {
-        const insightsData = await apiClient<InsightsResponse>(
-          `/api/attendance/insights?startDate=${startOfMonth}&endDate=${todayStr}`,
-        );
-        setInsights(insightsData);
-      } catch {
-        // Silent catch for secondary dashboard widget loads
-      }
+  // 3. Fetch Insights (current month)
+  const { data: insights } = useQuery<InsightsResponse, Error>({
+    queryKey: [
+      'attendance',
+      'insights',
+      { startDate: startOfMonth, endDate: todayStr },
+    ],
+    queryFn: () =>
+      apiClient<InsightsResponse>(
+        `/api/attendance/insights?startDate=${startOfMonth}&endDate=${todayStr}`,
+      ),
+    retry: false,
+  });
 
-      // 4. Fetch Recent Logs (last 5)
-      try {
-        const historyData = await apiClient<HistoryResponse>(
-          '/api/attendance/history?limit=5&offset=0',
-        );
-        setRecentLogs(historyData.history || []);
-      } catch {
-        // Silent catch for secondary dashboard widget loads
-      }
+  // 4. Fetch Recent Logs (last 5)
+  const { data: recentLogsData } = useQuery<HistoryResponse, Error>({
+    queryKey: ['attendance', 'history', { limit: 5, offset: 0 }],
+    queryFn: () =>
+      apiClient<HistoryResponse>('/api/attendance/history?limit=5&offset=0'),
+    retry: false,
+  });
 
-      // 5. Fetch Leave Balance (Developer B)
-      try {
-        const leaveData =
-          await apiClient<LeaveBalanceResponse>('/api/leave/balance');
-        setLeaveBalance(leaveData);
-      } catch {
-        // Silent catch for secondary dashboard widget loads
-      }
+  const recentLogs = recentLogsData?.history || [];
 
-      // 6. Fetch Salary Slips (Developer B)
-      try {
-        const slipsData =
-          await apiClient<SalarySlipsResponse>('/api/payroll/slips');
-        if (slipsData.slips && slipsData.slips.length > 0) {
-          const sorted = [...slipsData.slips].sort((a, b) =>
-            b.month.localeCompare(a.month),
-          );
-          setLatestSlip(sorted[0]);
-        }
-      } catch {
-        // Silent catch for secondary dashboard widget loads
-      }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to load dashboard data';
-      setErrorText(message);
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  // 5. Fetch Leave Balance
+  const { data: leaveBalance } = useQuery<LeaveBalanceResponse, Error>({
+    queryKey: ['leave', 'balance'],
+    queryFn: () => apiClient<LeaveBalanceResponse>('/api/leave/balance'),
+    retry: false,
+  });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [fetchDashboardData]);
+  // 6. Fetch Salary Slips
+  const { data: slipsData } = useQuery<SalarySlipsResponse, Error>({
+    queryKey: ['payroll', 'slips'],
+    queryFn: () => apiClient<SalarySlipsResponse>('/api/payroll/slips'),
+    retry: false,
+  });
+
+  const latestSlip = (() => {
+    if (!slipsData?.slips || slipsData.slips.length === 0) return null;
+    const sorted = [...slipsData.slips].sort((a, b) =>
+      b.month.localeCompare(a.month),
+    );
+    return sorted[0];
+  })();
+
+  const isLoading = isProfileLoading || isTodayLoading;
+  const errorText = profileError
+    ? profileError.message || 'Failed to load profile'
+    : todayAttendanceError
+      ? todayAttendanceError.message || 'Failed to load attendance'
+      : null;
+
+  const fetchDashboardData = () => {
+    queryClient.invalidateQueries({ queryKey: ['employee', 'profile'] });
+    queryClient.invalidateQueries({ queryKey: ['attendance'] });
+    queryClient.invalidateQueries({ queryKey: ['leave'] });
+    queryClient.invalidateQueries({ queryKey: ['payroll'] });
+  };
 
   // Live timer for active check-in
   useEffect(() => {
@@ -196,46 +190,53 @@ export function EmployeeDashboard() {
     };
   }, [todayAttendance]);
 
-  // Attendance actions handlers
+  // Attendance actions handlers using Mutations
+  const checkInMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/check-in', {
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      toast.success('Successfully checked in!');
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'today'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'insights'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Check-in failed');
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/check-out', {
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      toast.success('Successfully checked out!');
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'today'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'insights'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Check-out failed');
+    },
+  });
+
   const handleCheckIn = async () => {
     try {
-      setIsActionPending(true);
-      const data = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/check-in',
-        {
-          method: 'POST',
-        },
-      );
-      setTodayAttendance(data.attendance);
-      toast.success('Successfully checked in!');
-      fetchDashboardData();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Check-in failed';
-      toast.error(message);
-    } finally {
-      setIsActionPending(false);
-    }
+      await checkInMutation.mutateAsync();
+    } catch {}
   };
 
   const handleCheckOut = async () => {
     try {
-      setIsActionPending(true);
-      const data = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/check-out',
-        {
-          method: 'POST',
-        },
-      );
-      setTodayAttendance(data.attendance);
-      toast.success('Successfully checked out!');
-      fetchDashboardData();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Check-out failed';
-      toast.error(message);
-    } finally {
-      setIsActionPending(false);
-    }
+      await checkOutMutation.mutateAsync();
+    } catch {}
   };
+
+  const isActionPending =
+    checkInMutation.isPending || checkOutMutation.isPending;
 
   const formatTime = (isoString?: string | null) => {
     if (!isoString) return '--:--';

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, HelpCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import {
   Card,
   Button,
@@ -48,11 +49,6 @@ export function AttendanceInsights() {
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
 
-  // Data states
-  const [insights, setInsights] = useState<InsightsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   // Recalculate date range based on selected period
   const updateDatesForPeriod = useCallback(
     (selectedPeriod: typeof period) => {
@@ -99,40 +95,30 @@ export function AttendanceInsights() {
     updateDatesForPeriod(period);
   }, [period, updateDatesForPeriod]);
 
-  // Fetch insights from API
-  const fetchInsights = useCallback(async () => {
-    if (!startDate || !endDate) return;
+  const isDateRangeInvalid =
+    !!startDate && !!endDate && new Date(startDate) > new Date(endDate);
 
-    if (new Date(startDate) > new Date(endDate)) {
-      setError('Start date must be less than or equal to end date');
-      setInsights(null);
-      setIsLoading(false);
-      return;
-    }
+  const {
+    data: insights,
+    isLoading: isQueryLoading,
+    error: queryError,
+    refetch: fetchInsights,
+  } = useQuery<InsightsResponse, Error>({
+    queryKey: ['attendance', 'insights', { startDate, endDate }],
+    queryFn: () =>
+      apiClient<InsightsResponse>('/api/attendance/insights', {
+        params: { startDate, endDate },
+      }),
+    enabled: !!startDate && !!endDate && !isDateRangeInvalid,
+  });
 
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await apiClient<InsightsResponse>(
-        '/api/attendance/insights',
-        {
-          params: { startDate, endDate },
-        },
-      );
-      setInsights(data);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Failed to load insights';
-      setError(message);
-      setInsights(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [startDate, endDate]);
+  const error = isDateRangeInvalid
+    ? 'Start date must be less than or equal to end date'
+    : queryError
+      ? queryError.message || 'Failed to load insights'
+      : null;
 
-  useEffect(() => {
-    fetchInsights();
-  }, [fetchInsights]);
+  const isLoading = isQueryLoading && !isDateRangeInvalid;
 
   const handlePeriodChange = (val: typeof period) => {
     setPeriod(val);
@@ -273,7 +259,7 @@ export function AttendanceInsights() {
 
         <Button
           variant="secondary"
-          onClick={fetchInsights}
+          onClick={() => fetchInsights()}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -341,7 +327,7 @@ export function AttendanceInsights() {
           <ErrorState
             title="Insights Error"
             message={error}
-            onRetry={fetchInsights}
+            onRetry={() => fetchInsights()}
           />
         </div>
       ) : !insights ? (

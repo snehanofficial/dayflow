@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AttendancePage } from './AttendancePage.js';
 import * as client from '../../api/client.js';
 
@@ -38,6 +39,19 @@ const mockInsightsDefault = {
   ],
 };
 
+const renderWithQuery = (ui: React.ReactNode) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+  );
+};
+
 describe('AttendancePage Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,7 +68,7 @@ describe('AttendancePage Component', () => {
       return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
     });
 
-    const { container } = render(<AttendancePage />);
+    const { container } = renderWithQuery(<AttendancePage />);
 
     expect(container.querySelector('.skeleton')).toBeTruthy();
   });
@@ -70,7 +84,7 @@ describe('AttendancePage Component', () => {
       return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
     });
 
-    render(<AttendancePage />);
+    renderWithQuery(<AttendancePage />);
 
     await waitFor(() => {
       expect(screen.getByText('API server down')).toBeTruthy();
@@ -91,7 +105,7 @@ describe('AttendancePage Component', () => {
       return {};
     });
 
-    render(<AttendancePage />);
+    renderWithQuery(<AttendancePage />);
 
     await waitFor(() => {
       expect(
@@ -122,7 +136,7 @@ describe('AttendancePage Component', () => {
       return {};
     });
 
-    render(<AttendancePage />);
+    renderWithQuery(<AttendancePage />);
 
     await waitFor(() => {
       expect(
@@ -153,7 +167,7 @@ describe('AttendancePage Component', () => {
       return {};
     });
 
-    render(<AttendancePage />);
+    renderWithQuery(<AttendancePage />);
 
     await waitFor(() => {
       expect(screen.getByText('Attendance Completed Today')).toBeTruthy();
@@ -192,7 +206,7 @@ describe('AttendancePage Component', () => {
       return {};
     });
 
-    render(<AttendancePage />);
+    renderWithQuery(<AttendancePage />);
 
     await waitFor(() => {
       expect(screen.getByText('LATE')).toBeTruthy();
@@ -232,7 +246,7 @@ describe('AttendancePage Component', () => {
         return {};
       });
 
-      render(<AttendancePage />);
+      renderWithQuery(<AttendancePage />);
 
       await waitFor(() => {
         // Check cards values
@@ -273,7 +287,7 @@ describe('AttendancePage Component', () => {
         return {};
       });
 
-      render(<AttendancePage />);
+      renderWithQuery(<AttendancePage />);
 
       await waitFor(() => {
         expect(screen.getAllByText('0').length).toBeGreaterThan(0);
@@ -293,7 +307,7 @@ describe('AttendancePage Component', () => {
         return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
       });
 
-      const { container } = render(<AttendancePage />);
+      const { container } = renderWithQuery(<AttendancePage />);
 
       expect(container.querySelector('.skeleton')).toBeTruthy();
     });
@@ -309,7 +323,7 @@ describe('AttendancePage Component', () => {
         return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
       });
 
-      render(<AttendancePage />);
+      renderWithQuery(<AttendancePage />);
 
       await waitFor(() => {
         expect(screen.getByText('Insights Error')).toBeTruthy();
@@ -326,7 +340,7 @@ describe('AttendancePage Component', () => {
         return { history: [], pagination: { total: 0, limit: 10, offset: 0 } };
       });
 
-      render(<AttendancePage />);
+      renderWithQuery(<AttendancePage />);
 
       await waitFor(() => {
         expect(

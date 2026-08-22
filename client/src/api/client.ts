@@ -48,6 +48,8 @@ const axiosInstance = axios.create({
   withCredentials: true, // Crucial: Send HttpOnly session cookie
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+    Pragma: 'no-cache',
   },
 });
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   Clock,
   Calendar,
@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Info,
 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AttendanceInsights } from './AttendanceInsights.js';
 import { useAuth } from '../../context/AuthContext.js';
 import {
@@ -29,22 +30,10 @@ type Attendance =
   paths['/api/attendance/today']['get']['responses']['200']['content']['application/json']['attendance'];
 type HistoryResponse =
   paths['/api/attendance/history']['get']['responses']['200']['content']['application/json'];
-type HistoryItem = HistoryResponse['history'][number];
 
 export function AttendancePage() {
   const { user } = useAuth();
-
-  // Today's attendance states
-  const [todayAttendance, setTodayAttendance] = useState<Attendance>(null);
-  const [isTodayLoading, setIsTodayLoading] = useState(true);
-  const [todayError, setTodayError] = useState<string | null>(null);
-  const [isActionPending, setIsActionPending] = useState(false);
-
-  // History states
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
-  const [historyError, setHistoryError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   // Filters and Pagination
   const [startDate, setStartDate] = useState('');
@@ -53,111 +42,100 @@ export function AttendancePage() {
   const limit = 10;
 
   // Fetch today's status
-  const fetchTodayStatus = useCallback(async () => {
-    try {
-      setIsTodayLoading(true);
-      setTodayError(null);
-      const data = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/today',
-      );
-      setTodayAttendance(data.attendance);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : 'Unable to load attendance';
-      setTodayError(message);
-    } finally {
-      setIsTodayLoading(false);
-    }
-  }, []);
+  const {
+    data: todayData,
+    isLoading: isTodayLoading,
+    error: todayQueryError,
+    refetch: fetchTodayStatus,
+  } = useQuery<{ attendance: Attendance }>({
+    queryKey: ['attendance', 'today'],
+    queryFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/today'),
+  });
+
+  const todayAttendance = todayData?.attendance ?? null;
+  const todayError = todayQueryError
+    ? todayQueryError.message || 'Unable to load attendance'
+    : null;
 
   // Fetch history list
-  const fetchHistory = useCallback(async () => {
-    try {
-      setIsHistoryLoading(true);
-      setHistoryError(null);
+  const isHistoryRangeInvalid =
+    !!startDate && !!endDate && new Date(startDate) > new Date(endDate);
 
+  const {
+    data: historyData,
+    isLoading: isHistoryLoading,
+    error: historyQueryError,
+    refetch: fetchHistory,
+  } = useQuery<HistoryResponse>({
+    queryKey: ['attendance', 'history', { startDate, endDate, page, limit }],
+    queryFn: () => {
       const params: Record<string, string> = {
         limit: String(limit),
         offset: String((page - 1) * limit),
       };
-
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
+      return apiClient<HistoryResponse>('/api/attendance/history', { params });
+    },
+    enabled: !isHistoryRangeInvalid,
+  });
 
-      // Validate range client side first
-      if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-        setHistoryError('Start date must be less than or equal to end date');
-        setIsHistoryLoading(false);
-        return;
-      }
-
-      const data = await apiClient<HistoryResponse>('/api/attendance/history', {
-        params,
-      });
-      setHistory(data.history || []);
-      setTotalRecords(data.pagination.total);
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Unable to load attendance history';
-      setHistoryError(message);
-    } finally {
-      setIsHistoryLoading(false);
-    }
-  }, [page, startDate, endDate]);
-
-  // Combine initial loads and page changes
-  useEffect(() => {
-    fetchTodayStatus();
-  }, [fetchTodayStatus]);
-
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
+  const history = historyData?.history || [];
+  const totalRecords = historyData?.pagination?.total || 0;
+  const historyError = isHistoryRangeInvalid
+    ? 'Start date must be less than or equal to end date'
+    : historyQueryError
+      ? historyQueryError.message || 'Unable to load attendance history'
+      : null;
 
   // Actions handlers
+  const checkInMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/check-in', {
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      toast.success('Checked in successfully.');
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'today'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'insights'] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Check-in failed');
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: () =>
+      apiClient<{ attendance: Attendance }>('/api/attendance/check-out', {
+        method: 'POST',
+      }),
+    onSuccess: () => {
+      toast.success('Checked out successfully.');
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'today'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'history'] });
+      queryClient.invalidateQueries({ queryKey: ['attendance', 'insights'] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Check-out failed');
+    },
+  });
+
   const handleCheckIn = async () => {
     try {
-      setIsActionPending(true);
-      const data = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/check-in',
-        {
-          method: 'POST',
-        },
-      );
-      setTodayAttendance(data.attendance);
-      toast.success('Checked in successfully.');
-      // Refresh history list to include the new check-in
-      fetchHistory();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Check-in failed';
-      toast.error(message);
-    } finally {
-      setIsActionPending(false);
-    }
+      await checkInMutation.mutateAsync();
+    } catch {}
   };
 
   const handleCheckOut = async () => {
     try {
-      setIsActionPending(true);
-      const data = await apiClient<{ attendance: Attendance }>(
-        '/api/attendance/check-out',
-        {
-          method: 'POST',
-        },
-      );
-      setTodayAttendance(data.attendance);
-      toast.success('Checked out successfully.');
-      // Refresh history
-      fetchHistory();
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Check-out failed';
-      toast.error(message);
-    } finally {
-      setIsActionPending(false);
-    }
+      await checkOutMutation.mutateAsync();
+    } catch {}
   };
+
+  const isActionPending =
+    checkInMutation.isPending || checkOutMutation.isPending;
 
   const handleFilterReset = () => {
     setStartDate('');
@@ -253,7 +231,7 @@ export function AttendancePage() {
               <ErrorState
                 title="Error Loading Status"
                 message={todayError}
-                onRetry={fetchTodayStatus}
+                onRetry={() => fetchTodayStatus()}
               />
             </div>
           ) : (
@@ -458,7 +436,7 @@ export function AttendancePage() {
 
           <Button
             variant="secondary"
-            onClick={fetchHistory}
+            onClick={() => fetchHistory()}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -541,7 +519,7 @@ export function AttendancePage() {
             <ErrorState
               title="History Error"
               message={historyError}
-              onRetry={fetchHistory}
+              onRetry={() => fetchHistory()}
             />
           </div>
         ) : history.length === 0 ? (
